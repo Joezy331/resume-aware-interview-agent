@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+
+# Data (user privacy)
+data/
+uploads/
+*.pdf
+*.docx
+
+# Jupyter
+.ipynb_checkpoints/
