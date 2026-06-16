@@ -249,10 +249,21 @@ MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
 ```
 resume-aware-interview-agent/
 ├── app.py                  # Streamlit 主应用入口
+├── config.py               # 配置文件（模型参数 + Prompt 模板）
 ├── requirements.txt        # Python 依赖
 ├── .env.example            # 环境变量模板
 ├── .gitignore              # Git 忽略规则
 ├── README.md               # 项目说明（本文件）
+├── agents/                 # Agent 模块
+│   ├── __init__.py         # 模块导出
+│   ├── resume_parser.py    # Resume Parser Agent - 简历解析
+│   ├── interview.py        # Interview Agent - 面试问题生成 + 追问
+│   ├── score.py            # Score Agent - 6维度评分
+│   └── summary.py          # Summary Agent - 改进报告
+├── utils/                  # 工具模块
+│   ├── __init__.py         # 模块导出
+│   ├── file_parser.py      # PDF/DOCX 文件解析
+│   └── llm_client.py       # LLM 客户端初始化（SiliconFlow API）
 ├── screenshots/            # 页面截图
 │   ├── homepage.png
 │   ├── resume_upload.png
