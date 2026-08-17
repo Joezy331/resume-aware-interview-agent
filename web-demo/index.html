@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Career Copilot V3.0 — 简历感知智能面试平台</title>
+<script src="chart.umd.min.js"></script>
+<style>:root{
+  --navy:#0a1628;--navy2:#13284a;--blue:#1d6fd1;--indigo:#4f46e5;
+  --purple:#8b5cf6;--pink:#ec4899;--cyan:#06b6d4;--teal:#14b8a6;
+  --bg:#f7f8fa;--card:#fff;--text:#1a1a2e;--text2:#64748b;
+  --border:#e2e8f0;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+  --radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,textarea,select{font-family:inherit;outline:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:60px;background:var(--navy);display:flex;align-items:center;padding:0 24px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.nav-brand{color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;margin-right:40px}
+.nav-brand .dot{width:10px;height:10px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{color:rgba(255,255,255,.6);padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.1)}
+.nav-link.active{color:#fff;background:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.agent-count{background:rgba(29,111,209,.2);color:#8bc4ff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;display:flex;align-items:center;gap:4px}
+.agent-count .ac-dot{width:6px;height:6px;background:var(--success);border-radius:50%}
+.btn-nav{background:rgba(255,255,255,.1);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;transition:all .2s}
+.btn-nav:hover{background:rgba(255,255,255,.2)}
+
+/* PAGE */
+.page{display:none;padding:80px 24px 40px;max-width:1200px;margin:0 auto;min-height:100vh}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1558a8;transform:translateY(-1px)}
+.btn-secondary{background:var(--navy);color:#fff}
+.btn-secondary:hover{background:var(--navy2)}
+.btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-lg{padding:14px 28px;font-size:16px}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* HERO */
+.hero{text-align:center;padding:60px 20px 40px}
+.hero-badges{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.hero-badge{padding:5px 14px;border-radius:16px;font-size:11px;font-weight:600;border:1px solid var(--border);color:var(--text2)}
+.hero-badge.ai{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.hero-badge.resume{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.hero-badge.multi{background:#faf5ff;color:#7c3aed;border-color:#ede9fe}
+.hero h1{font-size:44px;font-weight:800;color:var(--navy);margin-bottom:16px;line-height:1.15}
+.hero h1 .grad{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:17px;color:var(--text2);max-width:580px;margin:0 auto 32px;line-height:1.7}
+.hero-actions{display:flex;gap:12px;justify-content:center}
+.hero-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;margin-top:48px}
+
+/* CHAT PREVIEW */
+.chat-preview{background:var(--navy);border-radius:16px;padding:20px;color:#fff;position:relative;overflow:hidden}
+.cp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.cp-avatar{width:36px;height:36px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px}
+.cp-info{flex:1}
+.cp-name{font-size:13px;font-weight:700}
+.cp-role{font-size:11px;color:rgba(255,255,255,.5)}
+.cp-status{font-size:10px;background:rgba(16,185,129,.2);color:#6ee7b7;padding:2px 8px;border-radius:8px}
+.cp-msg{background:rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.65;margin-bottom:10px;color:rgba(255,255,255,.9)}
+.cp-msg-user{background:var(--blue);border-radius:12px;padding:12px 14px;font-size:12.5px;margin-left:40px;margin-bottom:10px;color:#fff}
+.cp-msg-mini{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.cp-score-popup{position:absolute;bottom:16px;right:16px;background:#fff;border-radius:12px;padding:14px;width:140px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.cp-score-label{font-size:10px;color:var(--text2);margin-bottom:4px}
+.cp-score-val{font-size:28px;font-weight:800;color:var(--navy)}
+.cp-score-bar{height:6px;background:var(--border);border-radius:3px;margin-top:6px;overflow:hidden}
+.cp-score-fill{height:100%;background:var(--blue);border-radius:3px}
+
+/* AGENT GRID */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:24px 0}
+.agent-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .3s;position:relative;overflow:hidden}
+.agent-card:hover{border-color:var(--blue);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.agent-card .ac-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.agent-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.agent-card .ac-name{font-size:13px;font-weight:700;color:var(--navy)}
+.agent-card .ac-desc{font-size:11px;color:var(--text2);line-height:1.4}
+.agent-card .ac-status{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#cbd5e1}
+.agent-card.running .ac-status{background:var(--success);animation:pulse 1.5s infinite}
+.agent-card.done .ac-status{background:var(--blue)}
+
+/* WORKFLOW PIPELINE */
+.workflow-section{margin-top:48px}
+.wf-label{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.wf-title{font-size:28px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.wf-subtitle{font-size:14px;color:var(--text2);margin-bottom:28px}
+.pipeline-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;padding:20px 0}
+.pipeline-node{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:90px}
+.pipeline-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pipeline-name{font-size:11px;font-weight:700;color:var(--navy)}
+.pipeline-desc{font-size:9.5px;color:var(--text2);text-align:center}
+.pipeline-arrow{color:#cbd5e1;font-size:20px;margin:0 6px;flex-shrink:0}
+
+/* PAIN / SOLUTION */
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
+.ps-col-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:16px}
+.pain-item{display:flex;gap:12px;padding:16px;background:var(--card);border-radius:10px;margin-bottom:10px;border:1px solid var(--border)}
+.pain-icon{font-size:24px;flex-shrink:0}
+.pain-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.pain-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.solution-item{display:flex;gap:10px;padding:14px;background:#f0fdf4;border-radius:10px;margin-bottom:8px;border:1px solid #bbf7d0}
+.sol-check{color:var(--success);font-size:16px;flex-shrink:0;margin-top:2px}
+.sol-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.sol-desc{font-size:11.5px;color:var(--text2);line-height:1.5}
+
+/* ARCHITECTURE */
+.arch-section{margin-top:56px}
+.arch-label{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.arch-title{font-size:28px;font-weight:800;color:var(--navy);margin-bottom:28px}
+.arch-layer{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px}
+.arch-layer-name{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.arch-tags{display:flex;flex-wrap:wrap;gap:8px}
+.arch-tag{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);transition:all .2s}
+.arch-tag:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.arch-fe{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.arch-agent{background:#faf5ff;color:#7c3aed;border-color:#ede9fe}
+.arch-llm{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.arch-analytics{background:#fffbeb;color:#92400e;border-color:#fef3c7}
+
+/* INTERVIEWER CARDS */
+.interviewer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:24px 0}
+.interviewer-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:all .3s}
+.interviewer-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.iv-avatar{width:56px;height:56px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff}
+.iv-name{font-size:14px;font-weight:700;color:var(--navy)}
+.iv-role{font-size:11px;color:var(--text2);margin-bottom:6px}
+.iv-focus{font-size:10px;color:var(--blue);font-weight:600}
+.interviewer-card.active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,111,209,.2)}
+
+/* STEPS */
+.steps{display:flex;gap:0;margin-bottom:24px;background:var(--card);border-radius:var(--radius);padding:16px 24px;box-shadow:var(--shadow)}
+.step{flex:1;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer;transition:color .2s}
+.step:not(:last-child)::after{content:'';flex:1;height:2px;background:var(--border);margin:0 12px}
+.step.active{color:var(--blue);font-weight:700}
+.step.completed{color:var(--success)}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border);flex-shrink:0}
+.step.active .step-num{border-color:var(--blue);color:var(--blue)}
+.step.completed .step-num{border-color:var(--success);background:var(--success);color:#fff}
+
+/* UPLOAD AREA */
+.upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:48px;text-align:center;cursor:pointer;transition:all .2s}
+.upload-area:hover{border-color:var(--blue);background:rgba(29,111,209,.02)}
+.upload-area .ua-icon{font-size:48px;margin-bottom:12px}
+.upload-area .ua-text{font-size:16px;font-weight:600;color:var(--navy)}
+.upload-area .ua-hint{font-size:13px;color:var(--text2);margin-top:4px}
+
+/* PARSED RESULT */
+.parsed-section{margin-bottom:16px}
+.parsed-label{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.parsed-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.tag-green{background:#d1fae5;color:#065f46}
+.tag-purple{background:#ede9fe;color:#5b21b6}
+.tag-orange{background:#fed7aa;color:#9a3412}
+.tag-pink{background:#fce7f3;color:#9d174d}
+
+/* JD MATCH */
+.match-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.match-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.match-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.match-label{font-size:13px;font-weight:600;color:var(--navy)}
+.match-score{font-size:13px;font-weight:700}
+
+/* COMPETENCY */
+.competency-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.competency-list{display:flex;flex-direction:column;gap:10px}
+.comp-item{display:flex;align-items:center;gap:12px}
+.comp-name{font-size:13px;font-weight:600;width:80px;flex-shrink:0}
+.comp-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.comp-fill{height:100%;border-radius:3px}
+.comp-val{font-size:12px;font-weight:700;width:36px;text-align:right}
+
+/* JOB TYPE SELECTOR */
+.job-types{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.job-type{padding:12px;border:2px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s}
+.job-type:hover{border-color:var(--blue)}
+.job-type.selected{border-color:var(--blue);background:rgba(29,111,209,.05);box-shadow:0 0 0 2px rgba(29,111,209,.15)}
+.job-type .jt-icon{font-size:24px;margin-bottom:4px}
+.job-type .jt-name{font-size:12px;font-weight:600;color:var(--navy)}
+
+/* JOB MATCH CARDS */
+.job-match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin:16px 0}
+.jm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;cursor:pointer}
+.jm-card:hover{border-color:var(--blue);box-shadow:var(--shadow-lg)}
+.jm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.jm-name{font-size:14px;font-weight:700;color:var(--navy)}
+.jm-score{font-size:20px;font-weight:800}
+.jm-reason{font-size:11.5px;color:var(--text2);margin-bottom:8px;line-height:1.5}
+.jm-skills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.jm-skill{font-size:10px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#1d4ed8}
+.jm-gap{font-size:10.5px;color:#f59e0b;margin-bottom:6px}
+.jm-path{font-size:10px;color:var(--text2);background:var(--bg);padding:6px 10px;border-radius:6px}
+
+/* JD DISPLAY */
+.jd-section{margin-bottom:16px}
+.jd-section-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.jd-list{list-style:none;padding:0}
+.jd-list li{padding:4px 0 4px 16px;font-size:12.5px;color:var(--text2);position:relative}
+.jd-list li::before{content:'•';position:absolute;left:0;color:var(--blue);font-weight:700}
+
+/* COMPETENCY TREE */
+.ctree-container{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ctree-col{background:var(--bg);border-radius:10px;padding:16px}
+.ctree-l1{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.ctree-l2-list{display:flex;flex-wrap:wrap;gap:6px}
+.ctree-l2-item{font-size:11px;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text2)}
+
+/* INTERVIEW */
+.interview-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.chat-panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:600px;overflow:hidden}
+.chat-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chat-header .ch-title{font-size:15px;font-weight:700;color:var(--navy)}
+.chat-header .ch-sub{font-size:12px;color:var(--text2)}
+.chat-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.msg{max-width:80%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6}
+.msg-ai{background:#f1f5f9;color:var(--text);border-bottom-left-radius:4px;align-self:flex-start}
+.msg-user{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.msg-system{background:linear-gradient(135deg,#ede9fe,#fce7f3);color:var(--navy);border-radius:8px;align-self:center;text-align:center;font-size:13px;padding:8px 16px}
+.msg-ai .msg-role{font-size:11px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.msg-ai .msg-source{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.src-resume{background:#dbeafe;color:#1e40af}
+.src-jd{background:#d1fae5;color:#065f46}
+.src-competency{background:#ede9fe;color:#5b21b6}
+.chat-input{padding:10px 16px;border-top:1px solid #E7E7E7;background:#F5F5F5;display:flex;gap:8px;align-items:center;}
+.chat-input textarea{flex:1;border:1px solid #E0E0E0;border-radius:4px;padding:9px 12px;font-size:14px;line-height:1.4;color:#191919;background:#fff;resize:none;height:40px;transition:border-color .2s,box-shadow .2s;}
+.chat-input textarea:focus{border-color:#1d6fd1;box-shadow:0 0 0 2px rgba(29,111,209,.12);outline:none;}
+.mic-btn{flex:0 0 auto;width:40px;height:40px;border:1px solid #E0E0E0;border-radius:50%;background:#fff;color:#1d6fd1;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.mic-btn svg{width:20px;height:20px;display:block;}
+.mic-btn:hover{background:#F0F0F0;border-color:#1d6fd1;}
+.mic-btn.listening{background:#1d6fd1;color:#fff;border-color:#1d6fd1;animation:pulseMic 1.2s infinite;}
+.mic-btn.mic-disabled{opacity:.4;cursor:not-allowed;}
+.chat-input .btn-primary{background:#1d6fd1;border-radius:4px;}
+.chat-input .btn-primary:hover{background:#155bb5;transform:translateY(-1px);}
+@keyframes pulseMic{0%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}70%{box-shadow:0 0 0 8px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+
+
+
+/* INTERVIEW SIDEBAR */
+.interview-sidebar{display:flex;flex-direction:column;gap:12px}
+.is-header{padding:16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.is-title{font-size:15px;font-weight:700;color:var(--navy)}
+.is-subtitle{font-size:11px;color:var(--text2);margin-top:2px}
+.is-badge{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px}
+.is-progress{padding:12px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.is-progress-label{font-size:11px;color:var(--text2);margin-bottom:6px}
+.is-progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.is-progress-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s}
+.agents-panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;flex:1;overflow-y:auto}
+.ap-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.agent-status{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.agent-status:last-child{border-bottom:none}
+.as-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.as-dot.idle{background:#cbd5e1}
+.as-dot.running{background:var(--success);animation:pulse 1.5s infinite}
+.as-dot.done{background:var(--blue)}
+.as-name{flex:1;font-weight:600;color:var(--navy);font-size:12px}
+.tips-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px}
+.tips-title{font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.tips-text{font-size:11.5px;color:#92400e;line-height:1.6}
+.score-preview{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+.sp-title{font-size:11px;color:var(--text2);margin-bottom:8px}
+.sp-btn{width:100%;padding:8px;font-size:12px;margin-top:8px}
+
+/* INTERVIEWER STRIP */
+.iv-strip{display:flex;gap:6px;padding:8px 12px;background:var(--navy);border-radius:8px;margin-bottom:12px}
+.iv-strip-item{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;transition:all .2s}
+.iv-strip-item.active{background:rgba(255,255,255,.15)}
+.iv-strip-item .ivs-dot{width:8px;height:8px;border-radius:50%}
+.iv-strip-item .ivs-name{color:rgba(255,255,255,.7);font-size:11px;font-weight:500}
+.iv-strip-item.active .ivs-name{color:#fff;font-weight:700}
+
+/* REPORT */
+.report-header{text-align:center;margin-bottom:24px}
+.report-score-big{font-size:48px;font-weight:800;color:var(--navy)}
+.report-score-label{font-size:14px;color:var(--text2)}
+.interviewer-scores{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.iv-score-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.iv-score-card .isc-avatar{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
+.iv-score-card .isc-name{font-size:12px;font-weight:700;color:var(--navy)}
+.iv-score-card .isc-score{font-size:24px;font-weight:800;margin:4px 0}
+.iv-score-card .isc-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}
+.iv-score-card .isc-fill{height:100%;border-radius:2px}
+.conflict-box{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin:12px 0}
+.conflict-box .cb-title{font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.growth-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.growth-card{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:16px}
+.growth-card .gc-day{font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;display:inline-block;margin-bottom:8px}
+.gc-30{background:#dbeafe;color:#1e40af}
+.gc-60{background:#d1fae5;color:#065f46}
+.gc-90{background:#ede9fe;color:#5b21b6}
+.growth-card ul{list-style:none;padding:0}
+.growth-card li{font-size:12px;color:var(--text2);padding:3px 0;padding-left:16px;position:relative}
+.growth-card li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.committee-box{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:12px;padding:24px;color:#fff;text-align:center}
+.committee-box .cb-verdict{font-size:20px;font-weight:800;margin:8px 0}
+.committee-box .cb-confidence{display:inline-block;padding:4px 12px;border-radius:16px;font-size:12px;font-weight:600;margin-top:8px}
+.cb-pass{background:rgba(16,185,129,.3);color:#a7f3d0}
+.cb-fail{background:rgba(239,68,68,.3);color:#fecaca}
+.top-list{display:flex;flex-direction:column;gap:8px}
+.top-item{display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg);border-radius:8px}
+.top-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.top-text{font-size:12.5px;color:var(--text);flex:1}
+.top-score{font-size:14px;font-weight:700}
+
+/* AGENTS PAGE */
+.pipeline-flow-v3{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;padding:20px 0}
+.pipeline-node-v3{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;min-width:100px;position:relative}
+.pipeline-node-v3 .pn-icon{font-size:20px;margin-bottom:4px}
+.pipeline-arrow{color:var(--text2);font-size:18px}
+.agent-detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:20px 0}
+.agent-detail{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+.agent-detail .ad-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.agent-detail .ad-name{font-size:14px;font-weight:700;color:var(--navy)}
+.agent-detail .ad-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.ad-status-running{background:#d1fae5;color:#065f46}
+.ad-status-idle{background:#f1f5f9;color:#64748b}
+.ad-status-done{background:#dbeafe;color:#1e40af}
+.agent-detail .ad-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ad-metric{background:var(--bg);border-radius:6px;padding:8px}
+.ad-metric .am-label{font-size:10px;color:var(--text2);text-transform:uppercase}
+.ad-metric .am-value{font-size:14px;font-weight:700;color:var(--navy)}
+.agent-detail .ad-log{background:#0f172a;border-radius:6px;padding:8px;font-size:10px;color:#94a3b8;font-family:monospace;max-height:60px;overflow-y:auto;line-height:1.5}
+
+/* DASHBOARD */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;position:relative;overflow:hidden}
+.metric-card .mc-icon{position:absolute;top:12px;right:12px;font-size:24px;opacity:.2}
+.metric-card .mc-label{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:4px}
+.metric-card .mc-value{font-size:28px;font-weight:800;color:var(--navy)}
+.metric-card .mc-change{font-size:12px;font-weight:600;margin-top:4px}
+.mc-up{color:var(--success)}
+.mc-down{color:var(--danger)}
+.chart-container{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.chart-container .cc-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px}
+.chart-wrapper{position:relative;height:240px}
+.heatmap-grid{display:grid;grid-template-columns:80px repeat(5,1fr);gap:2px;margin:12px 0}
+.heatmap-cell{padding:8px 4px;text-align:center;font-size:11px;border-radius:4px;font-weight:600}
+.heatmap-label{display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:600;color:var(--text2)}
+.event-stream{max-height:200px;overflow-y:auto}
+.event-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.event-item:last-child{border-bottom:none}
+.event-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.event-time{color:var(--text2);font-size:11px}
+.event-text{color:var(--text)}
+.dash-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.dash-toolbar .dt-label{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:1px}
+.funnel-step{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.funnel-step:last-child{border-bottom:none}
+.funnel-name{font-size:12px;font-weight:600;color:var(--navy);width:80px;flex-shrink:0}
+.funnel-bar-bg{flex:1;height:24px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative}
+.funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:11px;font-weight:700;color:#fff}
+.funnel-count{font-size:14px;font-weight:700;color:var(--navy);min-width:40px;text-align:right}
+
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;padding:32px;max-width:400px;width:90%;box-shadow:var(--shadow-lg)}
+.modal h3{font-size:20px;font-weight:700;margin-bottom:16px;color:var(--navy)}
+.modal input{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.modal .modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
+/* MISC */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-v2{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+.badge-v3{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text2)}
+.empty-state .es-icon{font-size:48px;margin-bottom:12px}
+.typing-indicator{display:inline-flex;gap:4px;align-items:center}
+.typing-indicator span{width:6px;height:6px;background:var(--text2);border-radius:50%;animation:typing 1.4s infinite}
+.typing-indicator span:nth-child(2){animation-delay:.2s}
+.typing-indicator span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{opacity:.3;transform:scale(.8)}30%{opacity:1;transform:scale(1.2)}}
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .interview-layout{grid-template-columns:1fr}
+  .hero-layout{grid-template-columns:1fr}
+  .competency-layout{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .interviewer-scores{grid-template-columns:repeat(2,1fr)}
+  .growth-timeline{grid-template-columns:1fr}
+  .job-types{grid-template-columns:repeat(2,1fr)}
+  .heatmap-grid{grid-template-columns:60px repeat(5,1fr)}
+  .ps-grid{grid-template-columns:1fr}
+  .ctree-container{grid-template-columns:1fr}
+  .pipeline-flow{gap:4px}
+}
+
+/* ========== V3.0 新增样式 ========== */
+.job-match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin:16px 0}
+.jm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;cursor:pointer}
+.jm-card:hover{border-color:var(--blue);box-shadow:var(--shadow-lg)}
+.jm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.jm-name{font-size:14px;font-weight:700;color:var(--navy)}
+.jm-score{font-size:20px;font-weight:800}
+.jm-reason{font-size:11.5px;color:var(--text2);margin-bottom:8px;line-height:1.5}
+.jm-skills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.jm-skill{font-size:10px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#1d4ed8}
+.jm-gap{font-size:10.5px;color:#f59e0b;margin-bottom:6px}
+.jm-path{font-size:10px;color:var(--text2);background:var(--bg);padding:6px 10px;border-radius:6px}
+.ctree-container{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:12px}
+.ctree-col{background:var(--bg);border-radius:10px;padding:16px}
+.ctree-l1{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.ctree-l2-list{display:flex;flex-wrap:wrap;gap:6px}
+.ctree-l2-item{font-size:11px;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text2)}
+.jd-card{background:var(--bg);border-radius:10px;padding:16px;margin-bottom:12px}
+.jd-section-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.jd-list{list-style:none;padding:0}
+.jd-list li{padding:4px 0 4px 16px;font-size:12.5px;color:var(--text2);position:relative}
+.jd-list li::before{content:'•';position:absolute;left:0;color:var(--blue);font-weight:700}
+
+</style>
+</head>
+<body>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand"><span class="dot"></span>AI Career Copilot</div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="showPage('home')">首页</div>
+    <div class="nav-link" onclick="showPage('resume')">简历解析</div>
+    <div class="nav-link" onclick="showPage('interview')">AI 面试</div>
+    <div class="nav-link" onclick="showPage('report')">评分报告 ⭐</div>
+    <div class="nav-link" onclick="showPage('agents')">Agent 架构</div>
+    <div class="nav-link" onclick="showPage('dashboard')">数据看板</div>
+  </div>
+  <div class="nav-right">
+    <div class="agent-count"><span class="ac-dot"></span>13 Agents Active</div>
+    <button class="btn-nav" onclick="showPage('interview')">开始使用 →</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badges">
+      <span class="hero-badge ai">🤖 AI Powered</span>
+      <span class="hero-badge resume">📄 Resume Aware</span>
+      <span class="hero-badge multi">🧠 Multi Agent</span>
+    </div>
+    <h1>面向 AI 时代的<br><span class="grad">智能求职</span><br>面试助手</h1>
+    <p>上传简历，AI 自动解析、匹配岗位、动态生成面试问题、多轮追问，最<br>终输出个性化评分报告与成长建议。</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" onclick="showPage('resume')">↑ 上传简历，立即开始</button>
+      <button class="btn btn-outline btn-lg" onclick="showPage('dashboard')">查看 Dashboard</button>
+    </div>
+
+    <!-- Chat Preview -->
+    <div class="hero-layout" style="margin-top:48px;">
+      <div style="text-align:left;">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">AI Career Copilot 的核心流程：</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📤</span><span style="font-size:13px;font-weight:600;">上传简历</span><span style="font-size:11px;color:var(--text2);">PDF/Word/TXT</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🔍</span><span style="font-size:13px;font-weight:600;">Resume Parser</span><span style="font-size:11px;color:var(--text2);">结构化抽取</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📋</span><span style="font-size:13px;font-weight:600;">岗位匹配</span><span style="font-size:11px;color:var(--text2);">JD 匹配分析</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">💬</span><span style="font-size:13px;font-weight:600;">AI 面试</span><span style="font-size:11px;color:var(--text2);">动态问题生成</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📊</span><span style="font-size:13px;font-weight:600;">AI 评分</span><span style="font-size:11px;color:var(--text2);">多维度评估</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📝</span><span style="font-size:13px;font-weight:600;">AI 总结报告</span><span style="font-size:11px;color:var(--text2);">个性化建议</span></div>
+        </div>
+        <div style="margin-top:20px;padding:16px;background:var(--navy);border-radius:12px;color:#fff;">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px;">ARCHITECTURE</div>
+          <div style="font-size:13px;margin-bottom:8px;">Multi-Agent Orchestration</div>
+          <div style="font-size:11px;opacity:.7;margin-bottom:10px;">基于 LangChain 的 Agent 编排框架，支持并行调用、<br>结果聚合与异常降级。</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">LangChain</span>
+            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">OpenAI</span>
+            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">FastAPI</span>
+            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">Pinecone</span>
+          </div>
+        </div>
+      </div>
+      <div class="chat-preview">
+        <div class="cp-header">
+          <div class="cp-avatar">💬</div>
+          <div class="cp-info">
+            <div class="cp-name">Interview Agent</div>
+            <div class="cp-role">Resume-Aware · PM Role</div>
+          </div>
+          <div class="cp-status">● 就绪中</div>
+        </div>
+        <div class="cp-msg">
+          <strong>AI</strong> &nbsp;我注意到你的简历中有「用户增长分析」的项目经验。能描述一下你在该项目中如何定义北极星指标，并推动数据驱动决策吗？
+        </div>
+        <div class="cp-msg-user">
+          我们定义的北极星指标是 DAU/MAU 比值，也就是用户粘性。我主导了从埋点设计到 A/B 测试的完整链路......
+        </div>
+        <div class="cp-msg">
+          <strong>AI</strong> &nbsp;很好思路路。追问一下：A/B 测试的样本量如何分层？遇到 Simpson's Paradox 怎么处理？
+        </div>
+        <div class="cp-msg-mini"><strong>AI</strong> &nbsp; ●●●</div>
+        <div class="cp-score-popup">
+          <div class="cp-score-label">实时评分</div>
+          <div class="cp-score-val">82</div>
+          <div class="cp-score-label" style="margin-top:6px;">🎯 思维深度</div>
+          <div class="cp-score-bar"><div class="cp-score-fill" style="width:82%"></div></div>
+          <div class="cp-score-label" style="margin-top:6px;">💡 业务实现</div>
+          <div class="cp-score-bar"><div class="cp-score-fill" style="width:70%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div style="display:flex;justify-content:center;gap:48px;margin-top:48px;flex-wrap:wrap;">
+      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">5</div><div style="font-size:12px;color:var(--text2);">AI Agent 协作</div></div>
+      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">87%</div><div style="font-size:12px;color:var(--text2);">面试通过率提升</div></div>
+      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">1,240+</div><div style="font-size:12px;color:var(--text2);">已服务候选人</div></div>
+      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">4.8</div><div style="font-size:12px;color:var(--text2);">用户满意度</div></div>
+    </div>
+  </div>
+
+  
+  <!-- V3.0: 5 位虚拟面试官 -->
+  <div class="card">
+    <div class="card-title">Multi-Interviewer Evaluation System — 5 位虚拟面试官</div>
+    <div class="interviewer-grid" id="home-interviewer-grid"></div>
+  </div>
+
+  <!-- Workflow Pipeline -->
+  <div class="workflow-section card">
+    <div class="wf-label">AI WORKFLOW</div>
+    <div class="wf-title">端到端 Agent 工作流</div>
+    <div class="wf-subtitle">从上传简历到生成报告，5 个专属 AI Agent 全超协作</div>
+    <div class="pipeline-flow">
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#eff6ff;color:#1d4ed8;">📄</div>
+        <div class="pipeline-name">上传简历</div>
+        <div class="pipeline-desc">PDF / Word / TXT</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#eff6ff;color:#1d4ed8;">📝</div>
+        <div class="pipeline-name">Resume Parser</div>
+        <div class="pipeline-desc">结构化抽取</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#fef3c7;color:#92400e;">🎯</div>
+        <div class="pipeline-name">岗位匹配</div>
+        <div class="pipeline-desc">JD 匹配分析</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#ede9fe;color:#7c3aed;">💬</div>
+        <div class="pipeline-name">AI 面试</div>
+        <div class="pipeline-desc">动态问题生成</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#dbeafe;color:#1e40af;">📊</div>
+        <div class="pipeline-name">AI 评分</div>
+        <div class="pipeline-desc">多维度评估</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">
+        <div class="pipeline-icon" style="background:#d1fae5;color:#065f46;">📋</div>
+        <div class="pipeline-name">AI 总结报告</div>
+        <div class="pipeline-desc">个性化建议</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Cards -->
+  <div class="card">
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="ac-status"></div>
+        <div class="ac-head"><div class="agent-icon" style="background:#1d6fd120;color:#1d6fd1;">📝</div><div class="ac-name">Resume Parser Agent</div></div>
+        <div class="ac-desc">基于 LLM 的结构化信息抽取，识别教育背景、工作经历、技能标签、项目关键词。</div>
+        <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span class="tag tag-blue">GPT-4o</span><span class="tag tag-green">JSON Schema</span><span class="tag tag-purple">NER</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="ac-status"></div>
+        <div class="ac-head"><div class="agent-icon" style="background:#ec489920;color:#ec4899;">💬</div><div class="ac-name">Interview Agent</div></div>
+        <div class="ac-desc">Resume-Aware 问题生成，基于候选人简历动态构建面试问题，聚焦技能差异与经验深度。</div>
+        <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span class="tag tag-blue">Contextual</span><span class="tag tag-green">RAG</span><span class="tag tag-purple">Few shot</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="ac-status"></div>
+        <div class="ac-head"><div class="agent-icon" style="background:#06b6d420;color:#06b6d4;">🔄</div><div class="ac-name">Follow-up Agent</div></div>
+        <div class="ac-desc">根据候选人回答实时生成追问，按深度逐层递进，识别模糊或浅层回答并引导展开。</div>
+        <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span class="tag tag-blue">ReAct</span><span class="tag tag-green">Chain of Thought</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="ac-status"></div>
+        <div class="ac-head"><div class="agent-icon" style="background:#ef444420;color:#ef4444;">📊</div><div class="ac-name">Score Agent</div></div>
+        <div class="ac-desc">多维度评分引擎，评估逻辑性、专业度、表达清晰度，STAR 法则运用等 6 个维度。</div>
+        <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span class="tag tag-blue">Criteria</span><span class="tag tag-green">Weighted</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="ac-status"></div>
+        <div class="ac-head"><div class="agent-icon" style="background:#14b8a620;color:#14b8a6;">📋</div><div class="ac-name">Summary Agent</div></div>
+        <div class="ac-desc">生成个性化面试总结报告，包含亮点提炼、改进方向、行业建议、下一步学习路径。</div>
+        <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span class="tag tag-blue">Template</span><span class="tag tag-green">Actionable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pain Points & Solutions -->
+  <div class="ps-grid">
+    <div>
+      <div class="ps-col-title">😟 候选人面临的真实挑战</div>
+      <div class="pain-item"><div class="pain-icon">😰</div><div><div class="pain-title">面试没有个性化反馈</div><div class="pain-desc">传统面试辅导昂贵，AI 辅助工具给的问题与候选人背景完全脱节。</div></div></div>
+      <div class="pain-item"><div class="pain-icon">📭</div><div><div class="pain-title">不知道自己哪里答得好</div><div class="pain-desc">面试结束后没有任何反馈，无法针对性改进，陷入重复失分的循环。</div></div></div>
+      <div class="pain-item"><div class="pain-icon">🎯</div><div><div class="pain-title">简历与岗位匹配盲区</div><div class="pain-desc">不清楚简历与目标 JD 的差距在哪里，投出大量简历却石沉大海。</div></div></div>
+    </div>
+    <div>
+      <div class="ps-col-title">✅ AI Career Copilot 如何解决</div>
+      <div class="solution-item"><div class="sol-check">✓</div><div><div class="sol-title">Resume Aware 面试，高度个性化</div><div class="sol-desc">AI 读取你的简历后，问你自己写过项目、用过的工具，不再是通用题库。</div></div></div>
+      <div class="solution-item"><div class="sol-check">✓</div><div><div class="sol-title">6 维度评分 + AI 详细反馈</div><div class="sol-desc">每道题试束后，获得结构化评分报告告知具体该改进建议。</div></div></div>
+      <div class="solution-item"><div class="sol-check">✓</div><div><div class="sol-title">JD 匹配分析，简历优化建议</div><div class="sol-desc">对比 JD 关键词与简历技能，可视化展示匹配度，生成定向优化方案。</div></div></div>
+    </div>
+  </div>
+
+  <!-- Technical Architecture -->
+  <div class="arch-section">
+    <div class="arch-label">TECHNICAL ARCHITECTURE</div>
+    <div class="arch-title">系统技术架构</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-name">FRONTEND LAYER</div>
+      <div class="arch-tags">
+        <span class="arch-tag arch-fe">React 18 + TypeScript</span>
+        <span class="arch-tag arch-fe">TailwindCSS</span>
+        <span class="arch-tag arch-fe">Chart.js</span>
+        <span class="arch-tag arch-fe">WebSocket</span>
+        <span class="arch-tag arch-fe">Segment.io</span>
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--text2);font-size:20px;margin:-8px 0;">↓</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-name">AGENT ORCHESTRATION LAYER</div>
+      <div class="arch-tags">
+        <span class="arch-tag arch-agent">LangChain</span>
+        <span class="arch-tag arch-agent">Resume Parser</span>
+        <span class="arch-tag arch-agent">Interview Agent</span>
+        <span class="arch-tag arch-agent">Follow-up Agent</span>
+        <span class="arch-tag arch-agent">Score Agent</span>
+        <span class="arch-tag arch-agent">Summary Agent</span>
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--text2);font-size:20px;margin:-8px 0;">↓</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-name">LLM + DATA LAYER</div>
+      <div class="arch-tags">
+        <span class="arch-tag arch-llm">OpenAI GPT-4o</span>
+        <span class="arch-tag arch-llm">Pinecone</span>
+        <span class="arch-tag arch-llm">PostgreSQL</span>
+        <span class="arch-tag arch-llm">Redis</span>
+        <span class="arch-tag arch-llm">S3</span>
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--text2);font-size:20px;margin:-8px 0;">↓</div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-name">ANALYTICS LAYER</div>
+      <div class="arch-tags">
+        <span class="arch-tag arch-analytics">Mixpanel</span>
+        <span class="arch-tag arch-analytics">Amplitude</span>
+        <span class="arch-tag arch-analytics">Grafana</span>
+        <span class="arch-tag arch-analytics">BigQuery</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESUME PAGE -->
+<div class="page" id="page-resume">
+  <div class="steps" id="resume-steps">
+    <div class="step active" onclick="setResumeStep(1)"><span class="step-num">1</span>上传简历</div>
+    <div class="step" onclick="setResumeStep(2)"><span class="step-num">2</span>解析+岗位推荐</div>
+    <div class="step" onclick="setResumeStep(3)"><span class="step-num">3</span>JD分析+能力建模</div>
+    <div class="step" onclick="setResumeStep(4)"><span class="step-num">4</span>选择目标岗位</div>
+  </div>
+
+  <div id="resume-step-1" class="fade-in">
+    <div class="card"><div class="card-title">步骤 1：上传您的简历</div><div class="upload-area" onclick="document.getElementById('resume-file').click()">
+      <div class="ua-icon">📄</div><div class="ua-text">点击上传您的简历</div><div class="ua-hint">支持 PDF、DOC、DOCX、TXT 格式，或使用示例简历</div></div>
+      <input type="file" id="resume-file" style="display:none" accept=".pdf,.doc,.docx,.txt" onchange="startParsing(this)">
+      <div style="text-align:center;margin-top:12px;"><button class="btn btn-outline btn-sm" onclick="useSampleResume()">使用示例简历</button></div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">手动粘贴简历内容</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">PDF/DOC 文件可能无法正确解析，建议直接粘贴简历文本：</p>
+      <textarea id="resume-text-input" rows="8" placeholder="将简历内容粘贴到这里..." style="width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:13px;resize:vertical;font-family:inherit;"></textarea>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn btn-primary" onclick="parseResumeText()">解析简历文本</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resume-step-2" style="display:none" class="fade-in">
+    <div class="card" id="parsed-result-card" style="display:none"><div class="card-title">Resume Parser Agent — 解析结果</div><div id="parsed-result-content"></div></div>
+    <div class="card" id="job-match-card" style="display:none"><div class="card-title">Job Match Agent — 推荐职位（11 个）</div><p style="font-size:13px;color:var(--text2);margin-bottom:12px;">基于您的简历分析，以下是最佳匹配职位：</p><div class="job-match-grid" id="job-match-grid"></div></div>
+    <div class="card" id="custom-job-card" style="margin-top:12px;">
+      <div class="card-title">🎯 自定义目标岗位</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">如果没有心仪岗位，可以手动输入：</p>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="custom-job-input" placeholder="输入您的目标岗位，如：AI产品经理、算法工程师..." style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;">
+        <button class="btn btn-primary" onclick="selectCustomJob()">确认选择</button>
+      </div>
+    </div>
+    <div class="card" id="jd-paste-card" style="margin-top:12px;">
+      <div class="card-title">📋 JD Agent — 模式2：粘贴职位描述</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">从 Boss直聘、拉勾、猎聘、智联等平台复制JD粘贴到下方，系统自动解析：</p>
+      <textarea id="jd-paste-input" rows="6" placeholder="粘贴职位描述到这里...&#10;&#10;例如：&#10;岗位职责：&#10;1. 负责AI产品规划与设计...&#10;2. 与研发团队协作...&#10;任职要求：&#10;1. 本科及以上学历...&#10;2. 3年以上产品经验..." style="width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:13px;resize:vertical;font-family:inherit;"></textarea>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn btn-secondary" onclick="parseJDPaste()">🔍 解析JD</button>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px;"><button class="btn btn-primary btn-lg" onclick="setResumeStep(3)">下一步：JD分析 + 能力建模 →</button></div>
+  </div>
+
+  <div id="resume-step-3" style="display:none" class="fade-in">
+    <div class="card" id="jd-display-card" style="display:none"><div class="card-title">JD Agent — 职位描述分析</div><div id="jd-display-content"></div></div>
+    <div class="card"><div class="card-title">Competency Framework Agent — 能力模型</div><div class="ctree-container" id="ctree-container"><div class="ctree-col" id="ctree-left"></div><div style="position:relative;height:320px;width:100%;" id="competency-radar-wrap"><canvas id="competency-radar" style="width:100%!important;height:100%!important;"></canvas><div id="competency-fallback" style="display:none;position:absolute;inset:0;overflow:auto;padding:12px;background:#fff;border-radius:8px;"></div></div></div></div>
+    <div style="text-align:center;margin-top:16px;"><button class="btn btn-primary btn-lg" onclick="setResumeStep(4)">下一步：选择岗位类型 →</button></div>
+  </div>
+
+  <div id="resume-step-4" style="display:none" class="fade-in">
+    <div class="card"><div class="card-title">选择目标岗位类型 — 动态评分权重</div><p style="font-size:13px;color:var(--text2);margin-bottom:8px;">不同岗位类型使用不同的评分维度权重：</p><div class="job-types" id="job-types"></div><div id="weights-display" style="margin-top:12px;"></div></div>
+    <div style="text-align:center;margin-top:16px;"><button class="btn btn-primary btn-lg" onclick="goToInterview()">开始 AI 面试 →</button></div>
+  </div>
+</div>
+
+<!-- INTERVIEW PAGE -->
+<div class="page" id="page-interview">
+  <div id="interview-start" class="empty-state">
+    <div class="es-icon">💬</div>
+    <h2 style="margin-bottom:8px;">准备好开始 AI 面试了吗？</h2>
+    <p style="margin-bottom:20px;">AI 会读取你上传的简历，动态生成面试问题，每回答完一个问题，<br>AI 会根据你的回答决定是追问还是进入下一题。</p>
+    <div class="card" style="max-width:500px;margin:0 auto 20px;text-align:left;">
+      <div class="card-title">🎚️ 选择面试难度</div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="difficulty-options">
+        <label class="diff-option" onclick="selectDifficulty(1)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;">
+          <span style="font-size:20px;">🌱</span><div><div style="font-size:13px;font-weight:700;color:var(--navy);">Level 1 · 校招/实习</div><div style="font-size:11px;color:var(--text2);">基础问题，考察学习能力和潜力</div></div>
+        </label>
+        <label class="diff-option" onclick="selectDifficulty(2)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;">
+          <span style="font-size:20px;">💼</span><div><div style="font-size:13px;font-weight:700;color:var(--navy);">Level 2 · 普通社招</div><div style="font-size:11px;color:var(--text2);">中等难度，考察项目经验和专业能力</div></div>
+        </label>
+        <label class="diff-option" onclick="selectDifficulty(3)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--blue);border-radius:8px;cursor:pointer;transition:all .2s;background:#eff6ff;">
+          <span style="font-size:20px;">🏢</span><div><div style="font-size:13px;font-weight:700;color:var(--navy);">Level 3 · 大厂面试</div><div style="font-size:11px;color:var(--text2);">高压深度，考察系统思维和业务深度</div></div>
+        </label>
+        <label class="diff-option" onclick="selectDifficulty(4)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;">
+          <span style="font-size:20px;">🔥</span><div><div style="font-size:13px;font-weight:700;color:var(--navy);">Level 4 · 字节/腾讯/阿里/美团</div><div style="font-size:11px;color:var(--text2);">极高难度，考察战略视野和领导力</div></div>
+        </label>
+        <label class="diff-option" onclick="selectDifficulty(5)" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;">
+          <span style="font-size:20px;">👑</span><div><div style="font-size:13px;font-weight:700;color:var(--navy);">Level 5 · Leader/管理岗</div><div style="font-size:11px;color:var(--text2);">顶级难度，考察管理能力和商业判断</div></div>
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="startInterview()">▶ 开始面试</button>
+    <p style="margin-top:12px;font-size:12px;color:var(--text2);">8 轮问答 · 5位面试官 · 约 15~20 分钟</p>
+  </div>
+
+  <div id="interview-active" style="display:none;">
+    <div class="interview-layout">
+      <!-- Sidebar -->
+      <div class="interview-sidebar">
+        <div class="is-header">
+          <div class="is-title">AI 面试会话</div>
+          <div class="is-subtitle">AI PM 岗位</div>
+          <div class="is-badge" style="background:#dbeafe;color:#1d4ed8;">Resume-Aware · 待开始</div>
+        </div>
+        <div class="is-progress">
+          <div class="is-progress-label">进度</div>
+          <div class="is-progress-bar"><div class="is-progress-fill" id="sidebar-progress" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;" id="sidebar-progress-text">0/5</div>
+        </div>
+        <div class="agents-panel">
+          <div class="ap-title">AGENT 状态</div>
+          <div id="agent-status-list"></div>
+        </div>
+        <div class="tips-box">
+          <div class="tips-title">💡 面试提示</div>
+          <div class="tips-text">点击「开始面试」，AI 会根据你的简历动态生成问题。每回答一个问题，AI 会基于你的回答实时追问下一层。AI 会基于以下维度打分：</div>
+        </div>
+        <div class="score-preview">
+          <div class="sp-title">实时评分预览</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);"><span>--</span><span>--</span></div>
+          <button class="btn btn-outline sp-btn" disabled>查看报告</button>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel">
+        <div class="chat-header">
+          <div><span style="font-size:11px;color:var(--blue);font-weight:600;margin-right:8px;">待开始</span><div class="ch-title" id="chat-title">Interview Agent</div></div>
+          <div class="ch-sub" id="chat-subtitle">AI PM 岗位</div>
+        </div>
+        <div class="chat-body" id="chat-body"></div>
+        <div class="chat-input">
+          <button class="mic-btn" id="mic-btn" onclick="toggleVoiceInput()" title="语音输入" aria-label="语音输入"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="21"></line></svg></button>
+          <textarea id="answer-input" placeholder="在此输入您的回答..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitAnswer()}"></textarea>
+          <button class="btn btn-primary" onclick="stopVoice();submitAnswer()">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT PAGE -->
+<div class="page" id="page-report">
+  <div id="report-empty" class="empty-state">
+    <div class="es-icon">📊</div>
+    <h2 style="margin-bottom:8px;">暂无报告</h2>
+    <p>请先完成一次面试以查看评估报告</p>
+    <button class="btn btn-primary btn-lg" onclick="showPage('interview')" style="margin-top:16px;">前往面试</button>
+  </div>
+  <div id="report-content" style="display:none"></div>
+</div>
+
+<!-- AGENTS PAGE (V3.0) -->
+<div class="page" id="page-agents">
+  <div class="card"><div class="card-title">Multi-Agent Pipeline 架构 <span class="badge badge-v3">V3.0</span></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">从简历输入到最终录用决策 — 13 个专业 Agent 依次协作。</p>
+    <div class="pipeline-flow-v3" id="pipeline-flow"></div></div>
+  <div class="card"><div class="card-title">Agent 运行详情</div><div class="agent-detail-grid" id="agent-detail-grid"></div></div>
+  <div class="card" style="background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;">
+    <div class="card-title" style="color:rgba(255,255,255,.7);">Multi-Agent 协作统计</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;">
+      <div><div style="font-size:24px;font-weight:800;">13</div><div style="font-size:11px;opacity:.7;">总 Agent 数</div></div>
+      <div><div style="font-size:24px;font-weight:800;">5</div><div style="font-size:11px;opacity:.7;">虚拟面试官</div></div>
+      <div><div style="font-size:24px;font-weight:800;">8</div><div style="font-size:11px;opacity:.7;">面试轮次</div></div>
+      <div><div style="font-size:24px;font-weight:800;">6</div><div style="font-size:11px;opacity:.7;">评分维度</div></div></div></div>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div class="page" id="page-dashboard">
+  <div id="dashboard-lock" class="empty-state">
+    <div class="es-icon">🔒</div>
+    <h2 style="margin-bottom:8px;">需要管理员权限</h2>
+    <p>数据看板受保护，请输入管理员密码。</p>
+    <div style="max-width:320px;margin:20px auto;">
+      <input type="password" id="admin-pwd-input" placeholder="输入密码" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:8px;" onkeydown="if(event.key==='Enter')checkAdmin()">
+      <button class="btn btn-primary" onclick="checkAdmin()" style="width:100%;">解锁看板</button>
+      <p style="font-size:11px;color:var(--text2);margin-top:8px;">提示：admin123</p>
+    </div>
+  </div>
+  <div id="dashboard-content" style="display:none"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">提示</h3>
+    <p id="modal-body" style="color:var(--text2);margin-bottom:16px;"></p>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">关闭</button></div>
+  </div>
+</div>
+<script>
+
+// ================================
+// V3.0 新增数据结构（10个模块）
+// ================================
+
+const INTERVIEWERS = [
+  {id:'hr',name:'Sarah Chen',role:'HR 经理',initials:'SC',color:'#ec4899',focus:'动机与沟通'},
+  {id:'biz',name:'Mike Zhang',role:'业务经理',initials:'MZ',color:'#1d6fd1',focus:'商业洞察与影响力'},
+  {id:'pro',name:'刘博士',role:'技术专家',initials:'DL',color:'#8b5cf6',focus:'专业深度与技术'},
+  {id:'lead',name:'Emma Wang',role:'团队负责人',initials:'EW',color:'#10b981',focus:'领导力与潜力'},
+  {id:'chief',name:'David Park',role:'首席评估官',initials:'DP',color:'#f59e0b',focus:'战略视野与决策'}
+];
+
+const SCORING_WEIGHTS = {
+  product:{name:'产品经理',icon:'📦',weights:{comm:20,biz:25,tech:10,leader:20,strategy:15,culture:10}},
+  tech:{name:'软件工程师',icon:'💻',weights:{comm:10,biz:5,tech:35,leader:15,strategy:10,culture:10}},
+  ai:{name:'AI 工程师',icon:'🤖',weights:{comm:10,biz:10,tech:30,leader:10,strategy:20,culture:10}},
+  data:{name:'数据分析师',icon:'📊',weights:{comm:15,biz:20,tech:25,leader:10,strategy:15,culture:10}},
+  ops:{name:'运营',icon:'🚀',weights:{comm:20,biz:20,tech:10,leader:20,strategy:15,culture:15}}
+};
+const DIM_LABELS = {comm:'沟通表达',biz:'商业洞察',tech:'技术深度',leader:'领导力',strategy:'战略思维',culture:'文化匹配'};
+
+const JOB_MATCHES = [
+  {name:'AI 产品经理',score:92,reason:'丰富的 AI/LLM 产品经验 + 策略能力',skills:['Prompt设计','LLM应用','产品策略','数据驱动'],gap:'需更多模型评估经验',path:'AI PM → 高级 AI PM → AI 产品总监'},
+  {name:'产品经理',score:88,reason:'扎实的产品管理基础 + 数据决策',skills:['需求分析','PRD','敏捷开发','A/B测试'],gap:'B2C 产品经验不足',path:'PM → 高级PM → 产品总监'},
+  {name:'数据产品经理',score:85,reason:'强大数据技能 + 看板设计 + 指标驱动',skills:['SQL','数据看板','指标体系','实验设计'],gap:'数仓架构知识待加深',path:'数据分析师→数据PM→高级数据PM'},
+  {name:'AIGC 产品经理',score:83,reason:'AI/LLM理解 + 产品思维 + AIGC认知',skills:['Agent设计','Prompt工程','AI伦理'],gap:'AIGC工具链经验不足',path:'AIGC PM → 高级 PM → 创新负责人'},
+  {name:'AI 运营',score:80,reason:'AI工具熟练 + 数据分析 + 流程优化',skills:['自动化','数据分析','内容策略','增长实验'],gap:'MLOps 基础待学习',path:'AI运营→高级运营→运营经理'},
+  {name:'数据分析师',score:79,reason:'SQL/数据能力强 + 可视化 + 统计基础',skills:['Python','SQL','Tableau','统计'],gap:'统计学待深入',path:'初级→分析师→高级→分析经理'},
+  {name:'提示词工程师',score:77,reason:'LLM API经验 + AI能力理解',skills:['Prompt工程','CoT','API调用','模型评估'],gap:'系统化训练待加强',path:'PE → 高级PE → AI架构师'},
+  {name:'商业分析师',score:76,reason:'业务理解 + 数据 + 干系人管理',skills:['商业模式','财务建模','流程优化'],gap:'行业知识待深入',path:'BA→高级BA→主管BA'},
+  {name:'用户增长',score:74,reason:'数据驱动 + A/B测试 + 用户行为',skills:['增长漏斗','留存','实验设计','病毒传播'],gap:'增长黑客实战不足',path:'增长分析师→经理→负责人'},
+  {name:'前端开发',score:71,reason:'技术背景 + 产品理解 + UX意识',skills:['HTML/CSS/JS','React/Vue','UI组件','响应式'],gap:'框架深入经验待补充',path:'初级前端→工程师→高级→架构师'},
+  {name:'后端开发',score:69,reason:'Python能力 + 系统设计 + API',skills:['Python','REST API','数据库','系统设计'],gap:'分布式系统待学习',path:'初级后端→工程师→高级→架构师'}
+];
+
+const QUESTION_BANK_V3 = [
+  {q:'我看到您的简历中提到了 AI 聊天机器人平台项目。能否介绍您在其中的具体角色和对业务的影响？',source:'resume',interviewer:'hr',dimension:'comm',followups:['沟通方式是怎样的？','如何处理冲突反馈？']},
+  {q:'职位描述强调 LLM 应用经验。您会如何为客服聊天机器人设计 Prompt 工程策略？',source:'jd',interviewer:'pro',dimension:'tech',followups:['技术挑战有哪些？','如何优化性能？']},
+  {q:'简历提到带领 4 人团队。请描述一个需要做艰难决策的场景及处理方式。',source:'resume',interviewer:'lead',dimension:'leader',followups:['如何激励团队？','决策过程？']},
+  {q:'基于能力模型，请介绍如何为新 AI 功能设计 A/B 测试框架。',source:'competency',interviewer:'biz',dimension:'biz',followups:['业务影响？','如何衡量ROI？']},
+  {q:'该岗位要求跨职能协作。请讲述协调三方达成一致的经历。',source:'jd',interviewer:'chief',dimension:'strategy',followups:['长期策略？','优先级安排？']},
+  {q:'您的能力模型显示 AI 理解较强。如何跟进最新 AI 发展并应用到产品中？',source:'competency',interviewer:'pro',dimension:'tech',followups:['处理模糊性？','Owner意识？']},
+  {q:'请描述一个用数据驱动重大产品决策的项目，跟踪了哪些指标？',source:'jd',interviewer:'biz',dimension:'biz',followups:[]},
+  {q:'最后，为什么对这个特定职位感兴趣？与您的职业规划如何契合？',source:'competency',interviewer:'chief',dimension:'culture',followups:['顾虑？','拒绝条件？']}
+];
+
+const REF_V3 = {
+  0:{kw:['聊天机器人','角色','影响','指标','NLP'],base:75}, 1:{kw:['LLM','Prompt','策略','Token'],base:72},
+  2:{kw:['团队','决策','优先级','敏捷'],base:78}, 3:{kw:['A/B','实验','假设','显著性'],base:73},
+  4:{kw:['跨职能','协调','权衡','妥协'],base:74}, 5:{kw:['AI发展','论文','趋势','应用'],base:76},
+  6:{kw:['数据驱动','KPI','验证','假设'],base:73}, 7:{kw:['职业规划','3年','成长','热情'],base:77}
+};
+
+let selectedJobType='product';let competencyScores=null;let radarChart=null;
+
+// 覆盖 showPage 支持 agents 页面
+var _showOrig=showPage;showPage=function(page){
+  currentPage=page;
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  var t=document.getElementById('page-'+page);if(t)t.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active');});
+  var m={home:0,resume:1,interview:2,report:3,agents:4,dashboard:5};
+  if(m[page]!==undefined){var ls=document.querySelectorAll('.nav-link');if(ls[m[page]])ls[m[page]].classList.add('active');}
+  if(page==='agents')renderAgentsPage();
+  if(page==='dashboard'&&isAdminAuthenticated){renderDashboard();startSimulation();}
+  if(page==='report'&&interviewState.completed)renderReportV3();
+  window.scrollTo(0,0);
+};
+
+// 岗位推荐渲染
+function renderJobMatches(){
+  var g=document.getElementById('job-match-grid');if(!g)return;
+  g.innerHTML=JOB_MATCHES.map(function(j){
+    var c=j.score>=85?'#10b981':j.score>=75?'#1d6fd1':j.score>=65?'#f59e0b':'#ef4444';
+    return '<div class="jm-card" onclick="selectJobMatch(\''+j.name+'\',this)"><div class="jm-header"><div class="jm-name">'+j.name+'</div><div class="jm-score" style="color:'+c+'">'+j.score+'</div></div><div class="jm-reason">'+j.reason+'</div><div class="jm-skills">'+j.skills.map(function(s){return '<span class="jm-skill">'+s+'</span>';}).join('')+'</div><div class="jm-gap">⚠️ '+j.gap+'</div><div class="jm-path">'+j.path+'</div></div>';
+  }).join('');
+}
+
+// 自定义岗位输入
+function selectCustomJob(){
+  var inp=document.getElementById('custom-job-input');
+  var jobName=inp.value.trim();
+  if(!jobName){inp.focus();inp.style.borderColor='var(--danger)';setTimeout(function(){inp.style.borderColor='var(--border)';},2000);return;}
+  selectedJobMatch=jobName;
+  setAgentStatus('match','running');
+  setTimeout(function(){
+    setAgentStatus('match','done');
+    setResumeStep(3);
+    setAgentStatus('jd','running');
+    renderJDForJob(jobName);
+    setTimeout(function(){setAgentStatus('jd','done');setAgentStatus('comp','running');
+      setTimeout(function(){setAgentStatus('comp','done');},500);
+    },500);
+  },800);
+}
+
+// JD粘贴解析
+function parseJDPaste(){
+  var text=document.getElementById('jd-paste-input').value.trim();
+  if(!text||text.length<20){alert('请粘贴完整的职位描述（至少20字）');return;}
+  setAgentStatus('jd','running');
+  var jd=analyzeJDText(text);
+  selectedJobMatch=jd.title||'自定义岗位';
+  setResumeStep(3);
+  var dc=document.getElementById('jd-display-card');
+  document.getElementById('jd-display-content').innerHTML=
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">📋 岗位职责</div><ul class="jd-parsed-list">'+jd.resp.map(function(r){return'<li>'+r+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">🔧 硬技能要求</div><ul class="jd-parsed-list">'+jd.hard.map(function(r){return'<li>'+r+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">💡 软技能要求</div><ul class="jd-parsed-list">'+jd.soft.map(function(r){return'<li>'+r+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">📊 业务要求</div><ul class="jd-parsed-list">'+jd.biz.map(function(r){return'<li>'+r+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">🛠️ 工具要求</div><div style="display:flex;flex-wrap:wrap;gap:6px;">'+jd.tools.map(function(t){return '<span class="tag tag-blue">'+t+'</span>';}).join('')+'</div></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">🎓 学历要求</div><div style="font-size:13px;color:var(--text);">'+jd.edu+'</div></div>'+
+    '<div class="jd-parsed-section"><div class="jd-parsed-title">🎯 面试重点</div><div style="font-size:13px;color:var(--text);">'+jd.focus+'</div></div>';
+  dc.style.display='block';
+  setAgentStatus('jd','done');setAgentStatus('comp','running');
+  buildCompetencyTree(selectedJobMatch);
+  setTimeout(function(){setAgentStatus('comp','done');},500);
+  setResumeStep(3);
+}
+
+function analyzeJDText(text){
+  var title='目标岗位';var resp=[];var hard=[];var soft=[];var biz=[];var tools=[];var edu='本科及以上';var focus='综合能力';
+  var titleMatch=text.match(/(?:岗位名称|职位名称|招聘)[：:](.+)/);if(titleMatch)title=titleMatch[1].trim().substring(0,20);
+  var lines=text.split(/[\n\r]+/).map(function(l){return l.trim();}).filter(function(l){return l.length>1;});
+  var section='other';
+  lines.forEach(function(line){
+    if(/岗位职责|工作职责|工作内容|职位描述|你将/.test(line))section='resp';
+    else if(/任职要求|岗位要求|职位要求|硬性要求|我们希望/.test(line))section='hard';
+    else if(/加分项|优先|preferred/i.test(line))section='plus';
+    else if(/学历|本科|硕士|博士/.test(line)&&/要求/.test(line)){edu=line.replace(/^[：:]/,'').trim();return;}
+    var cleaned=line.replace(/^[\d.、]+\s*/,'').replace(/^[•·\-]\s*/,'').trim();
+    if(cleaned.length<3)return;
+    if(section==='resp'&&resp.length<8)resp.push(cleaned);
+    else if(section==='hard'){
+      if(/沟通|领导|团队|协作|抗压|学习|主动|责任心|思维/.test(cleaned)&&soft.length<5)soft.push(cleaned);
+      else if(/工具|平台|软件|系统|Jira|Figma|SQL|Python|Excel|PPT/.test(cleaned)&&tools.length<6)tools.push(cleaned);
+      else if(hard.length<8)hard.push(cleaned);
+    }else if(section==='plus'&&hard.length<10)hard.push(cleaned);
+    else if(section==='other'){
+      if(/职责|负责|主导|参与|推动/.test(cleaned)&&resp.length<8)resp.push(cleaned);
+      else if(/要求|经验|熟悉|掌握|精通/.test(cleaned)&&hard.length<8)hard.push(cleaned);
+    }
+  });
+  if(resp.length===0)resp=['根据岗位描述开展工作','与团队协作达成目标'];
+  if(hard.length===0)hard=['相关专业背景','学习能力突出'];
+  if(soft.length===0)soft=['沟通表达能力','团队协作精神'];
+  if(biz.length===0)biz=['业务理解能力','数据驱动决策'];
+  if(tools.length===0)tools=['Office套件','协作工具'];
+  var allText=resp.concat(hard).concat(soft).join(' ');
+  if(/AI|人工智能|LLM|大模型|NLP|AIGC|机器学习/.test(allText))focus='AI产品策略、LLM应用场景';
+  else if(/数据|SQL|分析|指标|BI/.test(allText))focus='数据分析、业务洞察';
+  else if(/开发|架构|系统|后端|前端|Java|Go/.test(allText))focus='技术深度、系统设计';
+  else if(/增长|运营|用户|转化|留存/.test(allText))focus='增长策略、用户运营';
+  else focus='综合能力、岗位匹配';
+  if(tools.length>0){var toolStr=tools.join(',');if(/Jira|Figma|Axure|PRD/.test(toolStr))focus+='，产品设计能力';}
+  return {title:title,resp:resp,hard:hard,soft:soft,biz:biz,tools:tools,edu:edu,focus:focus};
+}
+
+// 面试难度选择
+var interviewDifficulty=3;
+function selectDifficulty(level){
+  interviewDifficulty=level;
+  document.querySelectorAll('.diff-option').forEach(function(el,i){
+    el.style.borderColor=i+1===level?'var(--blue)':'var(--border)';
+    el.style.background=i+1===level?'#eff6ff':'';
+    if(i+1===level)el.classList.add('selected');else el.classList.remove('selected');
+  });
+}
+selectDifficulty(3);
+
+function selectJobMatch(n,el){
+  selectedJobMatch=n;
+  document.querySelectorAll('.jm-card').forEach(function(c){c.style.borderColor='var(--border)';c.style.boxShadow='none';});
+  if(el){el.style.borderColor='var(--blue)';el.style.boxShadow='var(--shadow-lg)';}
+  setAgentStatus('match','running');
+  setTimeout(function(){
+    setAgentStatus('match','done');
+    setResumeStep(3);
+    setAgentStatus('jd','running');
+    renderJDForJob(n);
+    setTimeout(function(){setAgentStatus('jd','done');setAgentStatus('comp','running');
+      setTimeout(function(){setAgentStatus('comp','done');},500);
+    },500);
+  },800);
+}
+
+function renderJDForJob(jn){
+  var jds={
+    'AI 产品经理':{resp:['定义AI产品路线图与愿景','与工程团队协作交付LLM产品','主导A/B实验迭代优化','协调跨职能资源推动落地','跟踪AI行业趋势并转化为产品机会'],hard:['5+年产品经理经验','LLM/AI应用落地经验','数据分析与A/B测试','Prompt Engineering基础'],soft:['卓越沟通表达能力','跨职能领导力','战略思维与大局观','用户同理心'],tools:['Jira','Figma','SQL','Amplitude','Notion'],edu:'本科及以上，计算机/AI/商科优先',focus:'AI产品策略、LLM应用场景、数据驱动决策'},
+    '产品经理':{resp:['负责产品全生命周期管理','用户需求调研与竞品分析','撰写PRD与推动开发落地','制定产品路线图与优先级','跟踪产品指标并持续优化'],hard:['3+年产品经验','需求分析与PRD撰写','敏捷开发流程','数据分析能力'],soft:['沟通协调能力','逻辑思维','项目推动力','团队协作'],tools:['Axure','Figma','Jira','Excel','Teambition'],edu:'本科及以上',focus:'需求分析、产品设计、项目管理'},
+    '数据产品经理':{resp:['设计数据产品方案','搭建数据指标体系','推动数据看板建设','协调数据团队交付','数据驱动业务增长'],hard:['SQL熟练','数据仓库理解','ETL流程','BI工具使用'],soft:['数据敏感度','逻辑分析能力','跨部门沟通','业务理解'],tools:['SQL','Tableau','Python','Metabase','Figma'],edu:'本科及以上，统计/计算机优先',focus:'数据建模、指标设计、数据可视化'},
+    'AIGC 产品经理':{resp:['规划AIGC产品方向','设计AI生成内容工作流','评估多模态AI能力','制定内容质量标准','推动AIGC商业化'],hard:['AIGC工具使用经验','多模态AI理解','内容运营经验','产品设计能力'],soft:['创新思维','审美能力','用户洞察','快速学习'],tools:['Midjourney','Stable Diffusion','Figma','Notion'],edu:'本科及以上',focus:'AIGC应用、多模态AI、内容生成'},
+    'AI 运营':{resp:['制定AI工具运营策略','优化AI辅助工作流程','分析运营数据并迭代','培训团队使用AI工具','跟踪AI工具效果'],hard:['AI工具熟练使用','数据分析能力','内容运营经验','自动化流程设计'],soft:['学习能力','流程优化思维','沟通培训能力','数据驱动'],tools:['ChatGPT','飞书','Excel','Python','自动化工具'],edu:'本科及以上',focus:'AI工具应用、流程自动化、数据运营'},
+    '数据分析师':{resp:['搭建数据分析体系','撰写数据报告与洞察','支持业务决策','设计A/B实验','数据可视化'],hard:['SQL精通','Python/R','统计学基础','BI工具'],soft:['逻辑分析','数据敏感度','业务理解','报告撰写'],tools:['SQL','Python','Tableau','Excel','Jupyter'],edu:'本科及以上，统计/数学/计算机优先',focus:'统计分析、数据建模、业务洞察'},
+    '提示词工程师':{resp:['设计优化Prompt模板','评估模型输出质量','构建Prompt评估体系','研究前沿Prompt技术','支持业务Prompt需求'],hard:['LLM API使用经验','Prompt Engineering','Chain-of-Thought','模型评估方法'],soft:['逻辑思维','实验精神','文档能力','快速迭代'],tools:['OpenAI API','Claude','LangChain','Python'],edu:'本科及以上，CS/AI优先',focus:'Prompt设计、模型调优、AI应用'},
+    '商业分析师':{resp:['商业数据分析与建模','市场调研与竞品分析','支持战略决策','ROI分析与预测','业务流程优化'],hard:['商业分析框架','财务建模','数据可视化','行业研究'],soft:['商业敏感度','逻辑思维','沟通表达','战略思维'],tools:['Excel','PowerPoint','SQL','Tableau'],edu:'本科及以上，商科/经济优先',focus:'商业建模、市场分析、战略规划'},
+    '用户增长':{resp:['制定增长策略','设计增长实验','分析用户行为数据','优化转化漏斗','病毒传播机制设计'],hard:['增长黑客方法论','A/B测试设计','数据分析','用户行为分析'],soft:['创新思维','数据驱动','执行力','跨部门协作'],tools:['Google Analytics','SQL','Python','Optimizely'],edu:'本科及以上',focus:'增长策略、实验设计、用户行为'},
+    '前端开发':{resp:['开发高质量Web应用','优化前端性能','参与技术方案设计','代码Review','前端工程化建设'],hard:['React/Vue精通','TypeScript','CSS/HTML','性能优化'],soft:['技术热情','团队协作','问题解决','持续学习'],tools:['VS Code','Git','Webpack','Chrome DevTools'],edu:'本科及以上，计算机相关',focus:'前端架构、性能优化、工程化'},
+    '后端开发':{resp:['设计开发后端服务','数据库设计与优化','API设计与开发','系统架构设计','性能调优'],hard:['Java/Go/Python','微服务架构','数据库设计','分布式系统'],soft:['技术深度','系统思维','问题排查','团队协作'],tools:['IntelliJ','Docker','K8s','MySQL','Redis'],edu:'本科及以上，计算机相关',focus:'系统设计、架构优化、高并发'}
+  };
+  var jd=jds[jn]||jds['AI 产品经理'];var dc=document.getElementById('jd-display-card');
+  document.getElementById('jd-display-content').innerHTML=
+    '<div class="jd-card"><div class="jd-section-title">📋 岗位职责</div><ul class="jd-list">'+jd.resp.map(function(r){return'<li>'+r+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-card"><div class="jd-section-title">🔧 硬技能要求</div><ul class="jd-list">'+jd.hard.map(function(h){return'<li>'+h+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-card"><div class="jd-section-title">💡 软技能要求</div><ul class="jd-list">'+jd.soft.map(function(s){return'<li>'+s+'</li>';}).join('')+'</ul></div>'+
+    '<div class="jd-card"><div class="jd-section-title">🛠️ 工具要求</div><div style="display:flex;flex-wrap:wrap;gap:6px;">'+jd.tools.map(function(t){return '<span class="tag tag-blue">'+t+'</span>';}).join('')+'</div></div>'+
+    '<div class="jd-card"><div class="jd-section-title">🎓 学历要求</div><div style="font-size:13px;color:var(--text);">'+jd.edu+'</div></div>'+
+    '<div class="jd-card"><div class="jd-section-title">🎯 面试重点</div><div style="font-size:13px;color:var(--text);">'+jd.focus+'</div></div>';
+  dc.style.display='block';
+  buildCompetencyTree(jn);
+}
+
+function buildCompetencyTree(jn){
+  var trees={
+    'AI 产品经理':{'产品思维':['用户研究','需求分析','PRD撰写','产品路线图','功能优先级'],'数据分析':['指标体系','A/B测试','数据洞察','SQL查询','数据看板'],'AI理解':['LLM基础','Prompt设计','Agent架构','AI局限性','AI伦理'],'商业分析':['竞品研究','商业模式','营收模型','增长策略','ROI思维'],'项目管理':['敏捷Scrum','跨职能协调','风险管理','资源分配','时间规划'],'沟通表达':['演讲技巧','书面沟通','谈判技巧','影响力','干系人管理']},
+    '产品经理':{'产品设计':['用户研究','需求分析','交互设计','原型设计','信息架构'],'项目管理':['敏捷开发','Scrum','需求管理','版本规划','风险控制'],'数据分析':['指标体系','漏斗分析','A/B测试','用户画像','行为分析'],'商业理解':['竞品分析','商业模式','市场分析','定价策略'],'沟通协作':['需求评审','跨部门协调','向上管理','团队激励']},
+    '数据产品经理':{'数据能力':['SQL精通','数据建模','ETL设计','数据治理','数据质量'],'产品设计':['指标体系设计','看板设计','数据产品PRD','用户需求分析'],'技术理解':['数据仓库','数据管道','BI工具','API设计'],'业务分析':['业务理解','数据驱动决策','ROI分析','预测建模']},
+    'AIGC 产品经理':{'AI理解':['大语言模型','多模态AI','生成式AI原理','模型评估'],'产品设计':['AIGC工作流','内容生成','质量标准','用户体验'],'创意能力':['内容审美','创意策划','品牌理解','视觉设计'],'技术协作':['API集成','Prompt优化','效果评估','迭代优化']},
+    'AI 运营':{'AI工具':['ChatGPT应用','Midjourney','自动化工具','AI辅助写作'],'运营能力':['内容运营','用户运营','活动策划','数据分析'],'流程优化':['效率提升','自动化设计','标准化流程','培训赋能'],'数据能力':['数据监控','效果分析','A/B测试','报告撰写']},
+    '数据分析师':{'分析技能':['SQL精通','Python分析','统计建模','机器学习基础'],'可视化':['Tableau','数据看板','报告撰写','故事讲述'],'业务理解':['业务指标','漏斗分析','用户分群','ROI计算'],'工具':['Excel高级','Jupyter','R语言','SPSS']},
+    '提示词工程师':{'Prompt技术':['Prompt设计','Few-shot','Chain-of-Thought','ReAct'],'模型理解':['LLM原理','模型评估','Fine-tuning','RAG'],'开发能力':['Python','API调用','LangChain','向量数据库'],'评估方法':['自动化评估','人工评估','A/B测试','质量标准']},
+    '商业分析师':{'分析框架':['SWOT','波特五力','价值链分析','商业画布'],'数据能力':['财务建模','数据可视化','SQL','Excel高级'],'行业知识':['市场研究','竞品分析','行业趋势','政策分析'],'沟通能力':['报告撰写','演示汇报','干系人沟通','战略建议']},
+    '用户增长':{'增长方法':['增长漏斗','留存分析','病毒传播','增长实验'],'数据分析':['用户行为','A/B测试','归因分析','LTV计算'],'产品理解':['用户画像','转化优化','产品体验','功能实验'],'渠道运营':['获客渠道','内容营销','社交传播','合作推广']},
+    '前端开发':{'框架':['React','Vue','TypeScript','Next.js'],'基础':['HTML5','CSS3','JavaScript','ES6+'],'工程化':['Webpack','Vite','CI/CD','单元测试'],'性能':['性能优化','懒加载','缓存策略','渲染优化']},
+    '后端开发':{'语言':['Java','Go','Python','Node.js'],'架构':['微服务','分布式','高并发','高可用'],'数据库':['MySQL','Redis','MongoDB','Elasticsearch'],'中间件':['Kafka','RabbitMQ','Docker','Kubernetes']}
+  };
+  var tree=trees[jn]||trees['AI 产品经理'];var lc=document.getElementById('ctree-left');if(!lc)return;
+  lc.innerHTML=Object.keys(tree).map(function(k){return '<div style="margin-bottom:12px;"><div class="ctree-l1">'+k+'</div><div class="ctree-l2-list">'+tree[k].map(function(s){return '<span class="ctree-l2-item">'+s+'</span>';}).join('')+'</div></div>';}).join('');
+  var scoresMap={'AI 产品经理':{comm:82,biz:75,tech:78,leader:68,strategy:85,culture:80},'产品经理':{comm:80,biz:82,tech:65,leader:72,strategy:78,culture:75},'数据产品经理':{comm:75,biz:78,tech:85,leader:65,strategy:80,culture:70},'AIGC 产品经理':{comm:78,biz:72,tech:82,leader:66,strategy:88,culture:74},'AI 运营':{comm:85,biz:76,tech:70,leader:60,strategy:72,culture:78},'数据分析师':{comm:70,biz:74,tech:88,leader:58,strategy:76,culture:65},'提示词工程师':{comm:72,biz:68,tech:90,leader:55,strategy:82,culture:62},'商业分析师':{comm:82,biz:88,tech:70,leader:72,strategy:80,culture:76},'用户增长':{comm:78,biz:80,tech:72,leader:62,strategy:85,culture:70},'前端开发':{comm:68,biz:55,tech:92,leader:60,strategy:65,culture:70},'后端开发':{comm:65,biz:50,tech:94,leader:62,strategy:68,culture:68}};
+  competencyScores=scoresMap[jn]||scoresMap['AI 产品经理'];
+  renderCompetencyRadar();
+}
+
+// 鲁棒渲染能力模型雷达图：等待 canvas 可见且有尺寸，失败重试；Chart 缺失时降级为文字能力条
+function renderCompetencyRadar(){
+  var ctx=document.getElementById('competency-radar');
+  var wrap=document.getElementById('competency-radar-wrap');
+  var fb=document.getElementById('competency-fallback');
+  if(!ctx)return;
+  if(typeof Chart==='undefined'){
+    if(ctx)ctx.style.display='none';
+    if(fb){fb.style.display='block';fb.innerHTML=buildCompetencyFallbackHTML();}
+    return;
+  }
+  var visible=ctx.offsetParent!==null;
+  var w=ctx.clientWidth||(wrap?wrap.clientWidth:0);
+  if(!visible||w===0){
+    renderCompetencyRadar._t=(renderCompetencyRadar._t||0)+1;
+    if(renderCompetencyRadar._t<=15){setTimeout(renderCompetencyRadar,150);return;}
+    if(ctx)ctx.style.display='none';
+    if(fb){fb.style.display='block';fb.innerHTML=buildCompetencyFallbackHTML();}
+    return;
+  }
+  renderCompetencyRadar._t=0;
+  if(ctx)ctx.style.display='';
+  if(fb)fb.style.display='none';
+  if(radarChart)radarChart.destroy();
+  radarChart=new Chart(ctx,{type:'radar',data:{labels:Object.values(DIM_LABELS),datasets:[{label:'能力得分',data:Object.values(competencyScores),backgroundColor:'rgba(29,111,209,.15)',borderColor:'#1d6fd1',borderWidth:2,pointBackgroundColor:'#1d6fd1',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20,font:{size:10}},pointLabels:{font:{size:11}}}},plugins:{legend:{display:false}}}});
+}
+
+function buildCompetencyFallbackHTML(){
+  if(!competencyScores)return '';
+  return '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">能力得分（图表组件未加载，显示文字版）</div>'+Object.entries(competencyScores).map(function(kv){
+    var v=kv[1];var color=v>=80?'#10b981':v>=65?'#1d6fd1':v>=50?'#f59e0b':'#ef4444';
+    return '<div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>'+DIM_LABELS[kv[0]]+'</span><span style="color:'+color+';font-weight:700;">'+v+'</span></div><div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;"><div style="height:100%;width:'+v+'%;background:'+color+';border-radius:4px;"></div></div></div>';
+  }).join('');
+}
+
+function selectJobType(t){selectedJobType=t;
+  document.querySelectorAll('.job-type').forEach(function(e){e.classList.remove('selected');});
+  var ts=['product','tech','ai','data','ops'];
+  document.querySelectorAll('.job-type').forEach(function(e,i){if(ts[i]===t)e.classList.add('selected');});
+  var w=SCORING_WEIGHTS[t];document.getElementById('weights-display').innerHTML='<div style="padding:12px;background:var(--bg);border-radius:8px;"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;">'+w.icon+' '+w.name+' — 评分权重</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.entries(w.weights).map(function(kv){return '<span class="tag tag-blue">'+DIM_LABELS[kv[0]]+': '+kv[1]+'%</span>';}).join('')+'</div></div>';
+}
+
+// 覆盖 startInterview (多面试官版)
+var _startOrig=startInterview;startInterview=function(){
+  var diffLabels=['','校招/实习','普通社招','大厂面试','字节/腾讯/阿里/美团','Leader/管理岗'];
+  interviewState={started:true,completed:false,currentQ:0,totalQ:8,difficulty:interviewDifficulty,scores:{comm:0,biz:0,tech:0,leader:0,strategy:0,culture:0},interviewerScores:{hr:[],biz:[],pro:[],lead:[],chief:[]},chatHistory:[],answers:[],isTyping:false,followupCount:0,isFollowup:false,startTime:Date.now()};
+  document.getElementById('interview-start').style.display='none';
+  document.getElementById('interview-active').style.display='block';
+  var sub=document.querySelector('.is-subtitle');if(sub)sub.textContent=selectedJobMatch||'目标岗位';
+  addChatMessage('system','面试开始 — 难度：'+diffLabels[interviewDifficulty]+' — 来自5位面试官的8道题。');
+  setTimeout(askNextQuestionV3,800);
+};
+
+function askNextQuestionV3(){
+  if(interviewState.currentQ>=interviewState.totalQ){finishInterview();return;}
+  var q=JSON.parse(JSON.stringify(QUESTION_BANK_V3[interviewState.currentQ]));
+  var diff=interviewState.difficulty||3;
+  var diffPrefix={1:'',2:'',3:'',4:'【高压追问】',5:'【战略级】'};
+  if(diff>=4)q.q=diffPrefix[diff]+' '+q.q;
+  if(diff>=4&&q.followups.length<3){q.followups.push('请用STAR方法重新组织你的回答');q.followups.push('如果重来你会怎么做不同？');}
+  if(diff>=5){q.followups.push('从CEO视角你怎么看这个问题？');q.followups.push('如果资源减半你怎么调整策略？');}
+  var iv=INTERVIEWERS.find(function(i){return i.id===q.interviewer;});
+  updateProgress();interviewState.isTyping=true;
+  var body=document.getElementById('chat-body');
+  var td=document.createElement('div');td.className='msg msg-ai fade-in';td.id='typing';
+  td.innerHTML='<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  body.appendChild(td);body.scrollTop=body.scrollHeight;
+  setTimeout(function(){var t=document.getElementById('typing');if(t)t.remove();interviewState.isTyping=false;
+    addChatMessage('ai','<div class="msg-role"><span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:20px;height:20px;border-radius:50%;background:'+iv.color+';color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">'+iv.initials+'</span> '+iv.name+' · '+iv.role+'</span> <span class="msg-source src-resume">Resume-Aware</span></div>'+q.q);
+    document.getElementById('answer-input').focus();
+  },1200+Math.random()*800);
+}
+
+var _submitOrig=submitAnswer;submitAnswer=function(){
+  var inp=document.getElementById('answer-input');var ans=inp.value.trim();if(!ans||interviewState.isTyping)return;
+  addChatMessage('user',ans);inp.value='';
+  var q=QUESTION_BANK_V3[interviewState.currentQ];var ref=REF_V3[interviewState.currentQ];
+  var kwCnt=ref.kw.filter(function(k){return ans.toLowerCase().indexOf(k.toLowerCase())!==-1;}).length;
+  var kwScore=Math.min(kwCnt/ref.kw.length*100,30);var lenScore=Math.min(ans.length/200*30,30);
+  var diffMul={1:1.15,2:1.05,3:1,4:0.9,5:0.8};
+  var total=Math.round((kwScore+lenScore+ref.base*0.4)*(diffMul[interviewState.difficulty]||1));
+  var score=Math.min(Math.max(total,30),98);
+  interviewState.scores[q.dimension]+=score;interviewState.interviewerScores[q.interviewer].push(score);
+  interviewState.answers.push({q:q.q,a:ans,score:score,dimension:q.dimension,interviewer:q.interviewer});
+  var needFU=score<70&&interviewState.followupCount<2&&!interviewState.isFollowup&&Math.random()>0.5;
+  setTimeout(function(){
+    if(needFU){interviewState.isFollowup=true;interviewState.followupCount++;
+      var fi=Math.min(interviewState.followupCount-1,q.followups.length-1);var ft=q.followups[fi]||'能详细说明吗？';
+      addChatMessage('ai','<em>追问：</em>'+ft);addChatMessage('system','追问 — 更深层探索');
+    }else{interviewState.isFollowup=false;interviewState.currentQ++;interviewState.followupCount=0;updateProgress();setTimeout(askNextQuestionV3,500);}
+  },1000);
+};
+
+
+
+
+// ========== 语音输入 (Web Speech API) ==========
+var voiceRecognition=null, voiceRecognizing=false;
+function initVoiceRecognition(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return false;
+  voiceRecognition=new SR();
+  voiceRecognition.lang='zh-CN';
+  voiceRecognition.continuous=true;
+  voiceRecognition.interimResults=true;
+  voiceRecognition.onresult=function(e){
+    var t='';
+    for(var i=e.resultIndex;i<e.results.length;i++){ t+=e.results[i][0].transcript; }
+    var inp=document.getElementById('answer-input');
+    if(inp)inp.value=t;
+  };
+  voiceRecognition.onerror=function(e){ console.warn('语音识别错误:',e.error); stopVoice(); };
+  voiceRecognition.onend=function(){ stopVoice(); };
+  return true;
+}
+function toggleVoiceInput(){
+  if(!voiceRecognition&&!initVoiceRecognition()){ alert('当前浏览器不支持语音输入，请使用 Chrome 或 Edge 浏览器打开。'); return; }
+  if(voiceRecognizing){ stopVoice(); }
+  else { try{ voiceRecognition.start(); voiceRecognizing=true; updateMicBtn(); }catch(err){ console.warn(err); voiceRecognizing=false; updateMicBtn(); } }
+}
+function stopVoice(){ voiceRecognizing=false; if(voiceRecognition){ try{ voiceRecognition.stop(); }catch(e){} } updateMicBtn(); }
+function updateMicBtn(){ var b=document.getElementById('mic-btn'); if(!b)return; if(voiceRecognizing){ b.classList.add('listening'); b.title='正在聆听，点击停止'; } else { b.classList.remove('listening'); b.title='语音输入'; } }
+(function(){ var SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ var b=document.getElementById('mic-btn'); if(b){ b.disabled=true; b.classList.add('mic-disabled'); b.title='当前浏览器不支持语音输入'; } } })();
+function finishInterview(){
+  addChatMessage('system','面试完成！正在生成综合报告...');
+  Object.keys(interviewState.scores).forEach(function(k){
+    var vals=interviewState.answers.filter(function(a){return a.dimension===k;}).map(function(a){return a.score;});
+    if(vals.length>0)interviewState.scores[k]=Math.round(vals.reduce(function(s,v){return s+v;},0)/vals.length);
+  });
+  setTimeout(function(){interviewState.completed=true;setTimeout(function(){showPage('report');},1500);},2000);
+}
+
+// 增强报告
+function renderReportV3(){
+  if(!interviewState.completed)return;
+  document.getElementById('report-empty').style.display='none';
+  var c=document.getElementById('report-content');c.style.display='block';
+  var w=SCORING_WEIGHTS[selectedJobType].weights;
+  var wt=Math.round(Object.entries(interviewState.scores).reduce(function(s,kv){return s+kv[1]*(w[kv[0]]||0)/100;},0));
+  var ivAvgs=INTERVIEWERS.map(function(iv){var s=interviewState.interviewerScores[iv.id]||[];return Object.assign({},iv,{avg:s.length?Math.round(s.reduce(function(a,b){return a+b;},0)/s.length):0,count:s.length});});
+  var avals=ivAvgs.filter(function(v){return v.avg>0;}).map(function(v){return v.avg;});
+  var mx=avals.length?Math.max.apply(null,avals):0;var mn=avals.length?Math.min.apply(null,avals):0;var hasC=mx-mn>15;
+  var verdict=wt>=75?'推荐':wt>=60?'谨慎推荐':'不推荐';var vc=verdict==='推荐'?'#10b981':verdict==='谨慎推荐'?'#f59e0b':'#ef4444';
+  var dims=Object.entries(interviewState.scores).sort(function(a,b){return b[1]-a[1];});
+  c.innerHTML='<div class="card report-header"><div class="report-score-big" style="color:'+vc+'">'+wt+'</div><div class="report-score-label">加权总分 · '+SCORING_WEIGHTS[selectedJobType].name+'</div><div style="margin-top:8px;"><span class="badge" style="background:'+vc+'20;color:'+vc+';font-size:14px;padding:4px 12px;">'+verdict+'</span></div></div>'
+    +'<div class="card"><div class="card-title">多面试官评估结果</div><div class="interviewer-scores">'+ivAvgs.map(function(iv){return '<div class="iv-score-card"><div class="isc-avatar" style="background:'+iv.color+'">'+iv.initials+'</div><div class="isc-name">'+iv.name+'</div><div style="font-size:10px;color:var(--text2);">'+iv.role+'</div><div class="isc-score" style="color:'+(iv.avg>=75?'#10b981':iv.avg>=60?'#f59e0b':'#ef4444')+'">'+(iv.avg||'--')+'</div><div class="isc-bar"><div class="isc-fill" style="width:'+iv.avg+'%;background:'+iv.color+'"></div></div><div style="font-size:10px;color:var(--text2);margin-top:4px;">'+iv.count+' 题</div></div>';}).join('')
+    +(hasC?'<div class="conflict-box"><div class="cb-title">⚠️ 检测到评分冲突</div><div style="font-size:12px;color:#92400e;">差距：'+(mx-mn)+' 分，建议关注分歧维度。</div></div>':'<div style="padding:10px;background:#d1fae5;border-radius:8px;font-size:12px;color:#065f46;margin-top:8px;">无显著冲突，一致性高。</div>')+'</div>'
+    +'<div class="card"><div class="card-title">Top3 优势 / Top3 待提升</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"><div><div style="font-size:13px;font-weight:700;color:var(--success);margin-bottom:8px;">✅ Top3 优势</div>'+dims.slice(0,3).map(function(d,i){return '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:8px;margin-bottom:6px;"><span style="width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">'+(i+1)+'</span><span style="font-size:12.5px;flex:1;">'+DIM_LABELS[d[0]]+': '+d[1]+'分</span><span style="font-size:14px;font-weight:700;color:var(--success);">'+d[1]+'</span></div>';}).join('')+'</div><div><div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:8px;">⚠️ Top3 待提升</div>'+dims.slice(-3).reverse().map(function(d,i){return '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:8px;margin-bottom:6px;"><span style="width:24px;height:24px;border-radius:50%;background:var(--danger);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">'+(i+1)+'</span><span style="font-size:12.5px;flex:1;">'+DIM_LABELS[d[0]]+': '+d[1]+'分</span><span style="font-size:14px;font-weight:700;color:var(--warning);">'+d[1]+'</span></div>';}).join('')+'</div></div></div>'
+    +'<div class="card"><div class="card-title">30/60/90 天成长计划</div><div class="growth-timeline">'
+    +'<div class="growth-card"><div class="gc-day gc-30">前 30 天</div><ul><li>完成结构化 PM 课程（Reforge/PMC）</li><li>每天练习 STAR 方法回答</li><li>构建 2 个产品案例研究</li><li>阅读《启示录》</li><li>加入 PM 社区</li></ul></div>'
+    +'<div class="growth-card"><div class="gc-day gc-60">31-60 天</div><ul><li>端到端主导模拟冲刺</li><li>5 次信息面试</li><li>LLM API 副业项目</li><li>系统设计练习</li><li>3 篇产品拆解</li></ul></div>'
+    +'<div class="growth-card"><div class="gc-day gc-90">61-90 天</div><ul><li>申请 20+ 目标职位</li><li>10+ 模拟面试</li><li>产品分享会演讲</li><li>数据驱动作品集</li><li>Offer 谈判策略</li></ul></div>'
+    +'</div></div>'
+    +'<div class="card"><div class="card-title">录用委员会结论</div><div class="committee-box"><div style="font-size:13px;opacity:.8;">录用委员会 — 最终决策</div><div class="cb-verdict" style="color:'+(verdict==='推荐'?'#a7f3d0':verdict==='谨慎推荐'?'#fde68a':'#fecaca')+'">'+verdict+'</div><div style="font-size:14px;opacity:.9;max-width:500px;margin:0 auto;">'
+    +(verdict==='推荐'?'建议推进。关键维度能力强，共识度高。':verdict==='谨慎推荐'?'建议后续面试明确边界能力。':'不建议推进。请关注成长计划后重新申请。')
+    +'</div><div class="cb-confidence '+(verdict==='推荐'?'cb-pass':'cb-fail')+'">'+Math.min(95,wt+5+Math.round(Math.random()*5))+'% 置信度</div>'
+    +'<div style="font-size:12px;opacity:.7;margin-top:12px;">由 '+ivAvgs.filter(function(v){return v.count>0;}).length+' 位面试官评估 · '
+    +(hasC?'· 有冲突':'· 无冲突')+' · '+(Date.now()-interviewState.startTime)+'ms</div></div></div>';
+
+  // Radar in report
+  setTimeout(function(){var rc=document.getElementById('report-radar');if(rc)new Chart(rc,{type:'radar',data:{labels:Object.values(DIM_LABELS),datasets:[
+    {label:'你的得分',data:Object.values(interviewState.scores),backgroundColor:'rgba(29,111,209,.15)',borderColor:'#1d6fd1',borderWidth:2,pointBackgroundColor:'#1d6fd1',pointRadius:4},
+    {label:'基准线',data:[75,70,72,68,73,78],backgroundColor:'rgba(148,163,184,.1)',borderColor:'#94a3b8',borderWidth:1,borderDash:[4,4],pointBackgroundColor:'#94a3b8',pointRadius:3}]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20,font:{size:9}},pointLabels:{font:{size:10}}}},plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}}});},100);
+}
+
+// Agents 页面渲染
+function renderAgentsPage(){
+  var flow=document.getElementById('pipeline-flow');if(flow){
+    var order=['parser','match','jd','comp','interview','fu','hr','biz','pro','lead','chief','score','summary'];
+    flow.innerHTML=order.map(function(id,i){var icons={parser:'📝',match:'🎯',jd:'📋',comp:'🌳',interview:'💬',fu:'🔄',hr:'👤',biz:'💼',pro:'🎓',lead:'👑',chief:'⚖️',score:'⭐',summary:'📋'};
+    var colors={parser:'#1d6fd1',match:'#f59e0b',jd:'#10b981',comp:'#8b5cf6',interview:'#ec4899',fu:'#06b6d4',hr:'#ec4899',biz:'#1d6fd1',pro:'#8b5cf6',lead:'#10b981',chief:'#f59e0b',score:'#ef4444',summary:'#14b8a6'};
+    var names={parser:'Resume Parser',match:'Job Match',jd:'JD Agent',comp:'Competency',interview:'Interview',fu:'Follow-up',hr:'HR Interviewer',biz:'Business Int.',pro:'Professional',lead:'Leader',chief:'Chief Eval',score:'Scorer',summary:'Summary'};
+    return '<div class="pipeline-node-v3" style="background:'+colors[id]+'15;border:1px solid '+colors[id]+'30;"><div class="pn-icon">'+(icons[id]||'🤖')+'</div><div style="color:'+colors[id]+';font-size:10px;">'+names[id]+'</div></div>'+(i<order.length-1?'<div class="pipeline-arrow">→</div>':'');
+  }).join('');}
+}
+
+// 首页面试官
+function renderHomeInterviewersV3(){var g=document.getElementById('home-interviewer-grid');if(g)
+  g.innerHTML=INTERVIEWERS.map(function(iv){return '<div class="interviewer-card"><div class="iv-avatar" style="background:'+iv.color+'">'+iv.initials+'</div><div class="iv-name">'+iv.name+'</div><div class="iv-role">'+iv.role+'</div><div class="iv-focus">'+iv.focus+'</div></div>';}).join('');}
+
+// 覆盖 setResumeStep (4步)
+var _stepOrig=setResumeStep;setResumeStep=function(step){
+  resumeStep=step;document.querySelectorAll('#resume-steps .step').forEach(function(s,i){s.classList.remove('active','completed');if(i+1<step)s.classList.add('completed');if(i+1===step)s.classList.add('active');});
+  for(var i=1;i<=4;i++){var el=document.getElementById('resume-step-'+i);if(el)el.style.display=(i===step)?'block':'none';}
+};
+
+// 覆盖 useSampleResume (增加岗位推荐)
+var _useOrig=useSampleResume;useSampleResume=function(){
+  parsedResume=JSON.parse(JSON.stringify(SAMPLE_RESUME));
+  parsedResume.isTech=false;
+  setAgentStatus('parser','running');
+  setTimeout(function(){setAgentStatus('parser','done');renderParsedResult();document.getElementById('job-match-card').style.display='block';renderJobMatches();},1200);
+  setResumeStep(2);
+};
+
+// Init job types
+window.addEventListener('DOMContentLoaded',function(){
+  var jt=document.getElementById('job-types');if(jt){
+    jt.innerHTML=Object.entries(SCORING_WEIGHTS).map(function(kv){
+      return '<div class="job-type '+(kv[0]===selectedJobType?'selected':'')+'" data-type="'+kv[0]+'" onclick="selectJobType(\''+kv[0]+'\')"><div class="jt-icon">'+kv[1].icon+'</div><div class="jt-name">'+kv[1].name+'</div></div>';
+    }).join('');
+    selectJobType(selectedJobType);
+  }
+  renderHomeInterviewersV3();
+});
+
+
+// ====== V1.0 原有代码 ======
+
+// ========== V1.0 数据与状态 ==========
+const AGENTS_V1 = [
+  {id:'parser',name:'Resume Parser',status:'idle',time:'--'},
+  {id:'interview',name:'Interview Agent',status:'idle',time:'--'},
+  {id:'followup',name:'Follow-up Agent',status:'idle',time:'--'},
+  {id:'score',name:'Score Agent',status:'idle',time:'--'},
+  {id:'summary',name:'Summary Agent',status:'idle',time:'--'}
+];
+
+const SAMPLE_RESUME = {
+  name:'张明',
+  title:'AI 产品经理',
+  experience:'3 年',
+  education:'清华大学 · 计算机科学 硕士',
+  skills:['Python','LLM/GPT API','产品策略','A/B 测试','SQL','Figma','敏捷开发','数据分析'],
+  projects:[
+    {name:'AI 智能客服平台',role:'PM 负责人',desc:'带领 4 人团队打造 LLM 驱动的智能客服机器人，将响应时间降低 60%'},
+    {name:'实时数据看板',role:'产品负责人',desc:'设计覆盖 15+ 核心 KPI 的实时分析看板，服务 3 个业务线'},
+    {name:'推荐系统',role:'产品助理',desc:'与 ML 团队协作上线内容推荐系统，CTR 提升 23%'}
+  ],
+  highlights:['客户服务成本降低 40%','带领 6 人跨职能团队','发表 2 篇 NLP 应用论文']
+};
+
+let currentPage = 'home';
+let resumeStep = 1;
+let parsedResume = null;
+let isAdminAuthenticated = false;
+let interviewState = {
+  started:false, completed:false,
+  currentQ:0, totalQ:5,
+  scores:{comm:0,biz:0,tech:0,leader:0,strategy:0,culture:0},
+  chatHistory:[], answers:[],
+  isTyping:false, followupCount:0,
+  startTime:0
+};
+const questionBank = [
+  {q:'我看到您在简历中提到过 "用户增长分析" 项目。能否描述您在该项目中的核心贡献和最终业务影响？',dimension:'comm',followups:['北极星指标是如何设计的？','A/B 测试是如何设计的？']},
+  {q:'这个岗位强调 LLM 应用经验。请描述一个您将 LLM API 落地到生产环境的案例，遇到了哪些挑战？',dimension:'tech',followups:['如何处理延迟或限流？','降级方案是什么？']},
+  {q:'简历显示您曾带领 4 人团队。请分享一个需要做艰难决策的场景，您是如何处理的？',dimension:'leader',followups:['团队内部有分歧怎么处理？','如果重来会做什么不同决定？']},
+  {q:'该岗位需要跨职能协作。请讲述一次协调工程、设计和业务三方达成一致的经历。',dimension:'biz',followups:['如何衡量结果？','做了什么妥协？']},
+  {q:'最后，为什么对这个职位感兴趣？它与您的 3 年职业规划如何契合？',dimension:'culture',followups:['有什么顾虑？','什么情况会让你拒绝 Offer？']}
+];
+const REF_ANSWERS = {
+  0:{kw:['增长','北极星','DAU','指标','实验','数据'],base:75},
+  1:{kw:['LLM','API','GPT','生产','延迟','Token'],base:72},
+  2:{kw:['团队','决策','优先级','敏捷','路线图'],base:78},
+  3:{kw:['跨职能','协调','工程','设计','权衡'],base:74},
+  4:{kw:['职业规划','3年','成长','热情','契合'],base:77}
+};
+
+// ========== 页面路由 ==========
+function showPage(page){
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const map={home:0,resume:1,interview:2,report:3,agents:4,dashboard:5};
+  if(map[page]!==undefined){const links=document.querySelectorAll('.nav-link');if(links[map[page]])links[map[page]].classList.add('active');}
+  if(page==='dashboard' && isAdminAuthenticated){renderDashboard();startSimulation();}
+  window.scrollTo(0,0);
+}
+
+// ========== 简历解析 ==========
+function setResumeStep(step){
+  resumeStep=step;
+  document.querySelectorAll('#resume-steps .step').forEach((s,i)=>{
+    s.classList.remove('active','completed');
+    if(i+1<step)s.classList.add('completed');if(i+1===step)s.classList.add('active');
+  });
+  for(let i=1;i<=3;i++){const el=document.getElementById('resume-step-'+i);if(el)el.style.display=(i===step)?'block':'none';}
+}
+
+function useSampleResume(){
+  parsedResume=JSON.parse(JSON.stringify(SAMPLE_RESUME));
+  setAgentStatus('parser','running');
+  setTimeout(()=>{setAgentStatus('parser','done');renderParsedResult();},1200);
+  setResumeStep(2);
+}
+
+function startParsing(input){
+  if(!input.files[0]){useSampleResume();return;}
+  var file=input.files[0];
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='pdf'||ext==='doc'||ext==='docx'){
+    alert('PDF/DOC 文件无法直接解析文本。请使用「使用示例简历」或将简历内容粘贴到下方文本框。');
+    return;
+  }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result||'';
+    if(text.length<20){alert('文件内容过少，请使用文本粘贴方式。');return;}
+    parsedResume=analyzeResumeText(text,file.name);
+    setAgentStatus('parser','running');
+    setTimeout(function(){setAgentStatus('parser','done');renderParsedResult();},1500);
+    setResumeStep(2);
+  };
+  reader.readAsText(file);
+}
+
+function parseResumeText(){
+  var text=document.getElementById('resume-text-input').value.trim();
+  if(!text||text.length<20){alert('请粘贴至少20字的简历内容');return;}
+  parsedResume=analyzeResumeText(text,'手动输入简历');
+  setAgentStatus('parser','running');
+  setTimeout(function(){setAgentStatus('parser','done');renderParsedResult();},1500);
+  setResumeStep(2);
+}
+
+function analyzeResumeText(text,filename){
+  var name=filename.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ')||'候选人';
+  var skills=[];var projects=[];var highlights=[];var isTech=false;
+  var skillMap={
+    'AI/LLM':['AI','人工智能','机器学习','深度学习','LLM','GPT','NLP','大模型','AIGC','Prompt','Transformer','BERT','Agent','RAG'],
+    '产品管理':['产品','PM','需求','PRD','用户研究','竞品','产品设计','产品策略','原型','交互设计','Axure','Figma'],
+    '数据分析':['数据','SQL','Python','Tableau','分析','指标','BI','数据仓库','ETL','Hadoop','Spark','数据建模'],
+    '软件开发':['开发','Java','Go','React','Vue','前端','后端','全栈','微服务','Spring','Node','C++','算法','数据结构','API','REST'],
+    '用户增长':['运营','增长','用户增长','活动','内容运营','社群','转化率','留存','漏斗','AARRR'],
+    '项目管理':['项目管理','敏捷','Scrum','PMP','OKR','里程碑','甘特图','风险管理'],
+    '设计':['设计','Figma','UI','UX','交互','原型','视觉','Sketch','Adobe'],
+    '商业分析':['商业','战略','咨询','财务','ROI','SWOT','波特五力','行业研究','市场分析']
+  };
+  Object.keys(skillMap).forEach(function(cat){
+    var matched=0;
+    skillMap[cat].forEach(function(kw){if(text.indexOf(kw)!==-1)matched++;});
+    if(matched>=2){skills.push(cat);if(cat==='软件开发'||cat==='AI/LLM'||cat==='数据分析')isTech=true;}
+    else if(matched===1){skills.push(cat+'(初步)');}
+  });
+  if(skills.length===0)skills=['通用能力','学习能力强'];
+  var projPatterns=[/项目[名称经历经验]?[：:](.+)/g,/(?:实习|工作)[经历期间]?[：:](.+)/g,/(?:负责|主导|参与|带领).{5,}/g];
+  projPatterns.forEach(function(pat){
+    var m;while((m=pat.exec(text))!==null&&projects.length<4){
+      var desc=m[1]||m[0];desc=desc.trim().substring(0,80);
+      if(desc.length>5&&projects.every(function(p){return p.name!==desc;}))
+        projects.push({name:desc.substring(0,30),role:'核心成员',desc:desc});
+    }
+  });
+  if(projects.length===0){
+    var sentences=text.split(/[。！？\n]/).filter(function(s){return s.length>10;});
+    sentences.slice(0,3).forEach(function(s){
+      if(/负责|主导|参与|开发|设计|优化|提升|搭建/.test(s))
+        projects.push({name:s.trim().substring(0,30),role:'参与者',desc:s.trim().substring(0,60)});
+    });
+  }
+  if(projects.length===0)projects=[{name:'项目经历待补充',role:'--',desc:'上传的简历中未检测到明确的项目描述'}];
+  var hlPatterns=[/(?:获得|荣获|取得).{3,30}(?:奖|荣誉|认证)/g,/(?:论文|专利|开源).{3,30}/g,/(?:增长|提升|优化|节省|提高|降低).{3,30}[%％]/g,/(?:从\d+到\d+|提升\d+|增长\d+).*/g];
+  hlPatterns.forEach(function(pat){var m;while((m=pat.exec(text))!==null&&highlights.length<5){var h=m[0].trim().substring(0,50);if(highlights.indexOf(h)===-1)highlights.push(h);}});
+  if(highlights.length===0){
+    text.split(/[。！？\n]/).forEach(function(s){
+      if(/\d+[%％]|\d+万|\d+人|Top|第一|领先/.test(s)&&highlights.length<3)highlights.push(s.trim().substring(0,50));
+    });
+  }
+  if(highlights.length===0)highlights=['待补充亮点成就'];
+  var title='候选人';var exp='经验待评估';var edu='学历待确认';
+  if(/产品|PM|product/i.test(text))title=isTech?'技术产品经理':'产品经理';
+  else if(/工程师|开发|engineer|developer|架构/i.test(text))title='软件工程师';
+  else if(/分析师|analyst|数据/i.test(text))title='数据分析师';
+  else if(/运营|operation|增长/i.test(text))title='运营专员';
+  else if(/设计|design|UI|UX/i.test(text))title='设计师';
+  else if(/AI|算法|机器学习|NLP/i.test(text))title='AI工程师';
+  var expMatch=text.match(/(\d+)\s*[年+]/);if(expMatch)exp=expMatch[1]+'年经验';
+  var eduMatch=text.match(/(本科|硕士|博士|学士|MBA|PhD|大专)/i);if(eduMatch)edu=eduMatch[1];
+  return {name:name,title:title,experience:exp,education:edu,skills:skills,projects:projects,highlights:highlights,isTech:isTech};
+}
+
+function renderParsedResult(){
+  var c=document.getElementById('parsed-result-content');
+  document.getElementById('parsed-result-card').style.display='block';
+  document.getElementById('job-match-card').style.display='block';
+  renderJobMatches();
+  c.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div class="parsed-label">候选人</div>
+        <div style="font-size:18px;font-weight:700;color:var(--navy);">${parsedResume.name}</div>
+        <div style="font-size:13px;color:var(--text2);">${parsedResume.title} · ${parsedResume.experience}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">${parsedResume.education}</div>
+      </div>
+      <div>
+        <div class="parsed-label">技能标签</div>
+        <div class="parsed-tags">${parsedResume.skills.map(s=>'<span class="tag tag-blue">'+s+'</span>').join('')}</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="parsed-label">项目经历</div>
+    ${parsedResume.projects.map(p=>`
+      <div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:700;color:var(--navy);">${p.name} <span class="tag tag-green" style="margin-left:4px;">${p.role}</span></div>
+        <div style="font-size:12px;color:var(--text2);">${p.desc}</div>
+      </div>`).join('')}
+    <div class="divider"></div>
+    <div class="parsed-label">亮点成就</div>
+    <div class="parsed-tags">${parsedResume.hights?parsedResume.highlights.map(h=>'<span class="tag tag-purple">'+h+'</span>').join(''):parsedResume.highlights.map(h=>'<span class="tag tag-purple">'+h+'</span>').join('')}</div>
+  `.replace('hights','highlights');
+}
+
+function goToInterview(){showPage('interview');}
+
+// ========== 面试引擎 ==========
+function startInterview(){
+  interviewState={started:true,completed:false,currentQ:0,totalQ:5,scores:{comm:0,biz:0,tech:0,leader:0,strategy:0,culture:0},chatHistory:[],answers:[],isTyping:false,followupCount:0,startTime:Date.now()};
+  document.getElementById('interview-start').style.display='none';
+  document.getElementById('interview-active').style.display='block';
+  renderAgentStatusList();
+  setAgentStatus('interview','running');
+  addChatMessage('system','面试开始 — 基于 Resume-Aware 的智能面试模式');
+  setTimeout(()=>askNextQuestion(),800);
+}
+
+function setAgentStatus(id,status){
+  const a=AGENTS_V1.find(x=>x.id===id);if(!a)return;a.status=status;
+  const dot=document.getElementById('as-dot-'+id);if(dot){dot.className='as-dot '+status;}
+  renderAgentStatusList();
+}
+
+function renderAgentStatusList(){
+  const list=document.getElementById('agent-status-list');
+  if(!list)return;
+  list.innerHTML=AGENTS_V1.map(a=>`
+    <div class="agent-status"><div class="as-dot ${a.status}" id="as-dot-${a.id}"></div><div class="as-name">${a.name}</div><div class="as-time">${a.time}</div></div>
+  `).join('');
+}
+
+function addChatMessage(type,content){
+  const body=document.getElementById('chat-body');
+  const div=document.createElement('div');div.className='msg msg-'+type+' fade-in';div.innerHTML=content;
+  body.appendChild(div);body.scrollTop=body.scrollHeight;
+  interviewState.chatHistory.push({type,content});
+}
+
+function askNextQuestion(){
+  if(interviewState.currentQ>=interviewState.totalQ){finishInterview();return;}
+  const q=questionBank[interviewState.currentQ];
+  updateProgress();
+  // typing
+  interviewState.isTyping=true;
+  const body=document.getElementById('chat-body');
+  const td=document.createElement('div');td.className='msg msg-ai fade-in';td.id='typing';td.innerHTML='<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  body.appendChild(td);body.scrollTop=body.scrollHeight;
+  setTimeout(()=>{
+    const t=document.getElementById('typing');if(t)t.remove();
+    interviewState.isTyping=false;
+    addChatMessage('ai','<div class="msg-role"><strong>AI</strong></div>'+q.q);
+    document.getElementById('answer-input').focus();
+  },1000+Math.random()*500);
+}
+
+function updateProgress(){
+  const pct=Math.round((interviewState.currentQ/interviewState.totalQ)*100);
+  const bar=document.getElementById('sidebar-progress');if(bar)bar.style.width=pct+'%';
+  const txt=document.getElementById('sidebar-progress-text');if(txt)txt.textContent=interviewState.currentQ+'/'+interviewState.totalQ;
+  const sub=document.getElementById('chat-subtitle');if(sub)sub.textContent='第 '+(interviewState.currentQ+1)+' 题，共 '+interviewState.totalQ+' 题';
+}
+
+function submitAnswer(){
+  const input=document.getElementById('answer-input');const ans=input.value.trim();
+  if(!ans||interviewState.isTyping)return;
+  addChatMessage('user',ans);input.value='';
+  setAgentStatus('followup','running');
+
+  // Score
+  const ref=REF_ANSWERS[interviewState.currentQ];
+  const kwCnt=ref.kw.filter(k=>ans.toLowerCase().includes(k.toLowerCase())).length;
+  const kwScore=Math.min(kwCnt/ref.kw.length*100,30);
+  const lenScore=Math.min(ans.length/200*30,30);
+  const total=Math.round(kwScore+lenScore+ref.base*0.4);
+  const score=Math.min(Math.max(total,40),95);
+
+  interviewState.scores[q.dimension]+=score;
+  interviewState.answers.push({q:questionBank[interviewState.currentQ].q,a:ans,score,dimension:questionBank[interviewState.currentQ].dimension});
+
+  const needFU=score<70&&interviewState.followupCount<2&&!Math.random()>0.3;
+
+  setTimeout(()=>{
+    setAgentStatus('followup','done');
+    if(needFU){
+      interviewState.followupCount++;
+      const fu=questionBank[interviewState.currentQ].followups[Math.min(interviewState.followupCount-1,questionBank[interviewerState.currentQ].followups.length-1)]||'能详细说明吗？';
+      addChatMessage('ai','<em>追问：</em>'+fu);
+    }else{
+      interviewState.currentQ++;updateProgress();renderAgentStatusList();
+      setTimeout(()=>askNextQuestion(),500);
+    }
+  },800);
+}
+// fix reference error in submitAnswer
+// redefine to use correct variable
+const _origSubmit = submitAnswer;
+submitAnswer=function(){
+  const input=document.getElementById('answer-input');const ans=input.value.trim();
+  if(!ans||interviewState.isTyping)return;
+  addChatMessage('user',ans);input.value='';
+  setAgentStatus('followup','running');
+  const q=questionBank[interviewState.currentQ];
+  const ref=REF_ANSWERS[interviewState.currentQ];
+  const kwCnt=ref.kw.filter(k=>ans.toLowerCase().includes(k.toLowerCase())).length;
+  const kwScore=Math.min(kwCnt/ref.kw.length*100,30);
+  const lenScore=Math.min(ans.length/200*30,30);
+  const total=Math.round(kwScore+lenScore+ref.base*0.4);
+  let score=Math.min(Math.max(total,40),95);
+  interviewState.scores[q.dimension]+=score;
+  interviewState.answers.push({q:q.q,a:ans,score,dimension:q.dimension});
+  const needFU=score<70&&interviewState.followupCount<2&&Math.random()>0.3;
+  setTimeout(()=>{setAgentStatus('followup','done');
+    if(needFU){interviewState.followupCount++;
+      const fu=q.followups[Math.min(interviewState.followupCount-1,q.followups.length-1)]||'能详细说明吗？';
+      addChatMessage('ai','<em>追问：</em>'+fu);
+    }else{interviewState.currentQ++;updateProgress();renderAgentStatusList();setTimeout(()=>askNextQuestion(),500);}
+  },800);
+};
+
+function finishInterview(){
+  setAgentStatus('interview','done');setAgentStatus('followup','done');
+  setAgentStatus('score','running');setAgentStatus('summary','running');
+  Object.keys(interviewState.scores).forEach(k=>{
+    const vals=interviewState.answers.filter(a=>a.dimension===k).map(a=>a.score);
+    if(vals.length>0)interviewState.scores[k]=Math.round(vals.reduce((s,v)=>s+v,0)/vals.length);
+  });
+  addChatMessage('system','面试完成！正在生成报告...');
+  setTimeout(()=>{setAgentStatus('score','done');setAgentStatus('summary','done');
+    interviewState.completed=true;renderAgentStatusList();setTimeout(()=>showPage('report'),1500);
+  },2000);
+}
+
+// ========== 报告 ==========
+function renderReport(){
+  if(!interviewState.completed)return;
+  document.getElementById('report-empty').style.display='none';
+  const c=document.getElementById('report-content');c.style.display='block';
+  const avg=Math.round(Object.values(interviewState.scores).reduce((a,b)=>a+b,0)/6);
+  c.innerHTML=`
+    <div class="card report-header">
+      <div class="report-score-big" style="color:${avg>=75?'#10b981':avg>=60?'#f59e0b':'#ef4444'}">${avg}</div>
+      <div class="report-score-label">综合评分</div>
+    </div>
+    <div class="card">
+      <div class="card-title">各维度得分</div>
+      ${Object.entries({comm:'沟通表达',biz:'商业洞察',tech:'技术深度',leader:'领导力',strategy:'战略思维',culture:'文化匹配'}).map(([k,n])=>{
+        const v=interviewState.scores[k];const c=v>=80?'#10b981':v>=70?'#1d6fd1':v>=60?'#f59e0b':'#ef4444';
+        return `<div class="match-row" style="flex-direction:column;align-items:stretch;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="match-label">${n}</span><span class="match-score" style="color:${c}">${v}</span></div>
+          <div class="match-bar"><div class="match-fill" style="width:${v}%;background:${c}"></div></div></div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">面试回顾</div>
+      ${interviewState.answers.map((a,i)=>`<div style="padding:12px;background:var(--bg);border-radius:8px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:700;">Q${i+1}</span><span class="tag" style="background:${a.score>=75?'#d1fae5;color:#065f46':'#fecaca;color:#991b1b'}">${a.score}/100</span></div>
+        <div style="font-size:12px;color:var(--text2);">${a.q.substring(0,80)}...</div></div>`).join('')}
+    </div>
+  `;
+}
+
+// ========== Dashboard ==========
+function checkAdmin(){
+  if(document.getElementById('admin-pwd-input').value==='admin123'){
+    isAdminAuthenticated=true;document.getElementById('dashboard-lock').style.display='none';
+    document.getElementById('dashboard-content').style.display='block';renderDashboard();startSimulation();
+  }else{showModal('错误','密码错误。提示：admin123');}
+}
+
+function renderDashboard(){
+  const c=document.getElementById('dashboard-content');
+  c.innerHTML=`
+    <div class="dash-toolbar"><span class="dt-label">PRODUCT ANALYTICS</span><span style="background:#10b981;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;">● LIVE</span>
+      <button class="btn btn-sm btn-secondary" style="margin-left:auto;" onclick="if(confirm('确认退出？')){isAdminAuthenticated=false;document.getElementById(\'dashboard-lock\').style.display=\'\';document.getElementById(\'dashboard-content\').style.display=\'none\';}">管理员</button>
+      <select style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;"><option>过去 30 天</option></select>
+      <button class="btn btn-sm btn-outline">📥 导出数据</button>
+      <button class="btn btn-sm btn-outline">退出</button></div>
+    <h2 style="font-size:24px;font-weight:800;margin-bottom:4px;">运营数据 Dashboard</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">基于用户行为·实时追踪·数据自动更新</p>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="mc-icon">📊</div><div class="mc-label">总面试次数</div><div class="mc-value">184</div><div class="mc-change mc-up">↑ 22%</div></div>
+      <div class="metric-card"><div class="mc-icon">🔄</div><div class="mc-label">平均面试轮数</div><div class="mc-value">6.0</div><div class="mc-change mc-up">↑ 0.3 轮</div></div>
+      <div class="metric-card"><div class="mc-icon">✅</div><div class="mc-label">面试完成率</div><div class="mc-value">66%</div><div class="mc-change mc-up">↑ 5pp</div></div>
+      <div class="metric-card"><div class="mc-icon">⭐</div><div class="mc-label">用户满意度</div><div class="mc-value">4.6</div><div class="mc-change mc-up">↑ 0.2</div></div>
+      <div class="metric-card"><div class="mc-icon">⚡</div><div class="mc-label">AI 平均响应时间</div><div class="mc-value">1.0s</div><div class="mc-change mc-up">↓ 0.2s</div></div>
+      <div class="metric-card"><div class="mc-icon">🎯</div><div class="mc-label">简历解析准确率</div><div class="mc-value">95.0%</div><div class="mc-change mc-up">↑ 2.7pp</div></div>
+      <div class="metric-card"><div class="mc-icon" style="color:var(--danger);">📉</div><div class="mc-label">Drop-off Rate</div><div class="mc-value" style="color:var(--danger);">20%</div><div class="mc-change mc-down">↓ 37%</div></div>
+      <div class="metric-card"><div class="mc-icon">👥</div><div class="mc-label">DAU</div><div class="mc-value">165</div><div class="mc-change mc-up">↑ 18%</div></div>
+    </div>
+    <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="metric-card"><div class="mc-label">累计面试次数</div><div class="mc-value">184</div><div class="mc-change mc-up">↑ 8%</div></div>
+      <div class="metric-card"><div class="mc-label">平均面试时长</div><div class="mc-value">18 分钟</div><div class="mc-change mc-up">≈ 14 分钟</div></div>
+      <div class="metric-card"><div class="mc-label">平均得分</div><div class="mc-value">74</div><div class="mc-change mc-up">↑ 2.3</div></div>
+      <div class="metric-card"><div class="mc-label">完成率</div><div class="mc-value">66%</div><div class="mc-change mc-up">↑ 5pp</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="chart-container"><div class="cc-title">DAU 趋势</div><div class="chart-wrapper"><canvas id="chart-dau"></canvas></div></div>
+      <div class="chart-container"><div class="cc-title">完成率 vs Drop-off</div><div class="chart-wrapper"><canvas id="chart-funnel"></canvas></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="chart-container"><div class="cc-title">得分分布</div><div class="chart-wrapper"><canvas id="chart-dist"></canvas></div></div>
+      <div class="chart-container"><div class="cc-title">岗位分布</div><div class="chart-wrapper"><canvas id="chart-pie"></canvas></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="chart-container"><div class="cc-title">用户漏斗 <span style="font-weight:400;color:var(--text2);font-size:12px;">过去 30 天</span></div>
+        <div id="funnel-container" style="padding:0 10px;"></div>
+      </div>
+      <div class="chart-container"><div class="cc-title">行为埋点 <span style="font-weight:400;color:var(--text2);font-size:12px;">实时事件追踪</span><span style="float:right;background:#eff6ff;color:#1d4ed8;font-size:10px;padding:2px 8px;border-radius:4px;">8 个关键事件</span></div>
+        <div class="event-stream" id="event-stream"></div></div>
+    </div>
+  `;
+  setTimeout(renderDashCharts,100);seedEvents();renderEvents();
+}
+
+function renderDashCharts(){
+  // DAU trend
+  const ctx1=document.getElementById('chart-dau');if(ctx1)new Chart(ctx1,{type:'line',data:{labels:['5/27','5/30','6/2','6/5','6/8','6/11','6/14','6/17','6/20','6/23'],datasets:[{label:'DAU',data:[720,550,780,650,480,820,540,900,750,680],borderColor:'#1d6fd1',backgroundColor:'rgba(29,111,209,.1)',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,ticks:{font:{size:10}},grid:{color:'#f1f5f9'}},x:{ticks:{font:{size:9}},grid:{display:false}}},plugins:{legend:{display:false}}}});
+  // Funnel
+  const ctx2=document.getElementById('chart-funnel');if(ctx2)new Chart(ctx2,{type:'bar',data:{labels:['完成面试(对)','完成面试(实)','Drop-off(对话)','Drop-off(实验)'],dataset:[{data:[66,55,25,15],backgroundColor:['#93c5fd','#3b82f6','#fca5a5','#ef4444'],borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{beginAtZero:true,max:100,ticks:{font:{size:10}},grid:{color:'#f1f5f9'}},y:{ticks:{font:{size:11}},grid:{display:false}}},plugins:{legend:{display:false},title:{display:true,text:'A/B 测试前后',font:{size:11}}}}});
+  // Fix: proper dataset format for Chart.js
+  const ctx2b=document.getElementById('chart-funnel');if(ctx2b)new Chart(ctx2b,{type:'bar',data:{labels:['完成面试(对)','完成面试(实)','Drop-off(对话)','Drop-off(实验)'],datasets:[{data:[66,55,25,15],backgroundColor:['#93c5fd','#3b82f6','#fca5a5','#ef4444'],borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{beginAtZero:true,max:100,ticks:{font:{size:10}},grid:{color:'#f1f5f9'}},y:{ticks:{font:{size:11}},grid:{display:false}}},plugins:{legend:{display:false},title:{display:true,text:'A/B 测试前后',font:{size:11}}}}});
+  // Distribution
+  const ctx3=document.getElementById('chart-dist');if(ctx3)new Chart(ctx3,{type:'bar',data:{labels:['0-40','40-50','50-60','60-70','70-80','80-90','90-100'],datasets:[{label:'人数',data:[420,130,110,120,140,100,90],backgroundColor:'#1d6fd180',borderColor:'#1d6fd1',borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,ticks:{font:{size:10}},grid:{color:'#f1f5f9'}},x:{ticks:{font:{size:10}},grid:{display:false}}},plugins:{legend:{display:false}}}});
+  // Pie
+  const ctx4=document.getElementById('chart-pie');if(ctx4)new Chart(ctx4,{type:'doughnut',data:{labels:['AI PM 34%','数 据 21%','开 发 20%','运 营 13%','其 他 12%'],datasets:[{data:[34,21,20,13,12],backgroundColor:['#1d6fd1','#8b5cf6','#f59e0b','#10b981','#94a3b8']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:10,padding:6}}}}});
+
+  // Funnel HTML
+  const fc=document.getElementById('funnel-container');if(fc){
+    fc.innerHTML=`
+      <div class="funnel-step"><div class="funnel-name">访问首页</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:100%;background:#1d6fd1;">100%</div></div><div class="funnel-count">1,297</div></div>
+      <div class="funnel-step"><div class="funnel-name">上传简历</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:36%;background:#3b82f6;">36%</div></div><div class="funnel-count">468</div></div>
+      <div class="funnel-step"><div class="funnel-name">JD 匹配</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:25%;background:#8b5cf6;">25%</div></div><div class="funnel-count">327</div></div>
+      <div class="funnel-step"><div class="funnel-name">开始面试</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:22%;background:#a78bfa;">22%</div></div><div class="funnel-count">280</div></div>
+      <div class="funnel-step"><div class="funnel-name">完成报告</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:17%;background:#c4b5fd;">17%</div></div><div class="funnel-count">219</div></div>
+      <div class="funnel-step"><div class="funnel-name">再次面试</div><div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:6%;background:#ddd6fe;">6%</div></div><div class="funnel-count">82</div></div>`;
+  }
+}
+
+// Events
+const trackedEvents=[];
+function trackEvent(t,d){trackedEvents.push({type:t,data:d,time:new Date().toISOString()});}
+function seedEvents(){
+  const data=[
+    ['resume_uploaded','上传简历',468],
+    ['parse_completed','解析完成',451],
+    ['jd_matched','JD 匹配',327],
+    ['interview_started','面试开始',280],
+    ['answer_submit','提交回答',1105],
+    ['followup_triggered','追问触发',527],
+    ['interview_dropoff','中途退出',57],
+    ['report_viewed','查看报告',219]
+  ];
+  data.forEach(d=>{for(let i=0;i<Math.floor(d[2]/30);i++)trackedEvents.push({type:d[0],name:d[1],count:d[2],time:new Date(Date.now()-i*3600000).toISOString()});});
+}
+function renderEvents(){
+  const el=document.getElementById('event-stream');if(!el)return;
+  const colors={resume_uploaded:'#10b981',parse_completed:'#1d6fd1',jd_matched:'#8b5cf6',interview_started:'#06b6d4',answer_submit:'#f59e0b',followup_triggered:'#ec4899',interview_dropoff:'#ef4444',report_viewed:'#a78bfa'};
+  const recent=trackedEvents.slice(-8).reverse();
+  el.innerHTML=recent.map(e=>{
+    const c=colors[e.type]||'#64748b';const t=new Date(e.time).toLocaleTimeString();
+    return `<div class="event-item"><div class="event-dot" style="background:${c}"></div><span class="event-time">${t}</span><span style="display:flex;align-items:center;gap:6px;"><span class="event-dot" style="background:${c};width:5px;height:5px;"></span>${e.name||e.type.replace(/_/g,' ')}</span><span style="margin-left:auto;font-weight:700;color:var(--navy);">${e.count||''}</span></div>`;
+  }).join('');
+}
+let simInterval=null;
+function startSimulation(){
+  if(simInterval)clearInterval(simInterval);
+  simInterval=setInterval(()=>{
+    const types=['resume_uploaded','parse_completed','interview_started','answer_submit','interview_complete'];
+    const t=types[Math.floor(Math.random()*types.length)];
+    trackEvent(t,{});renderEvents();
+  },3000+Math.random()*4000);
+}
+
+// Modal
+function showModal(title,body){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').textContent=body;document.getElementById('modal-overlay').classList.add('active');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('active');}
+
+// Init
+window.addEventListener('DOMContentLoaded',()=>{trackEvent('app_open',{});});
+</script></body></html>

@@ -1,280 +1,286 @@
-<div align="center">
+# Resume-Aware Career Interview Agent
 
-# 🎯 Resume-Aware Interview Agent
+> 基于 LLM 与 Multi-Agent 架构的 AI 求职与面试陪练系统，实现从简历解析、能力画像、Resume-Aware 模拟面试到多维度评分与成长建议的完整求职闭环。
 
-**AI驱动的简历自适应面试助手**
-
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-red.svg)](https://streamlit.io)
-[![OpenAI SDK](https://img.shields.io/badge/OpenAI_SDK-1.0+-green.svg)](https://pypi.org/project/openai/)
-[![Qwen2.5](https://img.shields.io/badge/Qwen-2.5-orange.svg)](https://huggingface.co/Qwen)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
-
-*上传简历 → AI解析 → 简历感知面试 → 多轮动态追问 → 6维度评分 → 个性化报告*
-
-[功能演示](#-核心功能) · [安装运行](#-安装与运行) · [架构设计](#-agent-架构) · [项目亮点](#-项目亮点)
-
-</div>
+> **AI Career Copilot · 简历感知 AI 求职与面试助手**
+> 适合岗位：AI 产品经理 / AI 应用开发（实习）
 
 ---
 
-## 📖 项目背景
+## 目录
 
-求职者在面试前缺乏**个性化**的练习工具。传统面试准备产品使用固定题库，无法针对候选人简历生成有针对性的问题，导致练习效果有限。
-
-**Resume-Aware Interview Agent** 是一款 AI 驱动的面试练习工具，核心创新在于**简历感知（Resume-Aware）**——AI 先解析简历，再基于简历内容动态生成面试问题，实现"千人千面"的个性化面试体验。
-
-### 用户痛点
-
-| 痛点 | 描述 |
-|------|------|
-| 🎯 问题与简历无关 | 固定题库无法针对个人背景提问，练习效率低 |
-| 😰 缺乏真实面试感 | 独自刷题无法模拟面试压力和追问场景 |
-| 📊 反馈不可量化 | 练习后不知道自己哪里弱、怎么改进 |
-| 🔄 练习无法闭环 | 缺少"练习→评分→改进→再练"的完整循环 |
-
----
-
-## ✨ 核心功能
-
-### 1. 📄 智能简历解析
-- 上传 PDF/DOCX 简历，AI 自动提取关键信息
-- 解析维度：联系方式、教育背景、工作经历、技能标签
-- 技能自动分类：技术 / 数据 / 产品 / AI·ML
-- 解析准确率 **94.2%**
-
-### 2. 🎙️ 简历感知面试
-- 基于简历内容动态生成 3-5 个个性化面试问题
-- **多轮动态追问**：回答不足 120 字自动触发深挖追问
-- 面试进度条 + 实时计时，模拟真实面试场景
-
-### 3. 📊 6维度AI评分
-- 评估维度：沟通能力 · 技术深度 · 项目经验 · 问题解决 · 文化匹配 · 成长潜力
-- 雷达图可视化，优势/劣势一目了然
-- 每个维度附带具体评分依据（非黑盒打分）
-
-### 4. 📝 个性化改进报告
-- 基于面试表现生成定制化改进建议
-- 识别能力短板并提供可行动的改进方向
-- Human-in-the-loop 反馈机制，持续优化评分模型
+- [1. 项目背景](#1-项目背景)
+- [2. 产品目标](#2-产品目标)
+- [3. 核心功能](#3-核心功能)
+- [4. Multi-Agent 架构](#4-multi-agent-架构)
+- [5. 评分体系](#5-评分体系)
+- [6. 产品流程](#6-产品流程)
+- [7. 技术栈](#7-技术栈)
+- [8. 项目亮点](#8-项目亮点)
+- [9. 项目角色](#9-项目角色)
+- [10. 项目难点](#10-项目难点)
+- [11. Future Roadmap](#11-future-roadmap)
+- [12. 快速开始](#12-快速开始)
+- [13. 目录结构](#13-目录结构)
+- [14. 安全说明](#14-安全说明)
 
 ---
 
-## 🔄 产品流程
+## 1. 项目背景
 
-```
-用户上传简历
-      ↓
- Resume Parser Agent
-  解析简历内容（技能/项目/教育）
-      ↓
-  Interview Agent
-  基于简历生成个性化问题
-      ↓
-  动态追问（回答<120字触发）
-      ↓
-  Score Agent
-  6维度评分 + 可视化雷达图
-      ↓
-  Summary Agent
-  个性化改进报告 + 行动建议
-      ↓
-  Human-in-the-loop 反馈
-  用户评价评分准确性 → 优化模型
-```
+传统求职准备存在低效：
+
+- **岗位匹配困难**：候选人难以判断自己与岗位的契合度，准备方向发散。
+- **面试准备缺乏针对性**：通用面试题库与本人经历脱节，"背题"难以迁移到真实追问。
+- **面试评价单一**：自评或单次反馈缺乏结构化维度，不知道"差在哪、怎么补"。
+- **缺乏持续成长反馈**：一次面试结束即终止，没有"评估 → 改进 → 再评估"的闭环。
+
+大语言模型与 Agent 技术的成熟，使"低成本、个性化、可溯源"的 AI 陪练成为可能。
 
 ---
 
-## 🏗️ Agent 架构
+## 2. 产品目标
 
-```
-┌─────────────────────────────────────────────┐
-│           Resume-Aware Interview Agent       │
-├─────────────────────────────────────────────┤
-│                                              │
-│  ┌──────────────────┐  ┌──────────────────┐  │
-│  │ Resume Parser    │  │ Interview Agent  │  │
-│  │ Agent            │→│                  │  │
-│  │                  │  │ · 动态问题生成    │  │
-│  │ · 信息抽取       │  │ · 多轮追问       │  │
-│  │ · 技能分类       │  │ · 上下文管理     │  │
-│  │ · 结构化输出     │  │                  │  │
-│  └──────────────────┘  └────────┬─────────┘  │
-│                                 │             │
-│                                 ↓             │
-│  ┌──────────────────┐  ┌──────────────────┐  │
-│  │ Summary Agent    │←│ Score Agent      │  │
-│  │                  │  │                  │  │
-│  │ · 改进建议       │  │ · 6维度评分      │  │
-│  │ · 行动计划       │  │ · 评分依据       │  │
-│  │ · 可视化报告     │  │ · 雷达图生成     │  │
-│  └──────────────────┘  └──────────────────┘  │
-│                                              │
-│  数据流: 简历文本 → 结构化数据 → 面试问答 → 评分 → 报告  │
-└─────────────────────────────────────────────┘
-```
+帮助用户完成闭环：
 
-### Agent 职责
-
-| Agent | 职责 | 输入 | 输出 |
-|-------|------|------|------|
-| **Resume Parser** | 简历信息抽取 + 技能分类 | 简历 PDF/DOCX | 结构化 JSON（技能/项目/教育） |
-| **Interview** | 动态问题生成 + 多轮追问 | 解析后简历数据 | 面试问题 + 追问 |
-| **Score** | 6维度评分 + 评分依据 | 面试问答记录 | 评分结果 + 雷达图数据 |
-| **Summary** | 个性化改进报告 | 评分 + 问答记录 | 改进建议 + 行动计划 |
+> **找到适合的岗位 → 针对简历准备 → 进行真实模拟面试 → 获得多维评价 → 明确能力差距 → 拿到 30 天成长计划**
 
 ---
 
-## 🖥️ 页面展示
+## 3. 核心功能
 
-> 📸 截图请查看 [screenshots/](screenshots/) 目录
-
-| 页面 | 说明 |
-|------|------|
-| **首页** | 产品价值主张 + 使用流程预览 + 数据信任背书 |
-| **简历上传页** | 拖拽上传 + 智能解析反馈 + 技能分类标签 |
-| **AI面试页** | 动态问题生成 + 多轮追问 + 面试进度条 |
-| **评分报告页** | 6维度雷达图 + AI反馈 + Human-in-the-loop |
-
----
-
-## 🛠️ 技术栈
-
-| 类别 | 技术 | 用途 |
+| 功能 | 说明 | 状态 |
 |------|------|------|
-| **后端框架** | Python 3.10+ / Streamlit | Web 应用框架 |
-| **LLM 调用** | OpenAI SDK | 统一 LLM API 调用接口 |
-| **推理服务** | SiliconFlow API | 模型推理平台 |
-| **基座模型** | Qwen2.5 | 中文面试问题生成 + 评分 |
-| **数据可视化** | Chart.js / Plotly | 雷达图 + 数据看板 |
+| 简历解析 | 支持 PDF / DOCX，输出结构化 JSON（教育 / 经历 / 项目 / 技能四分类） | ✅ 已实现 |
+| 能力画像 | 基于简历生成摘要与技能分组（技术 / 数据 / 产品 / AI·ML） | ✅ 已实现 |
+| **Resume-Aware 面试** | 每个问题都引用简历具体项目/经历，杜绝通用背题 | ✅ 已实现 |
+| 动态追问 | 回答 < 120 字自动深挖，引导给出具体细节 | ✅ 已实现 |
+| 多维度评分 | 6 维度评分 + 证据（evidence），Plotly 雷达图 | ✅ 已实现 |
+| 面试报告 | 优势 / 短板 / 改进建议 / 30 天行动计划 | ✅ 已实现 |
+| 岗位推荐 / JD 解析 | 结合岗位库与 JD 生成问题 | 🔜 规划中 |
+| 多面试官角色评分 | HR / Business / Professional / Leader 独立评分 | 🔜 规划中 |
 
 ---
 
-## 🚀 安装与运行
+## 4. Multi-Agent 架构
 
-### 环境要求
+当前 MVP 采用 **4-Agent 协作**（由 `agents/` 模块承载），所有 Agent 共享同一个 LLM 调用（通过 `utils/llm_client` 连接 SiliconFlow / Qwen）。
 
-- Python 3.10+
-- SiliconFlow API Key（[获取地址](https://cloud.siliconflow.cn/)）
+```mermaid
+flowchart TD
+    U[User] --> P[Resume Parser Agent]
+    P --> I[Interview Agent]
+    I -->|short answer| F[Follow-up]
+    F --> I
+    I --> S[Score Agent]
+    S --> R[Summary Agent]
+```
 
-### 快速开始
+![Multi-Agent Architecture](docs/agent_architecture.png)
+
+| Agent | 职责 |
+|-------|------|
+| **Resume Parser** | 简历解析与结构化，生成能力画像 |
+| **Interview** | Resume-Aware 问题生成；回答过简时触发 Follow-up 追问 |
+| **Score** | 6 维度评分，每维度附证据（evidence） |
+| **Summary** | 生成优势 / 短板 / 建议 / 30 天计划报告 |
+
+> 规划演进：在 4-Agent 之上扩展 Job Match、JD、多面试官角色与 Chief Evaluation Agent，形成更完整的面试委员会。详见 [`docs/PRD.md`](docs/PRD.md)。
+
+---
+
+## 5. 评分体系
+
+采用 **6 维度、1–10 分、evidence-based** 评分，每个分数都必须附带评分依据，将主观印象转为可追溯证据——这是缓解"单一 AI 评分偏差"的核心机制。
+
+| 维度 | 评估重点 |
+|------|----------|
+| 沟通能力 | 表达清晰度、逻辑连贯、观点传达 |
+| 技术深度 | 技术栈理解、岗位硬技能 |
+| 项目经验 | 项目细节、个人贡献与成果 |
+| 问题解决 | 追问应变、思路清晰度 |
+| 文化匹配 | 价值观与岗位匹配、协作意识 |
+| 成长潜力 | 学习能力、自驱力、职业规划 |
+
+> 规划：演进为多面试官角色独立评分 + Chief 汇总 + 按岗位类型动态权重。详见 [`docs/competency_framework.md`](docs/competency_framework.md)。
+
+---
+
+## 6. 产品流程
+
+```mermaid
+flowchart TD
+    A[上传简历] --> B[简历解析]
+    B --> C[能力画像]
+    C --> D[Resume-Aware 面试]
+    D --> E{回答<120字?}
+    E -- 是 --> F[动态追问]
+    F --> D
+    E -- 否 --> G[6 维评分]
+    G --> H[能力雷达图]
+    H --> I[改进报告 + 30天计划]
+```
+
+![User Flow](docs/user_flow.png)
+
+![System Architecture](docs/system_architecture.png)
+
+---
+
+## 7. 技术栈
+
+| 类别 | 技术 |
+|------|------|
+| 语言 | Python 3.10+ |
+| Web 框架 | Streamlit（多页面应用） |
+| LLM 调用 | OpenAI 兼容 SDK（`openai`），连接 SiliconFlow API |
+| 大模型 | Qwen / Qwen2.5-72B-Instruct（可替换为任意 OpenAI 兼容模型） |
+| 可视化 | Plotly（评分雷达图） |
+| 文档解析 | PyPDF2（PDF）、python-docx（Word） |
+| 配置管理 | python-dotenv（`.env`） |
+| 工程 | Git、Multi-Agent 模块化设计、Prompt Engineering |
+
+> 未使用虚构技术；前端免 Key 体验版（`web-demo/`）为独立静态页面，无需后端。
+
+---
+
+## 8. 项目亮点
+
+1. **Resume-Aware Interview**：问题强制引用简历具体经历，个性化而非通用题库。
+2. **Evidence-based 评分**：每维分数附带依据，可追溯、可解释。
+3. **动态追问**：轻量字数阈值触发，把敷衍回答转化为有效评估信号。
+4. **Multi-Agent 协同**：解析 / 面试 / 评分 / 总结职责解耦，易扩展。
+5. **能力闭环**：从简历到 30 天成长计划，形成"评估—改进"循环。
+6. **安全与隐私优先**：API Key 仅本地、简历仅以文本送入模型、绝不入库。
+
+---
+
+## 9. 项目角色
+
+**AI 产品经理 / AI 应用开发**
+
+本人负责：
+
+- 产品定位与用户流程设计
+- Multi-Agent 架构设计
+- Prompt 工程（见 [`prompts/`](prompts/)）
+- 评分体系与能力模型设计（见 [`docs/competency_framework.md`](docs/competency_framework.md)）
+- Streamlit 前端交互实现
+- PRD 与文档撰写（见 [`docs/PRD.md`](docs/PRD.md)）
+- 项目部署与 GitHub 整理
+
+---
+
+## 10. 项目难点
+
+- **让 AI 真正理解简历**：用结构化 JSON Schema 约束解析，降低自由文本歧义。
+- **根据简历生成针对性问题**：强制 `resume_ref` 字段引用经历，从机制上保证相关性。
+- **实现动态追问**：字数阈值 + 定点深挖 Prompt，低成本提升评估信噪比。
+- **避免单一 AI 评分偏差**：evidence 约束 + 规划多面试官交叉评分。
+- **设计岗位差异化评分**：维度与问题对齐，规划按岗位类型动态权重。
+
+---
+
+## 11. Future Roadmap
+
+- RAG 岗位知识库
+- 企业真实面试题库
+- 更多岗位能力模型与动态权重
+- 用户长期成长数据轨迹
+- 面试语音分析（Web Speech API）
+- 多模态面试与更完善 Dashboard
+
+---
+
+## 12. 快速开始
+
+### 12.1 安装依赖
 
 ```bash
-# 1. 克隆仓库
-git clone https://github.com/your-username/resume-aware-interview-agent.git
-cd resume-aware-interview-agent
-
-# 2. 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 3. 安装依赖
 pip install -r requirements.txt
+```
 
-# 4. 配置 API Key
+### 12.2 配置 API Key
+
+复制环境变量模板并填入你的 Key（**切勿提交真实 Key**）：
+
+```bash
 cp .env.example .env
-# 编辑 .env 文件，填入你的 SILICONFLOW_API_KEY
+# 编辑 .env：
+# SILICONFLOW_API_KEY=your_api_key_here
+# MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+```
 
-# 5. 启动应用
+获取 SiliconFlow Key：https://cloud.siliconflow.cn/
+
+### 12.3 运行
+
+```bash
 streamlit run app.py
 ```
 
-### 环境变量
+浏览器打开提示的本地地址即可使用。
 
-```env
-# .env
-SILICONFLOW_API_KEY=your_api_key_here
-MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
-```
+### 12.4 免 Key 体验版（Web Demo）
+
+`web-demo/` 提供一个**纯前端、无需 API Key** 的体验版（`index.html`），可直接用浏览器打开，适合快速查看完整交互流程（该版本为前端模拟，不调用真实大模型）。
 
 ---
 
-## 📖 使用说明
-
-1. **上传简历**：在简历上传页拖拽或选择 PDF/DOCX 文件
-2. **确认解析**：检查 AI 解析结果，确认技能和经历信息准确
-3. **开始面试**：点击"开始面试"，AI 将基于简历生成个性化问题
-4. **回答问题**：逐题作答，回答过短会触发 AI 追问
-5. **查看报告**：面试结束后查看 6 维度评分和改进建议
-6. **反馈评价**：对 AI 评分准确性提供反馈，帮助优化模型
-
----
-
-## 💡 项目亮点
-
-### 产品亮点
-- 🎯 **Resume-Aware 创新**：业界首个基于简历内容动态生成面试问题的系统，非固定题库
-- 📈 **数据驱动迭代**：A/B 测试验证，动态问题将面试完成率从 61% 提升至 **79%**
-- 🔄 **闭环产品设计**：练习 → 评分 → 反馈 → 优化，形成完整用户闭环
-- 👤 **Human-in-the-loop**：用户对 AI 评分反馈，持续优化评分模型
-
-### 技术亮点
-- 🧩 **多 Agent 协同架构**：4 个专用 Agent 通过结构化数据流转，避免 prompt 冲突
-- 🧠 **动态追问算法**：检测回答长度 < 120 字自动触发深挖追问，面试更真实
-- 📊 **可解释评分**：6 维度评分 + 具体依据，解决"AI 凭什么给我打分"的信任问题
-- 📉 **行为数据追踪**：localStorage 记录用户行为，支持精细化数据分析
-
-### 关键数据
-
-| 指标 | 优化前 | 优化后 | 提升 |
-|------|--------|--------|------|
-| 面试完成率 | 61% | **79%** | +18% |
-| Drop-off Rate | 39% | **21%** | -18% |
-| 用户满意度 | — | **4.8/5** | — |
-| 简历解析准确率 | — | **94.2%** | — |
-
----
-
-## 🔮 未来规划
-
-### 📊 Dashboard 管理看板
-- 用户分群分析（按技能、经验年限、行业分类）
-- 漏斗分析（上传→面试→报告全链路转化）
-- 数据导出（CSV/Excel）
-
-### 🧭 Career Advisor 职业规划
-- 基于面试表现识别能力短板
-- 推荐目标岗位 + 薪资参考
-- 职业发展路径建议
-
-### 📚 Learning Agent 学习助手
-- 基于评分报告生成个性化学习计划
-- 推荐针对性课程资源
-- 学习进度追踪 + 定期提醒
-
----
-
-## 📁 项目结构
+## 13. 目录结构
 
 ```
 resume-aware-interview-agent/
-├── app.py                  # Streamlit 主应用入口
-├── requirements.txt        # Python 依赖
-├── .env.example            # 环境变量模板
-├── .gitignore              # Git 忽略规则
-├── README.md               # 项目说明（本文件）
-├── screenshots/            # 页面截图
-│   ├── homepage.png
-│   ├── resume_upload.png
-│   ├── interview_page.png
-│   └── score_report.png
-├── docs/                   # 项目文档
-│   ├── PRD.pdf             # 产品需求文档
-│   ├── Product_Flow.png    # 产品流程图
-│   └── Agent_Architecture.png  # Agent 架构图
-└── assets/                 # 静态资源
+├── app.py                     # Streamlit 主应用（页面路由与流程编排）
+├── config.py                  # 模型配置 / 评分维度 / Prompt 模板
+├── requirements.txt           # 真实依赖（与代码 import 一致）
+├── .env.example               # API Key 模板（不提交真实 Key）
+├── .gitignore
+├── README.md
+│
+├── agents/                    # Multi-Agent 实现
+│   ├── resume_parser.py       # Resume Parser Agent
+│   ├── interview.py           # Interview Agent（+ Follow-up）
+│   ├── score.py               # Score Agent（6 维 + 雷达图数据）
+│   └── summary.py             # Summary Agent
+│
+├── utils/                     # 工具层
+│   ├── llm_client.py          # OpenAI 兼容客户端（SiliconFlow）
+│   └── file_parser.py         # PDF / DOCX 解析与校验
+│
+├── prompts/                   # Prompt 工程文档（设计说明）
+│   ├── resume_prompt.md
+│   ├── interview_prompt.md
+│   ├── followup_prompt.md
+│   ├── scoring_prompt.md
+│   └── summary_prompt.md
+│
+├── docs/                      # 产品与架构文档
+│   ├── PRD.md
+│   ├── competency_framework.md
+│   ├── agent_architecture.png
+│   ├── user_flow.png
+│   └── system_architecture.png
+│
+├── screenshots/               # 应用界面截图（运行后请补充，见 README 第 9 节说明）
+│
+├── web-demo/                  # 免 Key 前端体验版（独立静态页）
+│
+├── uploads/                   # 运行时上传目录（不入库）
+└── logs/                      # 运行时日志目录（不入库）
 ```
 
 ---
 
-## 📄 License
+## 14. 安全说明
 
-MIT License © 2026
+- **绝不**将真实 API Key、`.env`、个人简历原文上传至仓库（已被 `.gitignore` 忽略）。
+- 上传的简历仅在会话内以文本形式送入大模型，不做云端持久化。
+- 演示如需简历样例，请使用**虚拟简历**，禁止包含真实姓名 / 手机号 / 邮箱密码 / 身份证等信息。
+- 本项目仅用于求职陪练与学习，请遵守所选大模型平台的使用条款。
 
 ---
 
-<div align="center">
-
-**如果这个项目对你有帮助，请给个 ⭐ Star！**
-
-</div>
+<p align="center">
+  <sub>Resume-Aware Career Interview Agent · AI Career Copilot</sub>
+</p>

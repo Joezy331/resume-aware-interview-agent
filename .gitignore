@@ -1,4 +1,4 @@
-# Python
+# ===================== Python =====================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -9,39 +9,48 @@ build/
 eggs/
 *.egg
 
-# Virtual Environment
+# ===================== Virtual Environment =====================
 venv/
 .venv/
 env/
 
-# Environment Variables
+# ===================== Environment & Secrets（绝不提交真实 Key） =====================
 .env
 .env.local
 .env.*.local
+*.env
 
-# IDE
+# ===================== IDE =====================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# ===================== OS =====================
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Streamlit
-.streamlit/secrets.toml
+# ===================== Streamlit =====================
+.streamlit/
 
-# Logs
+# ===================== Logs =====================
+logs/
 *.log
 
-# Data (user privacy)
+# ===================== Data / Uploads（用户隐私，不入库） =====================
 data/
 uploads/
 *.pdf
 *.docx
 
-# Jupyter
+# ===================== Jupyter =====================
 .ipynb_checkpoints/
+
+# ===================== Node（web-demo 不提交依赖） =====================
+node_modules/
+
+# ===================== 本地临时产物 =====================
+*.bak
+*.prerevert
