@@ -5,42 +5,38 @@ Resume Parser Agent
 
 import json
 from config import RESUME_PARSER_PROMPT
+from utils.llm_client import chat_json
 
 
 def parse_resume(client, model_name: str, resume_text: str) -> dict:
     """
-    解析简历文本，返回结构化信息
+    解析简历文本，返回结构化信息（真实模型调用）。
 
-    Args:
-        client: OpenAI 客户端实例
-        model_name: 模型名称
-        resume_text: 简历原始文本
-
-    Returns:
-        解析后的结构化字典
+    失败时返回带 parse_error / error 字段的字典，
+    **不填充任何假的结构化字段**，调用方须据此显式标注。
     """
     prompt = RESUME_PARSER_PROMPT.format(resume_text=resume_text)
 
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": "你是一位专业的简历解析专家，擅长从简历中提取关键信息并结构化输出。"},
-            {"role": "user", "content": prompt},
-        ],
+    parsed, err = chat_json(
+        client,
+        system="你是一位专业的简历解析专家，擅长从简历中提取关键信息并结构化输出。",
+        user=prompt,
         temperature=0.3,
         max_tokens=2048,
+        fallback=None,
     )
 
-    content = response.choices[0].message.content
+    if err or not isinstance(parsed, dict):
+        return {"parse_error": True, "error": err or "返回结构异常", "raw_text": ""}
 
-    # 提取 JSON 部分
-    try:
-        json_str = _extract_json(content)
-        parsed = json.loads(json_str)
-    except (json.JSONDecodeError, ValueError):
-        # Fallback: 返回原始文本
-        parsed = {"raw_text": content, "parse_error": True}
+    if parsed.get("parse_error"):
+        return parsed
 
+    # 补齐缺省键，保证下游 format_resume_summary 不会 KeyError
+    parsed.setdefault("education", [])
+    parsed.setdefault("experience", [])
+    parsed.setdefault("projects", [])
+    parsed.setdefault("skills", {})
     return parsed
 
 

@@ -13,7 +13,7 @@
 | 你想看什么 | 怎么看 |
 |-----------|--------|
 | **完整产品交互（推荐先打开）** | 直接用浏览器打开根目录 `index.html`，无需安装、无需 Key |
-| **真实大模型工程实现** | 进入 `python-backend/`，配置 Key 后 `streamlit run app.py` |
+| **真实大模型工程实现** | 进入 `python-backend/`，配置 Key 后 `streamlit run streamlit_app.py`（见 [12.2](#122-运行真实大模型后端)） |
 | **核心逻辑流程图** | 见 [第 6.1 节](#61-核心逻辑流程图含判定分支与异常回退) 内联图，或打开 `docs/logic_flow.html` |
 | **产品与架构文档** | 见 `docs/PRD.md`、`docs/competency_framework.md` 与架构图 |
 
@@ -119,7 +119,7 @@ flowchart TD
 | **Score** | 6 维度动态权重评分 |
 | **Summary** | 个性化报告 + 成长计划 |
 
-> 工程落地版（`python-backend/`）当前实现了解析 / 面试 / 追问 / 评分 / 总结 核心闭环，并真实调用 SiliconFlow（Qwen）大模型；多面试官与岗位推荐/JD 解析的**生产级 LLM 实现**为 Roadmap 方向（见第 11 节）。
+> 工程落地版（`python-backend/`）已实现 **简历解析 → JD 感知出题 → 多轮作答 → 模型决策追问 → HR/业务/专业/Leader 四面试官独立评价 → Chief Evaluation 汇总 → 面试报告 + 运行统计** 的完整闭环，全部为真实大模型调用（Cline 本地 OpenAI 兼容 API，`cline-free/mimo-v2.6-flash`）。岗位推荐与 JD 结构化解析的**生产级 LLM 实现**仍为 Roadmap 方向（见第 11 节）。
 
 ---
 
@@ -175,7 +175,7 @@ flowchart TD
 | 类别 | 技术 |
 |------|------|
 | **原型（旗舰）** | 纯 HTML / CSS / JavaScript 单文件应用，Chart.js 可视化，Web Speech API 语音输入 |
-| **后端工程（`python-backend/`）** | Python 3.10+ · Streamlit · OpenAI 兼容 SDK · SiliconFlow（Qwen / Qwen2.5-72B-Instruct）· PyPDF2 / python-docx · python-dotenv |
+| **后端工程（`python-backend/`）** | Python 3.10+ · Streamlit · OpenAI 兼容 SDK · Cline 本地 API（`http://localhost:8787/v1`，`cline-free/mimo-v2.6-flash`）· pypdf / python-docx · Plotly / Pandas |
 | **工程方法** | Multi-Agent 模块化设计、Prompt Engineering、Git、产品文档驱动开发 |
 
 > 未使用虚构技术；原型为独立静态页（无需后端），后端工程真实调用大模型。
@@ -243,14 +243,41 @@ flowchart TD
 
 ### 12.2 运行真实大模型后端
 
+模型接口为 **Cline 提供的本地 OpenAI 兼容 API**（不使用 SiliconFlow）：
+
+| 配置项 | 值 |
+|---|---|
+| Base URL | `http://localhost:8787/v1` |
+| Model | `cline-free/mimo-v2.6-flash` |
+| API Key | 读取 `python-backend/.streamlit/secrets.toml` 的 `LLM_API_KEY`（**不硬编码、不入 Git**） |
+
 ```bash
+# 0) 确认本地 API 服务在跑（/health 应返回 ok:true）
+curl http://localhost:8787/health
+
+# 1) 安装依赖
 cd python-backend
 pip install -r requirements.txt
-cp .env.example .env          # 填入 SILICONFLOW_API_KEY
-streamlit run app.py
+
+# 2) 配置密钥（该文件已被 .gitignore 排除）
+mkdir -p .streamlit
+echo 'LLM_API_KEY = "你的密钥"' > .streamlit/secrets.toml
+
+# 3) 先做最小连通性测试（6 项检查）
+python test_api_connectivity.py
+
+# 4) 启动应用
+streamlit run streamlit_app.py
 ```
 
-获取 SiliconFlow Key：https://cloud.siliconflow.cn/
+可选：跑一次完整链路（解析 → 出题 → 追问 → 四面试官 → Chief → 报告，约 9 次真实调用）：
+
+```bash
+python test_e2e_pipeline.py
+```
+
+> **说明**：`app.py`（原有 FastAPI 版）保留不动；新增的 Streamlit 应用为
+> `streamlit_app.py`，两者共用同一套 `agents/` 与 `utils/`。
 
 ---
 
@@ -263,10 +290,16 @@ resume-aware-interview-agent/
 ├── README.md
 ├── .gitignore
 │
-├── python-backend/           # 真实大模型后端工程（Streamlit + SiliconFlow/Qwen）
-│   ├── app.py, config.py
-│   ├── agents/               # Resume Parser / Interview(+Follow-up) / Score / Summary
-│   ├── utils/                # llm_client(SiliconFlow) / file_parser(PDF·DOCX)
+├── python-backend/           # 真实大模型后端工程（Streamlit + Cline 本地 OpenAI 兼容 API）
+│   ├── streamlit_app.py      # 🌟 Streamlit 主应用（多轮面试 / 追问 / 四面试官 / Chief / 报告 / 统计）
+│   ├── app.py                # 原有 FastAPI 版（保留）
+│   ├── config.py             # 模型配置 + Prompt 模板（无密钥）
+│   ├── test_api_connectivity.py  # 最小 API 连通性测试（6 项）
+│   ├── test_e2e_pipeline.py      # 端到端真实链路测试
+│   ├── .streamlit/secrets.toml   # 本地密钥（gitignore，不入仓库）
+│   ├── agents/               # Resume Parser / Interview(+Follow-up, JD-Aware) / Score / Summary
+│   │   └── interviewers.py   # HR·业务·专业·Leader 四面试官 + Chief Evaluation + 报告
+│   ├── utils/                # llm_client(超时/重试/JSON容错) / file_parser / stats
 │   ├── prompts/              # Prompt 工程文档
 │   ├── requirements.txt, .env.example
 │   └── README.md

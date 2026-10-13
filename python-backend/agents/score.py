@@ -54,11 +54,14 @@ def score_interview(client, model_name: str, resume_summary: str,
         json_str = _extract_json(content)
         result = json.loads(json_str)
     except (json.JSONDecodeError, ValueError):
+        # 重要：失败时**不填默认分**——那属于用静态假数据冒充模型结果。
+        # 只返回错误标记，由调用方显式提示"未取得真实评分"。
         result = {
-            "scores": {dim: {"score": 5, "evidence": "解析失败，默认评分"} for dim in SCORE_DIMENSIONS},
-            "overall_score": 5,
-            "overall_comment": "评分解析失败，请重新评分",
+            "scores": {},
+            "overall_score": None,
+            "overall_comment": "",
             "parse_error": True,
+            "error": f"评分解析失败：{content[:200]}",
         }
 
     return result

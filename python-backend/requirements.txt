@@ -1,14 +1,24 @@
-# 核心 Web 框架（Streamlit 多页面应用）
+# 核心 Web 框架（Streamlit 应用）
 streamlit>=1.40.0
-# LLM 调用（OpenAI 兼容 SDK，连接 SiliconFlow / Qwen 等大模型）
+
+# LLM 调用（OpenAI 兼容 SDK，连接 Cline 本地 API http://localhost:8787/v1）
 openai>=1.0.0
-# 环境变量管理（读取 .env 中的 API Key）
-python-dotenv>=1.0.0
+
+# 连通性测试用到的 HTTP 客户端
+requests>=2.31.0
+
 # 简历 PDF 文本提取
-PyPDF2>=3.0.0
+pypdf>=4.0.0
+
 # 简历 Word(.docx) 文本提取
 python-docx>=1.1.0
+
 # 评分雷达图等可视化
 plotly>=5.18.0
+
 # 数据处理
 pandas>=2.1.0
+
+# 说明：API Key 不通过 .env / 环境变量硬编码，
+# 而是放在 python-backend/.streamlit/secrets.toml 的 LLM_API_KEY，
+# 该文件已被 .gitignore 排除，不会进入版本库。
