@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Career Copilot · 核心逻辑流程图</title>
+<style>
+  :root{
+    --cream:#FAF7F0; --ink:#3A352C; --coral:#C58A8A; --coral-deep:#A97070;
+    --line:#E3DCCC; --muted:#8A8475; --arrow:#A89F8C;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:40px 24px; background:#F2EFE7;
+    font-family:"Noto Sans SC","Inter","PingFang SC","Microsoft YaHei",sans-serif;
+    display:flex; justify-content:center;
+  }
+  .sheet{
+    background:var(--cream); border-radius:16px; overflow:hidden;
+    box-shadow:0 10px 40px rgba(58,53,44,.12); max-width:100%;
+  }
+  svg{display:block; width:100%; height:auto; font-family:"Noto Sans SC","Inter","PingFang SC","Microsoft YaHei",sans-serif}
+  .box{fill:#FFFFFF;stroke:#E3DCCC;stroke-width:1.5}
+  .dmd{fill:#F6ECEC;stroke:#C58A8A;stroke-width:1.5}
+  .brn{fill:#FBF8F2;stroke:#DCD3C2;stroke-width:1.5}
+  .t1{font-size:15px;font-weight:600;fill:#3A352C}
+  .t2{font-size:11.5px;fill:#8A8475}
+  .dt{font-size:13.5px;font-weight:600;fill:#8A5A5A}
+  .bt{font-size:12.5px;fill:#7A7364}
+  .ar{stroke:#A89F8C;stroke-width:1.7;fill:none;marker-end:url(#ah)}
+  .lb{font-size:12px;fill:#8A8475}
+  .lg{font-size:12px;fill:#8A8475}
+  @media print{ body{background:#fff;padding:0} .sheet{box-shadow:none;border-radius:0} }
+</style>
+</head>
+<body>
+<div class="sheet">
+<svg viewBox="0 0 1100 2280" width="1100" height="2280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C58A8A"/>
+      <stop offset="1" stop-color="#A97070"/>
+    </linearGradient>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#A89F8C"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect x="0" y="0" width="1100" height="2280" fill="#FAF7F0"/>
+  <!-- 标题条 -->
+  <rect x="0" y="0" width="1100" height="96" fill="url(#hg)"/>
+  <text x="550" y="52" text-anchor="middle" font-size="29" font-weight="700" fill="#FFFFFF">AI Career Copilot · 核心逻辑流程图</text>
+  <text x="550" y="78" text-anchor="middle" font-size="13.5" fill="#FFFFFF" opacity="0.88">Resume-Aware Interview Agent ｜ 13 个 Agent 协同的面试流程 · 与 25 帧低保真原型配套</text>
+
+  <!-- ===== 主流程 ===== -->
+  <!-- 开始 -->
+  <rect x="250" y="150" width="180" height="56" rx="28" fill="#3A352C"/>
+  <text x="340" y="185" text-anchor="middle" font-size="16" font-weight="700" fill="#FFFFFF">开始</text>
+  <path class="ar" d="M340,206 V236"/>
+
+  <!-- P1 上传简历 -->
+  <rect class="box" x="170" y="240" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="268" text-anchor="middle">上传简历</text>
+  <text class="t2" x="340" y="289" text-anchor="middle">PDF · Word · 粘贴文本</text>
+  <path class="ar" d="M340,304 V336"/>
+
+  <!-- P2 解析 -->
+  <rect class="box" x="170" y="340" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="368" text-anchor="middle">解析简历 → 结构化信息</text>
+  <text class="t2" x="340" y="389" text-anchor="middle">Resume Parser Agent</text>
+  <path class="ar" d="M340,404 V446"/>
+
+  <!-- D1 -->
+  <polygon class="dmd" points="340,450 510,500 340,550 170,500"/>
+  <text class="dt" x="340" y="505" text-anchor="middle">解析成功？</text>
+  <path class="ar" d="M512,500 H576"/>
+  <text class="lb" x="544" y="492" text-anchor="middle">否</text>
+  <rect class="brn" x="580" y="468" width="270" height="64" rx="8"/>
+  <text class="bt" x="715" y="505" text-anchor="middle">否 · 提示重新上传</text>
+  <path class="ar" d="M850,500 H930 V272 H512"/>
+  <path class="ar" d="M340,550 V576"/>
+  <text class="lb" x="356" y="570">是</text>
+
+  <!-- P3 岗位匹配 -->
+  <rect class="box" x="170" y="580" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="608" text-anchor="middle">岗位匹配推荐</text>
+  <text class="t2" x="340" y="629" text-anchor="middle">Job Match Agent · Top N 匹配度</text>
+  <path class="ar" d="M340,644 V676"/>
+
+  <!-- D2 -->
+  <polygon class="dmd" points="340,680 510,730 340,780 170,730"/>
+  <text class="dt" x="340" y="735" text-anchor="middle">满意推荐岗位？</text>
+  <path class="ar" d="M512,730 H576"/>
+  <text class="lb" x="544" y="722" text-anchor="middle">否</text>
+  <rect class="brn" x="580" y="698" width="270" height="64" rx="8"/>
+  <text class="bt" x="715" y="735" text-anchor="middle">否 · 手动输入 / 换一批</text>
+  <path class="ar" d="M850,730 H930 V612 H512"/>
+  <path class="ar" d="M340,780 V811"/>
+  <text class="lb" x="356" y="802">是</text>
+
+  <!-- P4 JD -->
+  <rect class="box" x="170" y="815" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="843" text-anchor="middle">生成 / 解析 JD</text>
+  <text class="t2" x="340" y="864" text-anchor="middle">JD Agent · 职责 · 硬软技能 · 业务要求</text>
+  <path class="ar" d="M340,879 V911"/>
+
+  <!-- P5 能力模型 -->
+  <rect class="box" x="170" y="915" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="943" text-anchor="middle">生成能力模型</text>
+  <text class="t2" x="340" y="964" text-anchor="middle">Competency Agent · 6 维 24 项二级能力</text>
+  <path class="ar" d="M340,979 V1011"/>
+
+  <!-- D3 -->
+  <polygon class="dmd" points="340,1015 510,1065 340,1115 170,1065"/>
+  <text class="dt" x="340" y="1070" text-anchor="middle">确认岗位与能力模型？</text>
+  <path class="ar" d="M512,1065 H576"/>
+  <text class="lb" x="544" y="1057" text-anchor="middle">否</text>
+  <rect class="brn" x="580" y="1033" width="270" height="64" rx="8"/>
+  <text class="bt" x="715" y="1070" text-anchor="middle">否 · 返回调整 JD / 能力项</text>
+  <path class="ar" d="M850,1065 H930 V847 H512"/>
+  <path class="ar" d="M340,1115 V1146"/>
+  <text class="lb" x="356" y="1137">是</text>
+
+  <!-- P6 难度 -->
+  <rect class="box" x="170" y="1150" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1178" text-anchor="middle">选择面试难度</text>
+  <text class="t2" x="340" y="1199" text-anchor="middle">简单 · 中等 · 困难</text>
+  <path class="ar" d="M340,1214 V1246"/>
+
+  <!-- P7 出题 -->
+  <rect class="box" x="170" y="1250" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1278" text-anchor="middle">生成面试题目</text>
+  <text class="t2" x="340" y="1299" text-anchor="middle">Interview Agent · 50% 简历 30% JD 20% 能力</text>
+  <path class="ar" d="M340,1314 V1346"/>
+
+  <!-- P8 作答 -->
+  <rect class="box" x="170" y="1350" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1378" text-anchor="middle">用户作答</text>
+  <text class="t2" x="340" y="1399" text-anchor="middle">文本 · 语音输入</text>
+  <path class="ar" d="M340,1414 V1446"/>
+
+  <!-- D4 -->
+  <polygon class="dmd" points="340,1450 510,1500 340,1550 170,1500"/>
+  <text class="dt" x="340" y="1505" text-anchor="middle">继续追问？</text>
+  <path class="ar" d="M512,1500 H576"/>
+  <text class="lb" x="544" y="1492" text-anchor="middle">是</text>
+  <rect class="brn" x="580" y="1468" width="270" height="64" rx="8"/>
+  <text class="bt" x="715" y="1505" text-anchor="middle">是 · Follow-up Agent 动态追问</text>
+  <path class="ar" d="M850,1500 H930 V1382 H512"/>
+  <path class="ar" d="M340,1550 V1581"/>
+  <text class="lb" x="356" y="1572">否</text>
+
+  <!-- P9 多面试官评分 -->
+  <rect class="box" x="170" y="1585" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1613" text-anchor="middle">多面试官并行评分</text>
+  <text class="t2" x="340" y="1634" text-anchor="middle">HR · 业务 · 专业 · 主管 四维独立打分</text>
+  <path class="ar" d="M340,1649 V1681"/>
+
+  <!-- P10 汇总 -->
+  <rect class="box" x="170" y="1685" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1713" text-anchor="middle">汇总评价</text>
+  <text class="t2" x="340" y="1734" text-anchor="middle">Chief Evaluation Agent</text>
+  <path class="ar" d="M340,1749 V1781"/>
+
+  <!-- D5 -->
+  <polygon class="dmd" points="340,1785 510,1835 340,1885 170,1835"/>
+  <text class="dt" x="340" y="1840" text-anchor="middle">存在 &gt;15 分冲突？</text>
+  <path class="ar" d="M512,1835 H576"/>
+  <text class="lb" x="544" y="1827" text-anchor="middle">是</text>
+  <rect class="brn" x="580" y="1803" width="270" height="64" rx="8"/>
+  <text class="bt" x="715" y="1840" text-anchor="middle">是 · 冲突分析 / 复核评分</text>
+  <path class="ar" d="M850,1835 H930 V1617 H512"/>
+  <path class="ar" d="M340,1885 V1916"/>
+  <text class="lb" x="356" y="1907">否</text>
+
+  <!-- P11 评分 -->
+  <rect class="box" x="170" y="1920" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="1948" text-anchor="middle">六维加权评分</text>
+  <text class="t2" x="340" y="1969" text-anchor="middle">Score Agent · 按岗位类型动态权重</text>
+  <path class="ar" d="M340,1984 V2016"/>
+
+  <!-- P12 报告 -->
+  <rect class="box" x="170" y="2020" width="340" height="64" rx="10"/>
+  <text class="t1" x="340" y="2048" text-anchor="middle">生成个性化报告</text>
+  <text class="t2" x="340" y="2069" text-anchor="middle">Summary Agent · 优势 · 劣势 · 成长计划</text>
+  <path class="ar" d="M340,2084 V2116"/>
+
+  <!-- 结束 -->
+  <rect x="250" y="2120" width="180" height="56" rx="28" fill="#C58A8A"/>
+  <text x="340" y="2155" text-anchor="middle" font-size="15" font-weight="700" fill="#FFFFFF">输出报告 · 结束</text>
+
+  <!-- ===== 图例 ===== -->
+  <line x1="170" y1="2180" x2="930" y2="2180" stroke="#E3DCCC" stroke-width="1.5"/>
+  <rect class="box" x="170" y="2200" width="28" height="18" rx="5"/>
+  <text class="lg" x="208" y="2214">流程 / 处理</text>
+  <polygon class="dmd" points="330,2200 346,2209 330,2218 314,2209"/>
+  <text class="lg" x="356" y="2214">判定 / 分支</text>
+  <rect x="470" y="2200" width="28" height="18" rx="9" fill="#3A352C"/>
+  <text class="lg" x="508" y="2214">开始 / 结束</text>
+  <rect class="brn" x="640" y="2200" width="28" height="18" rx="5"/>
+  <text class="lg" x="678" y="2214">异常 / 回退分支</text>
+  <text class="lg" x="820" y="2214" fill="#A89F8C">AI Career Copilot · prototype v3.0</text>
+</svg>
+</div>
+</body>
+</html>

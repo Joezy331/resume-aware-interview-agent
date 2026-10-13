@@ -14,6 +14,7 @@
 |-----------|--------|
 | **完整产品交互（推荐先打开）** | 直接用浏览器打开根目录 `index.html`，无需安装、无需 Key |
 | **真实大模型工程实现** | 进入 `python-backend/`，配置 Key 后 `streamlit run app.py` |
+| **核心逻辑流程图** | 见 [第 6.1 节](#61-核心逻辑流程图含判定分支与异常回退) 内联图，或打开 `docs/logic_flow.html` |
 | **产品与架构文档** | 见 `docs/PRD.md`、`docs/competency_framework.md` 与架构图 |
 
 ---
@@ -160,6 +161,13 @@ flowchart TD
 
 ![User Flow](docs/user_flow.png)
 
+### 6.1 核心逻辑流程图（含判定分支与异常回退）
+
+![核心逻辑流程图](docs/logic_flow.svg)
+
+> 覆盖 **12 个处理节点 · 5 个判定分支 · 5 条异常回退路径**，每个节点标注负责该步骤的 Agent。
+> 可打印 / 导出 PDF 的单文件版本：[`docs/logic_flow.html`](docs/logic_flow.html)
+
 ---
 
 ## 7. 技术栈
@@ -268,7 +276,9 @@ resume-aware-interview-agent/
 │   ├── competency_framework.md
 │   ├── agent_architecture.png
 │   ├── user_flow.png
-│   └── system_architecture.png
+│   ├── system_architecture.png
+│   ├── logic_flow.svg            # 核心逻辑流程图（判定 + 异常回退，README 内联渲染）
+│   └── logic_flow.html           # 同款流程图单文件版（可打印 / 导出 PDF）
 │
 ├── screenshots/              # 应用界面截图（运行后请补充）
 ├── uploads/                  # 运行时上传目录（不入库）
