@@ -1166,7 +1166,7 @@ var _startOrig=startInterview;startInterview=function(){
   document.getElementById('interview-start').style.display='none';
   document.getElementById('interview-active').style.display='block';
   var sub=document.querySelector('.is-subtitle');if(sub)sub.textContent=selectedJobMatch||'目标岗位';
-  addChatMessage('system','面试开始 — 难度：'+diffLabels[interviewDifficulty]+' — 来自5位面试官的8道题。');
+  addChatMessage('system','面试开始 — 难度：'+diffLabels[interviewDifficulty]+' — 来自5位面试官的'+QUESTION_BANK_V3.length+'道题。');
   setTimeout(askNextQuestionV3,800);
 };
 
