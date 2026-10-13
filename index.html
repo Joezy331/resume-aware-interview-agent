@@ -1162,7 +1162,7 @@ function selectJobType(t){selectedJobType=t;
 // 覆盖 startInterview (多面试官版)
 var _startOrig=startInterview;startInterview=function(){
   var diffLabels=['','校招/实习','普通社招','大厂面试','字节/腾讯/阿里/美团','Leader/管理岗'];
-  interviewState={started:true,completed:false,currentQ:0,totalQ:8,difficulty:interviewDifficulty,scores:{comm:0,biz:0,tech:0,leader:0,strategy:0,culture:0},interviewerScores:{hr:[],biz:[],pro:[],lead:[],chief:[]},chatHistory:[],answers:[],isTyping:false,followupCount:0,isFollowup:false,startTime:Date.now()};
+  interviewState={started:true,completed:false,currentQ:0,totalQ:QUESTION_BANK_V3.length,difficulty:interviewDifficulty,scores:{comm:0,biz:0,tech:0,leader:0,strategy:0,culture:0},interviewerScores:{hr:[],biz:[],pro:[],lead:[],chief:[]},chatHistory:[],answers:[],isTyping:false,followupCount:0,isFollowup:false,startTime:Date.now()};
   document.getElementById('interview-start').style.display='none';
   document.getElementById('interview-active').style.display='block';
   var sub=document.querySelector('.is-subtitle');if(sub)sub.textContent=selectedJobMatch||'目标岗位';
@@ -1172,6 +1172,8 @@ var _startOrig=startInterview;startInterview=function(){
 
 function askNextQuestionV3(){
   if(interviewState.currentQ>=interviewState.totalQ){finishInterview();return;}
+  // 防御：题库取不到题目时优雅结束，避免 JSON.parse(undefined) 抛错导致面试静默卡死
+  if(!QUESTION_BANK_V3[interviewState.currentQ]){finishInterview();return;}
   var q=JSON.parse(JSON.stringify(QUESTION_BANK_V3[interviewState.currentQ]));
   var diff=interviewState.difficulty||3;
   var diffPrefix={1:'',2:'',3:'',4:'【高压追问】',5:'【战略级】'};
@@ -1194,6 +1196,8 @@ var _submitOrig=submitAnswer;submitAnswer=function(){
   var inp=document.getElementById('answer-input');var ans=inp.value.trim();if(!ans||interviewState.isTyping)return;
   addChatMessage('user',ans);inp.value='';
   var q=QUESTION_BANK_V3[interviewState.currentQ];var ref=REF_V3[interviewState.currentQ];
+  // 防御：题目或评分参考缺失时优雅结束，避免 ref.kw 读取 undefined 抛错卡死
+  if(!q||!ref){finishInterview();return;}
   var kwCnt=ref.kw.filter(function(k){return ans.toLowerCase().indexOf(k.toLowerCase())!==-1;}).length;
   var kwScore=Math.min(kwCnt/ref.kw.length*100,30);var lenScore=Math.min(ans.length/200*30,30);
   var diffMul={1:1.15,2:1.05,3:1,4:0.9,5:0.8};
@@ -1206,7 +1210,7 @@ var _submitOrig=submitAnswer;submitAnswer=function(){
     if(needFU){interviewState.isFollowup=true;interviewState.followupCount++;
       var fi=Math.min(interviewState.followupCount-1,q.followups.length-1);var ft=q.followups[fi]||'能详细说明吗？';
       addChatMessage('ai','<em>追问：</em>'+ft);addChatMessage('system','追问 — 更深层探索');
-    }else{interviewState.isFollowup=false;interviewState.currentQ++;interviewState.followupCount=0;updateProgress();setTimeout(askNextQuestionV3,500);}
+    }else{interviewState.isFollowup=false;interviewState.currentQ++;interviewState.followupCount=0;updateProgress();if(typeof renderAgentStatusList==='function')renderAgentStatusList();setTimeout(askNextQuestionV3,500);}
   },1000);
 };
 
@@ -1611,31 +1615,13 @@ function submitAnswer(){
     }
   },800);
 }
-// fix reference error in submitAnswer
-// redefine to use correct variable
-const _origSubmit = submitAnswer;
-submitAnswer=function(){
-  const input=document.getElementById('answer-input');const ans=input.value.trim();
-  if(!ans||interviewState.isTyping)return;
-  addChatMessage('user',ans);input.value='';
-  setAgentStatus('followup','running');
-  const q=questionBank[interviewState.currentQ];
-  const ref=REF_ANSWERS[interviewState.currentQ];
-  const kwCnt=ref.kw.filter(k=>ans.toLowerCase().includes(k.toLowerCase())).length;
-  const kwScore=Math.min(kwCnt/ref.kw.length*100,30);
-  const lenScore=Math.min(ans.length/200*30,30);
-  const total=Math.round(kwScore+lenScore+ref.base*0.4);
-  let score=Math.min(Math.max(total,40),95);
-  interviewState.scores[q.dimension]+=score;
-  interviewState.answers.push({q:q.q,a:ans,score,dimension:q.dimension});
-  const needFU=score<70&&interviewState.followupCount<2&&Math.random()>0.3;
-  setTimeout(()=>{setAgentStatus('followup','done');
-    if(needFU){interviewState.followupCount++;
-      const fu=q.followups[Math.min(interviewState.followupCount-1,q.followups.length-1)]||'能详细说明吗？';
-      addChatMessage('ai','<em>追问：</em>'+fu);
-    }else{interviewState.currentQ++;updateProgress();renderAgentStatusList();setTimeout(()=>askNextQuestion(),500);}
-  },800);
-};
+// [已修复] 此处原有的「旧版 submitAnswer 覆盖块」已移除。
+// 原因：它在 V3 覆盖(约第1193行)之后再次覆盖 submitAnswer，造成两套实现错位——
+//   · startInterview 走 V3：totalQ=8，题目取自 QUESTION_BANK_V3(8题)
+//   · submitAnswer  走旧版：题目取自 questionBank(仅5题)、评分取自 REF_ANSWERS(仅5条)
+// 于是答完第 5 题后 questionBank[5] === undefined，读取 .q 抛 TypeError，
+// 异常发生在 setTimeout 回调内、页面无任何提示 → 表现为「面试卡住、不再出题」。
+// 现在统一由 V3 实现(QUESTION_BANK_V3 + REF_V3)负责，并已加入越界防御。
 
 function finishInterview(){
   setAgentStatus('interview','done');setAgentStatus('followup','done');
