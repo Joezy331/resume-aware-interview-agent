@@ -34,6 +34,8 @@ Desktop.ini
 
 # ===================== Streamlit =====================
 .streamlit/
+# 外接 API 配置（含明文密钥，禁止提交；上面 .streamlit/ 已覆盖，此处显式声明）
+python-backend/.streamlit/external_api.json
 
 # ===================== Logs =====================
 logs/

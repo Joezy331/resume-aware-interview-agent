@@ -44,7 +44,17 @@ from agents.interviewers import (  # noqa: E402
 from agents.resume_parser import format_resume_summary, parse_resume  # noqa: E402
 from config import INTERVIEWER_ROLES, MODEL_CONFIG, SCORE_DIMENSIONS  # noqa: E402
 from utils.file_parser import extract_resume_text, validate_resume_text  # noqa: E402
-from utils.llm_client import create_client, get_base_url, get_model_name  # noqa: E402
+from utils.llm_client import (  # noqa: E402
+    create_client,
+    get_active_config,
+    get_base_url,
+    get_model_name,
+    load_external_config,
+    reset_active_config,
+    save_external_config,
+    set_active_config,
+    test_connection,
+)
 from utils.stats import snapshot as stats_snapshot  # noqa: E402
 
 # ---------------------------------------------------------------- 页面配置
@@ -73,8 +83,14 @@ st.markdown(
 
 # ---------------------------------------------------------------- 会话状态
 def init_state() -> None:
+    # 从本地已保存的外接配置（.streamlit/external_api.json）预填表单默认值
+    try:
+        _saved_ext = load_external_config() or {}
+    except Exception:
+        _saved_ext = {}
+
     defaults = {
-        "stage": "setup",          # setup → interviewing → evaluating → done
+        "stage": "setup",          # setup → interviewing → evaluating → done → api_settings
         "client": None,
         "resume_text": "",
         "jd_text": "",
@@ -95,6 +111,14 @@ def init_state() -> None:
         "chief_error": None,
         "report_md": "",
         "report_error": None,
+        # —— 外接 API 设置页（仅配置，默认不切换生效）——
+        "api_service_name": _saved_ext.get("service_name", ""),
+        "api_base_url": _saved_ext.get("base_url", "http://localhost:8787/v1"),
+        "api_api_key": _saved_ext.get("api_key", ""),
+        "api_model_name": _saved_ext.get("model_name", "cline-free/mimo-v2.6-flash"),
+        "api_tested_ok": False,
+        "api_tested_cfg": None,
+        "api_return_stage": "setup",
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -127,13 +151,29 @@ def render_sidebar() -> None:
         st.divider()
 
         st.subheader("模型配置")
-        st.code(
-            f"Base URL : {get_base_url()}\n"
-            f"Model    : {get_model_name()}\n"
-            f"Timeout  : {MODEL_CONFIG['timeout']}s",
-            language="text",
-        )
-        st.caption("API Key 从 .streamlit/secrets.toml 读取，界面与日志均不显示。")
+        active = get_active_config()
+        if active["is_default"]:
+            st.code(
+                f"生效模型 : 默认 (Cline 本地)\n"
+                f"Base URL : {active['base_url']}\n"
+                f"Model    : {active['model_name']}\n"
+                f"Timeout  : {MODEL_CONFIG['timeout']}s",
+                language="text",
+            )
+            st.caption("API Key 从 .streamlit/secrets.toml 读取，界面与日志均不显示。")
+        else:
+            st.code(
+                f"生效模型 : 外接 ({active['service_name'] or '自定义'})\n"
+                f"Base URL : {active['base_url']}\n"
+                f"Model    : {active['model_name']}",
+                language="text",
+            )
+            st.caption("已切换为外接 API；Key 仅存于本地 .streamlit/，不显示。")
+
+        if st.button("⚙️ 模型 API 设置", use_container_width=True):
+            st.session_state.api_return_stage = st.session_state.stage
+            st.session_state.stage = "api_settings"
+            st.rerun()
 
         st.divider()
         st.subheader("运行统计")
@@ -609,6 +649,150 @@ def stage_done() -> None:
         st.rerun()
 
 
+# ================================================================ 模型 API 设置
+def _apply_external() -> None:
+    """校验 + 切换到「测试连接」时通过的外接配置。"""
+    cfg = st.session_state.get("api_tested_cfg")
+    if not cfg or not st.session_state.get("api_tested_ok"):
+        warn("请先点击「测试连接」并显示 ✅ 成功后再启用此模型。")
+        return
+
+    # 若表单字段与测试时不一致，要求重新测试，避免用未校验的配置上线
+    cur = {
+        "service_name": st.session_state.api_service_name,
+        "base_url": st.session_state.api_base_url.strip().rstrip("/"),
+        "api_key": st.session_state.api_api_key,
+        "model_name": st.session_state.api_model_name.strip(),
+    }
+    if cur != cfg:
+        warn("配置已修改，请重新点击「测试连接」后再启用。")
+        return
+
+    set_active_config(**cfg)
+    # 进行中的面试保持原模型（已缓存的 client 不变）；否则清空缓存使下一场试用新模型
+    if st.session_state.stage == "interviewing":
+        warn("当前面试进行中，已缓存的原模型客户端继续使用；新模型将在下一场面试生效。")
+    else:
+        st.session_state.client = None
+    ok(f"已切换为外接 API：{cfg['service_name'] or cfg['model_name']} @ {cfg['base_url']}")
+
+
+def _restore_default() -> None:
+    """恢复项目默认 Cline 模型（不删除已保存的外接配置）。"""
+    reset_active_config()
+    if st.session_state.stage == "interviewing":
+        warn("当前面试进行中，已缓存的原模型客户端继续使用；下一场面试将恢复默认 Cline 模型。")
+    else:
+        st.session_state.client = None
+    ok("已恢复默认 Cline 本地模型（cline-free/mimo-v2.6-flash @ http://localhost:8787/v1）。")
+
+
+def stage_api_settings() -> None:
+    st.header("⚙️ 模型 API 设置（外接 OpenAI 兼容服务）")
+    st.caption(
+        "仅切换模型连接配置（Base URL / Key / Model）。原有面试流程、动态追问、"
+        "简历解析、评分与报告结构均不变。"
+    )
+
+    active = get_active_config()
+    if active["is_default"]:
+        st.success("当前生效模型：默认 Cline 本地 API（cline-free/mimo-v2.6-flash @ http://localhost:8787/v1）")
+    else:
+        label = active["service_name"] or "外接 API"
+        st.success(f"当前生效模型：{label} · {active['model_name']} @ {active['base_url']}（已启用）")
+
+    with st.form("api_form"):
+        st.subheader("外接 API 配置")
+        st.text_input(
+            "API 服务名称（可选，仅用于识别）",
+            key="api_service_name",
+            placeholder="例如：我的云端 DeepSeek / 公司 OpenAI 代理",
+        )
+        st.text_input(
+            "API Base URL",
+            key="api_base_url",
+            placeholder="https://api.example.com/v1",
+        )
+        st.text_input(
+            "API Key",
+            type="password",
+            key="api_api_key",
+            placeholder="不会显示、不会写入日志或界面",
+            help="密码框输入，隐藏内容。保存后明文存于本地 .streamlit/（已被 Git 忽略），非加密 KMS。",
+        )
+        st.text_input(
+            "Model Name",
+            key="api_model_name",
+            placeholder="例如：gpt-4o / deepseek-chat",
+        )
+        c1, c2 = st.columns(2)
+        test_clicked = c1.form_submit_button("🔌 测试连接", use_container_width=True)
+        save_clicked = c2.form_submit_button("💾 保存配置", use_container_width=True)
+
+    if test_clicked:
+        if not st.session_state.api_base_url.strip() or not st.session_state.api_model_name.strip():
+            warn("请先填写 Base URL 与 Model Name 再测试。")
+        else:
+            with st.spinner("正在发送测试请求…（超时 20s）"):
+                ok_t, msg = test_connection(
+                    st.session_state.api_base_url,
+                    st.session_state.api_api_key,
+                    st.session_state.api_model_name,
+                    timeout=20,
+                )
+            if ok_t:
+                st.session_state.api_tested_ok = True
+                st.session_state.api_tested_cfg = {
+                    "service_name": st.session_state.api_service_name,
+                    "base_url": st.session_state.api_base_url.strip().rstrip("/"),
+                    "api_key": st.session_state.api_api_key,
+                    "model_name": st.session_state.api_model_name.strip(),
+                }
+                st.success(f"✅ {msg}")
+            else:
+                st.session_state.api_tested_ok = False
+                st.session_state.api_tested_cfg = None
+                st.error(f"❌ {msg}")
+
+    if save_clicked:
+        if not st.session_state.api_base_url.strip() or not st.session_state.api_model_name.strip():
+            warn("请先填写 Base URL 与 Model Name 再保存。")
+        else:
+            save_external_config(
+                {
+                    "service_name": st.session_state.api_service_name,
+                    "base_url": st.session_state.api_base_url.strip().rstrip("/"),
+                    "api_key": st.session_state.api_api_key,
+                    "model_name": st.session_state.api_model_name.strip(),
+                }
+            )
+            st.success(
+                "✅ 配置已保存到本地 .streamlit/external_api.json（已被 Git 忽略，未提交）。\n"
+                "注意：仅保存，尚未切换；点下方「使用此模型」生效。"
+            )
+
+    st.divider()
+
+    col_use, col_restore = st.columns(2)
+    with col_use:
+        use_clicked = st.button("✅ 使用此模型", type="primary", use_container_width=True)
+    with col_restore:
+        restore_clicked = st.button("↩️ 恢复默认模型", use_container_width=True)
+
+    if use_clicked:
+        _apply_external()
+    if restore_clicked:
+        _restore_default()
+
+    if not st.session_state.get("api_tested_ok"):
+        st.caption("提示：切换前请先点击「测试连接」并显示 ✅ 成功（使用测试时的配置生效）。")
+
+    st.divider()
+    if st.button("← 返回", use_container_width=True):
+        st.session_state.stage = st.session_state.get("api_return_stage", "setup")
+        st.rerun()
+
+
 # ---------------------------------------------------------------- 路由
 stage = st.session_state.stage
 if stage == "setup":
@@ -619,3 +803,5 @@ elif stage == "evaluating":
     stage_evaluating()
 elif stage == "done":
     stage_done()
+elif stage == "api_settings":
+    stage_api_settings()

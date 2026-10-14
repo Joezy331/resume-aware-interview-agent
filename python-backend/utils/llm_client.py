@@ -31,6 +31,7 @@ from openai import (
     AuthenticationError,
     BadRequestError,
     InternalServerError,
+    NotFoundError,
     OpenAI,
     RateLimitError,
 )
@@ -88,27 +89,181 @@ def get_api_key() -> str:
 
 
 def get_model_name() -> str:
-    """模型名称（可被环境变量 MODEL_NAME 覆盖，默认 cline-free/mimo-v2.6-flash）"""
-    return os.getenv("MODEL_NAME", "").strip() or MODEL_CONFIG["model_name"]
+    """当前生效模型名（默认 Cline；经 set_active_config 可切换为外接 API）。"""
+    return _active["model_name"]
 
 
 def get_base_url() -> str:
-    """Base URL（可被环境变量 LLM_BASE_URL 覆盖）"""
-    return os.getenv("LLM_BASE_URL", "").strip() or MODEL_CONFIG["base_url"]
+    """当前生效 Base URL（默认 Cline；可切换为外接 API）。"""
+    return _active["base_url"]
+
+
+# ---------------------------------------------------------------- 运行时生效配置
+# 默认使用 Cline 本地 API；外接 API 通过 set_active_config() 切换。
+# 模块级全局状态，生命周期与 Streamlit 进程一致；进程重启后回到默认。
+
+def _default_config() -> dict:
+    return {
+        "base_url": os.getenv("LLM_BASE_URL", "").strip() or MODEL_CONFIG["base_url"],
+        "model_name": os.getenv("MODEL_NAME", "").strip() or MODEL_CONFIG["model_name"],
+        "api_key": None,  # 默认延迟解析：走 get_api_key()
+        "service_name": "",
+        "timeout": MODEL_CONFIG["timeout"],
+        "max_retries": MODEL_CONFIG["max_retries"],
+        "is_default": True,
+    }
+
+
+_active = _default_config()
+
+
+def get_active_config() -> dict:
+    """返回当前生效配置（不含明文 Key，仅供界面展示）。"""
+    return {
+        "is_default": _active.get("is_default", True),
+        "service_name": _active.get("service_name", ""),
+        "base_url": _active["base_url"],
+        "model_name": _active["model_name"],
+        "has_api_key": bool(_active.get("api_key")),
+        "timeout": _active["timeout"],
+    }
+
+
+def set_active_config(
+    base_url: str,
+    api_key: str,
+    model_name: str,
+    service_name: str = "",
+    timeout: float | None = None,
+    max_retries: int | None = None,
+) -> None:
+    """
+    将后续请求切换到指定的外接 OpenAI 兼容 API。
+
+    仅切换「连接配置」（base_url / key / model），不触碰任何业务
+    Prompt、追问策略、评分规则或报告结构。
+    """
+    global _active
+    _active = {
+        "base_url": base_url.strip().rstrip("/"),
+        "api_key": api_key,
+        "model_name": model_name.strip(),
+        "service_name": (service_name or "").strip(),
+        "timeout": float(timeout) if timeout else MODEL_CONFIG["timeout"],
+        "max_retries": int(max_retries) if max_retries else MODEL_CONFIG["max_retries"],
+        "is_default": False,
+    }
+
+
+def reset_active_config() -> None:
+    """恢复为项目默认 Cline 配置（不删除用户已保存的外接配置）。"""
+    global _active
+    _active = _default_config()
 
 
 def create_client() -> OpenAI:
     """
-    创建 OpenAI 客户端实例（连接 Cline 本地 API）
+    创建 OpenAI 客户端实例。
 
-    Returns:
-        OpenAI 客户端实例
+    默认连接 Cline 本地 API；若已通过 set_active_config() 切换，
+    则连接用户指定的外接 API。仅切换连接配置，不改业务逻辑。
     """
+    cfg = _active
+    api_key = cfg["api_key"] if cfg["api_key"] else get_api_key()
     return OpenAI(
-        api_key=get_api_key(),
-        base_url=get_base_url(),
-        timeout=MODEL_CONFIG["timeout"],
-        max_retries=MODEL_CONFIG["max_retries"],
+        api_key=api_key,
+        base_url=cfg["base_url"],
+        timeout=cfg["timeout"],
+        max_retries=cfg["max_retries"],
+    )
+
+
+# ---------------------------------------------------------------- 连接测试（独立客户端，不影响当前生效配置）
+
+def test_connection(
+    base_url: str,
+    api_key: str,
+    model_name: str,
+    timeout: float = 20.0,
+) -> tuple[bool, str]:
+    """
+    用给定 Base URL / Key / Model 单独创建测试客户端并发送一句测试请求。
+
+    - 不读取、不覆盖当前生效配置。
+    - 不输出 API Key，也不写入日志。
+    - 只有真实收到模型非空响应才返回成功。
+    """
+    try:
+        client = OpenAI(
+            api_key=(api_key or "x"),
+            base_url=base_url.strip().rstrip("/"),
+            timeout=timeout,
+            max_retries=0,
+        )
+        resp = client.chat.completions.create(
+            model=model_name.strip(),
+            messages=[{"role": "user", "content": "请只回复两个字：连接成功"}],
+            max_tokens=20,
+            temperature=0,
+        )
+        content = ""
+        try:
+            content = (resp.choices[0].message.content or "").strip()
+        except Exception:
+            content = ""
+    except APIConnectionError:
+        return False, "无法连接到该 Base URL（地址不可达或连接被拒绝）。"
+    except AuthenticationError:
+        return False, "API Key 无效或权限不足。"
+    except NotFoundError:
+        return False, "模型名称错误或该接口路径不存在（HTTP 404）。"
+    except BadRequestError as e:
+        msg = str(e)
+        if "model" in msg.lower():
+            return False, "模型名称错误，或服务不支持该模型。"
+        return False, f"请求参数错误：{msg[:120]}"
+    except APITimeoutError:
+        return False, f"请求超时（>{timeout:.0f}s），服务响应过慢或地址不正确。"
+    except RateLimitError:
+        return False, "服务端限流（HTTP 429），请稍后重试。"
+    except InternalServerError:
+        return False, "服务端内部错误（HTTP 5xx）。"
+    except APIStatusError as e:
+        return False, f"服务端返回异常状态 HTTP {getattr(e, 'status_code', '?')}。"
+    except Exception as e:
+        return False, f"接口协议不兼容或未知错误：{type(e).__name__}: {str(e)[:120]}"
+
+    if not content:
+        return False, "模型返回空内容，连接测试未通过。"
+    return True, f"连接成功（模型已响应：{content[:30]}）"
+
+
+# ---------------------------------------------------------------- 外接配置持久化
+
+_EXT_FILE = Path(__file__).resolve().parent.parent / ".streamlit" / "external_api.json"
+
+
+def load_external_config() -> dict | None:
+    """读取本地已保存的外接 API 配置（文件位于 .streamlit/，已被 Git 忽略）。"""
+    try:
+        if _EXT_FILE.is_file():
+            return json.loads(_EXT_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return None
+
+
+def save_external_config(cfg: dict) -> None:
+    """
+    保存外接 API 配置到本地 .streamlit/external_api.json。
+
+    说明：明文本地存储（非加密 KMS）。该路径已被 .gitignore 的 `.streamlit/` 规则忽略，
+    不会提交到 Git。不会写入代码、日志或 secrets.toml 原文件。
+    """
+    _EXT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _EXT_FILE.write_text(
+        json.dumps(cfg, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
 
 
