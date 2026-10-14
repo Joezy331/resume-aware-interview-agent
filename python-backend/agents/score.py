@@ -69,22 +69,30 @@ def score_interview(client, model_name: str, resume_summary: str,
 
 def get_radar_chart_data(score_result: dict) -> tuple:
     """
-    从评分结果中提取雷达图数据
+    从评分结果中提取雷达图数据。
+
+    注意：只返回模型**真实给出**的维度。缺失维度一律跳过，
+    不用 0 分填充（用 0 填充等于伪造评分）。
 
     Returns:
-        (dimensions, scores, evidence_list)
+        (dimensions, scores, evidence_list, missing_dimensions)
     """
     dimensions = []
     scores = []
     evidence_list = []
+    missing = []
 
+    raw = score_result.get("scores") or {}
     for dim_name in SCORE_DIMENSIONS.keys():
-        dim_data = score_result.get("scores", {}).get(dim_name, {})
-        dimensions.append(dim_name)
-        scores.append(dim_data.get("score", 0))
-        evidence_list.append(dim_data.get("evidence", ""))
+        dim_data = raw.get(dim_name)
+        if isinstance(dim_data, dict) and isinstance(dim_data.get("score"), (int, float)):
+            dimensions.append(dim_name)
+            scores.append(dim_data["score"])
+            evidence_list.append(dim_data.get("evidence", ""))
+        else:
+            missing.append(dim_name)
 
-    return dimensions, scores, evidence_list
+    return dimensions, scores, evidence_list, missing
 
 
 def _extract_json(text: str) -> str:

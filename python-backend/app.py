@@ -3,15 +3,15 @@ Resume-Aware Interview Agent
 AI驱动的简历自适应面试助手
 
 启动方式：streamlit run app.py
+=====================================================================
+模型接口：Cline 本地 OpenAI 兼容 API
+    Base URL : http://localhost:8787/v1
+    Model    : cline-free/mimo-v2.6-flash
+    API Key  : .streamlit/secrets.toml 的 LLM_API_KEY（不硬编码、不入 Git）
 """
 
 import streamlit as st
-from dotenv import load_dotenv
 import plotly.graph_objects as go
-import json
-
-# 加载环境变量
-load_dotenv()
 
 # 导入项目模块
 from agents import (
@@ -78,7 +78,10 @@ def init_session():
         "summary_report": "",
         "follow_up_mode": False,
         "current_follow_up": "",
+        "_pending_answer": "",
         "target_role": "产品经理",
+        "num_questions": 4,
+        "jd_text": "",
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -172,7 +175,7 @@ def render_home():
 # ============ 简历上传页 ============
 def render_upload():
     st.markdown("## 📄 上传你的简历")
-    st.markdown("上传 PDF 或 DOCX 格式的简历，AI 将自动解析你的技能、经历和项目。")
+    st.markdown("上传 PDF / DOCX / TXT 格式的简历，AI 将自动解析你的技能、经历和项目。")
 
     # 目标岗位选择
     st.session_state.target_role = st.selectbox(
@@ -181,11 +184,28 @@ def render_upload():
         index=0,
     )
 
+    # 题目数量（原为硬编码 3，改为可配置）
+    st.session_state.num_questions = st.slider(
+        "🧾 面试题目数量",
+        min_value=2, max_value=8,
+        value=st.session_state.num_questions,
+        help="题目越多，面试与评估耗时越长（单次模型调用约 4-80 秒）",
+    )
+
+    # JD（可选）
+    with st.expander("📌 粘贴目标岗位 JD（可选，用于生成更贴合岗位的问题）"):
+        st.session_state.jd_text = st.text_area(
+            "JD 文本",
+            height=140,
+            placeholder="粘贴岗位描述…（留空则按简历驱动出题）",
+            label_visibility="collapsed",
+        )
+
     # 文件上传
     uploaded_file = st.file_uploader(
         "拖拽或点击上传简历",
-        type=["pdf", "docx"],
-        help="支持 PDF 和 DOCX 格式，建议简历内容不超过2页",
+        type=["pdf", "docx", "txt"],
+        help="支持 PDF / DOCX / TXT 格式，建议简历内容不超过2页",
     )
 
     if uploaded_file is not None:
@@ -205,12 +225,21 @@ def render_upload():
                 model_name = get_model_name()
                 parsed = parse_resume(client, model_name, resume_text)
                 summary = format_resume_summary(parsed)
-
-                st.session_state.resume_parsed = parsed
-                st.session_state.resume_summary = summary
             except Exception as e:
                 st.error(f"❌ AI 解析失败：{str(e)}")
                 return
+
+        # 解析失败时明确告警，不展示空壳结果
+        if parsed.get("parse_error") or parsed.get("error"):
+            st.warning(f"⚠️ 简历结构化解析未取得真实模型结果：{parsed.get('error', '未知原因')}")
+            st.info("将使用简历原文继续，出题质量会下降但流程可用。")
+            summary = resume_text[:1500]
+            parsed = {}
+        else:
+            st.success("✅ 简历解析成功（真实模型输出）")
+
+        st.session_state.resume_parsed = parsed
+        st.session_state.resume_summary = summary
 
         # 展示解析结果
         st.markdown("---")
@@ -291,7 +320,7 @@ def render_interview():
                     client, model_name,
                     st.session_state.resume_summary,
                     st.session_state.target_role,
-                    num_questions=3,
+                    num_questions=st.session_state.num_questions,
                 )
                 st.session_state.questions = questions
                 st.session_state.current_q_idx = 0
@@ -300,6 +329,11 @@ def render_interview():
                 return
 
     questions = st.session_state.questions
+    if not questions:
+        st.error("❌ 未取得任何题目，请返回重试。")
+        if st.button("← 返回上传页"):
+            navigate("upload")
+        return
     q_idx = st.session_state.current_q_idx
 
     # 面试完成判定
@@ -368,9 +402,11 @@ def render_interview():
                 # 记录问答
                 final_answer = answer
                 if st.session_state.follow_up_mode:
-                    final_answer = f"{st.session_state._pending_answer}\n\n[追问回答] {answer}"
+                    pending = st.session_state.get("_pending_answer") or ""
+                    final_answer = f"{pending}\n\n[追问回答] {answer}"
                     st.session_state.follow_up_mode = False
                     st.session_state.current_follow_up = ""
+                    st.session_state._pending_answer = ""
 
                 st.session_state.qa_records.append({
                     "question": current_q["question"],
@@ -428,39 +464,67 @@ def render_report():
 
     score_result = st.session_state.score_result
 
+    # 评分未取得真实模型结果时，明确告警，不渲染雷达图
+    if score_result.get("parse_error") or score_result.get("error") or not score_result.get("scores"):
+        st.error("❌ 评分未取得真实模型结果")
+        st.warning(f"原因：{score_result.get('error') or '模型未返回可解析的评分结构'}")
+        st.info("本页不展示任何评分图表或数据——系统不使用默认分或历史数据冒充模型输出。")
+        st.markdown("---")
+        if st.button("🔄 重试评分", use_container_width=True):
+            st.session_state.score_result = None
+            st.rerun()
+        if st.button("← 返回面试页重新作答", use_container_width=True):
+            navigate("interview")
+        return
+
     st.markdown("## 📊 面试评分报告")
 
-    # 综合评分
-    overall = score_result.get("overall_score", 0)
+    # 综合评分（None 时明确标注，不显示成 0）
+    overall = score_result.get("overall_score")
     comment = score_result.get("overall_comment", "")
 
-    st.markdown(f"### 综合评分：{overall} / 10")
+    if overall is None:
+        st.warning("⚠️ 模型未给出综合评分，以下仅展示分维度结果")
+    else:
+        st.markdown(f"### 综合评分：{overall} / 10")
     if comment:
         st.markdown(f"*{comment}*")
 
     # 雷达图
-    dimensions, scores, evidence_list = get_radar_chart_data(score_result)
-    fig = go.Figure(data=go.Scatterpolar(
-        r=scores + [scores[0]],  # 闭合
-        theta=dimensions + [dimensions[0]],
-        fill="toself",
-        fillcolor="rgba(29, 111, 209, 0.2)",
-        line=dict(color="#1d6fd1", width=2),
-    ))
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(visible=True, range=[0, 10], dtick=2),
-        ),
-        showlegend=False,
-        height=400,
-        margin=dict(t=20, b=20, l=40, r=40),
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    # 注意：get_radar_chart_data 现返回 4 元组 (dimensions, scores, evidence_list, missing)
+    dimensions, scores, evidence_list, missing = get_radar_chart_data(score_result)
+
+    if not scores:
+        st.warning("⚠️ 模型未返回任何可绘制的维度评分，无法生成雷达图（不渲染任何伪造图表）。")
+    else:
+        fig = go.Figure(data=go.Scatterpolar(
+            r=scores + [scores[0]],  # 闭合
+            theta=dimensions + [dimensions[0]],
+            fill="toself",
+            fillcolor="rgba(29, 111, 209, 0.2)",
+            line=dict(color="#1d6fd1", width=2),
+        ))
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(visible=True, range=[0, 10], dtick=2),
+            ),
+            showlegend=False,
+            height=400,
+            margin=dict(t=20, b=20, l=40, r=40),
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+    # 明确标注模型未给出/无法解析的维度，绝不以 0 分填充冒充
+    if missing:
+        st.warning(f"⚠️ 缺失维度（模型未给出或无法解析，不做 0 分填充）：{', '.join(missing)}")
 
     # 分维度评分详情
     st.markdown("### 📋 分维度评分")
     for dim_name, dim_data in score_result.get("scores", {}).items():
-        score = dim_data.get("score", 0)
+        # 跳过无效/缺失维度，不展示伪造的 0 分
+        if not (isinstance(dim_data, dict) and isinstance(dim_data.get("score"), (int, float))):
+            continue
+        score = dim_data.get("score")
         evidence = dim_data.get("evidence", "")
         st.markdown(f"**{dim_name}**：{score}/10")
         if evidence:
@@ -479,9 +543,13 @@ def render_report():
                     score_result,
                     st.session_state.qa_records,
                 )
+                if not summary or not summary.strip():
+                    st.warning("⚠️ 改进报告未取得真实模型结果（模型返回为空），不展示占位内容。")
+                    summary = ""
                 st.session_state.summary_report = summary
             except Exception as e:
                 st.error(f"改进报告生成失败：{str(e)}")
+                st.info("本页不展示任何改进建议占位文本——系统不使用静态假数据冒充模型输出。")
                 summary = ""
 
     if st.session_state.summary_report:
