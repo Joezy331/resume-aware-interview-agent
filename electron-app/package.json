@@ -1,0 +1,57 @@
+{
+  "name": "ai-career-copilot",
+  "version": "1.0.0",
+  "description": "AI Career Copilot — Resume-Aware Interview Agent",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64",
+    "dist-portable": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "com.aicareer.copilot",
+    "productName": "AI Career Copilot",
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "portable": {
+      "artifactName": "AI-Career-Copilot.exe"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "job-matching.js",
+      "resume-extract.js",
+      "baidu.js",
+      "chart.umd.min.js",
+      "assets/**"
+    ],
+    "extraResources": [
+      {
+        "from": "local_api_config.json",
+        "to": "local_api_config.json"
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "compression": "maximum"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "mammoth": "^1.9.0",
+    "pdf-parse": "1.1.1"
+  }
+}

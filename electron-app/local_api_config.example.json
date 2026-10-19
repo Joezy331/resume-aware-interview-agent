@@ -1,0 +1,11 @@
+{
+  "_comment": "本地安全配置模板。复制为 local_api_config.json 后填入真实值；该文件已被 .gitignore 排除，禁止提交。桌面版由主进程读取并经 extraResources 打包在 asar 之外。",
+  "api_key": "在此填入外接大模型 API Key（OpenAI 兼容服务）",
+  "base_url": "http://localhost:8787/v1",
+  "model": "cline-free/mimo-v2.6-flash",
+  "baidu": {
+    "_comment": "百度智能云文字识别（高精度版 accurate_basic）密钥，仅本地使用",
+    "apiKey": "在此填入百度智能云 API Key",
+    "secretKey": "在此填入百度智能云 Secret Key"
+  }
+}

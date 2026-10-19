@@ -53,6 +53,20 @@ uploads/
 # ===================== Node（web-demo 不提交依赖） =====================
 node_modules/
 
+# ===================== Electron 桌面版 =====================
+electron-app/local_api_config.json
+electron-app/local_api_config*.json
+!electron-app/local_api_config.example.json
+electron-app/node_modules/
+electron-app/release*/
+electron-app/dist/
+electron-app/build-out/
+electron-app/_verify/
+electron-app/*.log
+*.exe
+
 # ===================== 本地临时产物 =====================
 *.bak
 *.prerevert
+.cleanup_log.txt
+.persist_test.txt
