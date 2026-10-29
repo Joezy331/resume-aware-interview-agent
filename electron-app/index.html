@@ -468,26 +468,419 @@ input,textarea,select{font-family:inherit;outline:none}
 @media (max-width:720px){.history-stats{grid-template-columns:repeat(2,1fr)}}
 
 </style>
+<style id="ui-v4">
+/* ============================================================
+   UI v4 — 现代 SaaS 工作台 × 钉钉式轻办公
+   仅覆盖视觉层（色板 / 圆角 / 阴影 / 版式 / 组件外观）。
+   不修改任何业务类名、ID、事件绑定与数据结构。
+   参考：Customer-Journey 工作台 · 招聘后台（浅灰白 + 荧光绿强调）
+   ============================================================ */
+
+/* ---------- 1. 设计令牌 ---------- */
+:root{
+  --bg:#F5F6F7;--card:#FFFFFF;
+  --text:#202124;--text2:#7B818A;--text3:#9AA0A6;
+  --border:#E8EAED;--border2:#DDE0E4;
+  --navy:#1E2126;--navy2:#2A2F36;--ink:#1E2126;
+  --blue:#5A6572;
+  --indigo:#5F6B82;--purple:#7C8497;--pink:#A88E96;--cyan:#7FA3A0;--teal:#6FA093;
+  --lime:#C8F36A;--lime2:#B7E84F;--lime-soft:#F1FBD4;--lime-ink:#2E3B13;
+  --success:#3F9D6E;--warning:#C08A2E;--danger:#C05B45;
+  --radius:14px;--radius-lg:18px;
+  --shadow:0 1px 2px rgba(17,24,39,.04);
+  --shadow-lg:0 12px 32px rgba(17,24,39,.10);
+  --sb-w:236px;--tb-h:72px;
+}
+
+/* ---------- 2. 基础 ---------- */
+body{
+  background:var(--bg);color:var(--text);
+  font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#D8DBDF;border-radius:8px;border:3px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#C6CACE}
+::-webkit-scrollbar-track{background:transparent}
+:focus-visible{outline:2px solid var(--lime2);outline-offset:2px;border-radius:6px}
+code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
+
+/* ---------- 3. 左侧导航 ---------- */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sb-w);background:var(--card);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  padding:18px 12px 14px;z-index:120}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}
+.sb-logo{width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;
+  letter-spacing:.4px;flex:0 0 auto}
+.sb-name{display:block;font-size:14px;font-weight:600;color:var(--ink);line-height:1.25}
+.sb-sub{display:block;font-size:10.5px;color:var(--text3);margin-top:1px}
+.sb-nav{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:2px 0 8px}
+.sb-group{display:flex;flex-direction:column;gap:2px}
+.sb-group-title{font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--text3);
+  padding:0 10px 6px;text-transform:uppercase}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+  font-size:13.5px;font-weight:500;color:#5F646B;cursor:pointer;border:1px solid transparent;
+  transition:background .16s ease,color .16s ease,border-color .16s ease}
+.nav-link:hover{background:#F4F5F6;color:var(--ink)}
+.nav-link.active{background:var(--lime);color:var(--lime-ink);font-weight:600;border-color:#DCEBAF}
+.sb-ico{display:flex;align-items:center;justify-content:center;width:18px;height:18px;flex:0 0 auto;opacity:.72}
+.nav-link.active .sb-ico{opacity:1}
+.sb-ico svg{width:15px;height:15px;display:block}
+.sb-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-foot{border-top:1px solid var(--border);padding-top:12px}
+.sb-agent-pill{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2);
+  background:#FAFAFB;border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:#57B98A;flex:0 0 auto;
+  box-shadow:0 0 0 3px rgba(87,185,138,.16)}
+
+/* ---------- 4. 顶部栏 ---------- */
+.topbar{position:fixed;top:0;left:var(--sb-w);right:0;height:var(--tb-h);
+  background:rgba(245,246,247,.88);backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;gap:16px;padding:0 32px;z-index:110}
+.tb-crumb{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text3)}
+.tb-sep{opacity:.55}
+#tb-current{color:var(--text2)}
+.tb-title{font-size:19px;font-weight:600;color:var(--ink);margin-top:2px;
+  letter-spacing:.01em;line-height:1.3}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-btn{padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:600;
+  background:var(--ink);color:#fff;border:1px solid var(--ink);transition:opacity .16s}
+.tb-btn:hover{opacity:.86}
+.tb-btn-ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.tb-btn-ghost:hover{border-color:#CFD3D8;opacity:1}
+.tb-status{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2);
+  background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 11px}
+.tb-status i{width:6px;height:6px;border-radius:50%;background:#57B98A;font-style:normal}
+
+/* ---------- 5. 内容画布 ---------- */
+.page{margin-left:var(--sb-w);max-width:none;
+  padding:calc(var(--tb-h) + 26px) 32px 56px;min-height:100vh}
+.page.active{display:block;animation:pageIn .28s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- 6. 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:none;padding:22px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);text-transform:none;
+  letter-spacing:0;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.divider{background:var(--border)}
+
+/* ---------- 7. 按钮 ---------- */
+.btn{border-radius:10px;font-size:13.5px;font-weight:600;padding:9px 16px;gap:6px;
+  border:1px solid transparent;transition:background .16s,border-color .16s,color .16s}
+.btn-primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn-primary:hover{background:#000;transform:none}
+.btn-secondary{background:#3A4149;color:#fff;border-color:#3A4149}
+.btn-secondary:hover{background:var(--ink);transform:none}
+.btn-outline{background:var(--card);border:1px solid var(--border2);color:var(--text)}
+.btn-outline:hover{border-color:#C6CACE;background:#F7F8F9;color:var(--ink)}
+.btn-lg{padding:11px 22px;font-size:14px;border-radius:11px}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn:disabled{opacity:.45}
+
+/* ---------- 8. 首页 Hero ---------- */
+.hero{text-align:left;padding:4px 0 26px}
+.hero-badges{justify-content:flex-start;gap:8px;margin-bottom:14px}
+.hero-badge{padding:4px 11px;border-radius:999px;font-size:11px;font-weight:500;
+  background:var(--card);border:1px solid var(--border);color:var(--text2)}
+.hero-badge.ai,.hero-badge.resume,.hero-badge.multi{
+  background:var(--lime-soft);border-color:#DDEBAE;color:var(--lime-ink)}
+.hero h1{font-size:32px;font-weight:700;color:var(--ink);margin-bottom:12px;
+  line-height:1.3;letter-spacing:-.01em}
+.hero h1 .grad{background:none;background-clip:initial;
+  -webkit-text-fill-color:currentColor;color:var(--ink)}
+.hero p{font-size:14px;color:var(--text2);max-width:700px;margin:0 0 22px;line-height:1.75}
+.hero-actions{justify-content:flex-start;gap:10px}
+.hero-actions .btn-primary{background:var(--lime);color:var(--lime-ink);border-color:#DCEBAF}
+.hero-actions .btn-primary:hover{background:var(--lime2);color:var(--lime-ink)}
+.hero-layout{gap:24px;align-items:start}
+.chat-preview{background:var(--ink);border-radius:var(--radius-lg);padding:20px;box-shadow:none}
+.cp-msg{border-radius:12px}
+.cp-msg-user{background:var(--lime);color:var(--lime-ink);border-radius:12px}
+.cp-score-popup{border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.28)}
+.cp-score-val{color:var(--ink)}
+.cp-score-fill{background:var(--ink)}
+
+/* ---------- 9. 步骤条 ---------- */
+.steps{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:none;padding:12px 18px}
+.step{font-size:12.5px;color:var(--text2);font-weight:500}
+.step.active{color:var(--ink);font-weight:600}
+.step.completed{color:var(--text2)}
+.step-num{width:26px;height:26px;font-size:11.5px;border:1.5px solid var(--border2);color:var(--text2)}
+.step.active .step-num{border-color:var(--lime2);background:var(--lime);color:var(--lime-ink)}
+.step.completed .step-num{border-color:var(--ink);background:var(--ink);color:#fff}
+.step:not(:last-child)::after{background:var(--border)}
+
+/* ---------- 10. 上传区 ---------- */
+.upload-area{border:1.5px dashed #D6DADF;border-radius:var(--radius-lg);
+  padding:40px 28px;background:#FAFAFB}
+.upload-area:hover{border-color:var(--lime2);background:var(--lime-soft)}
+.upload-area .ua-text{font-size:15px;font-weight:600;color:var(--ink)}
+.upload-area .ua-hint{font-size:12.5px;color:var(--text2)}
+
+/* ---------- 11. 标签 ---------- */
+.tag{border-radius:7px;font-size:11.5px;font-weight:500;padding:4px 9px}
+.tag-blue{background:#F1F2F4;color:#3D444C}
+.tag-green{background:var(--lime-soft);color:var(--lime-ink)}
+.tag-purple{background:#F2F1F5;color:#4A4658}
+.tag-orange{background:#FBF3E6;color:#8A6420}
+.tag-pink{background:#F8F0F2;color:#8A4E5C}
+.badge-v2,.badge-v3{background:var(--lime);color:var(--lime-ink)}
+
+/* ---------- 12. 岗位匹配 ---------- */
+.jm-card{border-radius:var(--radius);padding:16px;border:1px solid var(--border);background:var(--card)}
+.jm-card:hover{border-color:#CFD3D8;box-shadow:var(--shadow-lg)}
+.jm-name{font-size:14px;font-weight:600;color:var(--ink)}
+.jm-score{font-size:19px;font-weight:700;color:var(--ink)}
+.jm-reason{font-size:12px;color:var(--text2);line-height:1.6}
+.jm-skill{background:#F4F5F6;color:#5A6169;border:1px solid var(--border);
+  border-radius:6px;font-size:10.5px}
+.jm-gap{color:#9A7420;font-size:11px}
+.jm-path{background:#FAFAFB;border:1px solid var(--border);border-radius:8px;color:var(--text2)}
+.match-label{color:var(--ink);font-weight:500}
+.match-bar{background:#EFF0F2}
+
+/* ---------- 13. JD / 能力模型 ---------- */
+.jd-big-section{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px}
+.jd-big-title{font-size:14px;font-weight:600;color:var(--ink);
+  border-bottom:1px solid var(--border);padding-bottom:10px}
+.jd-big-text{font-size:12.5px;color:var(--text)}
+.jd-card{background:#FAFAFB;border-radius:12px;border:1px solid var(--border)}
+.jd-section-title{color:var(--ink);font-weight:600}
+.jd-list li::before,.jd-big-list li::before,.growth-card li::before{color:#9BA1A8}
+.jd-list li,.jd-big-list li{font-size:12.5px}
+.ctree-col{background:#FAFAFB;border:1px solid var(--border);border-radius:12px}
+.ctree-l1{border-bottom:1px solid var(--border2);color:var(--ink);font-weight:600}
+.ctree-l2-item{background:var(--card);border:1px solid var(--border);
+  border-radius:7px;color:var(--text2)}
+.comp-name{color:var(--text);font-weight:500}
+.comp-bar{background:#EFF0F2}
+.parsed-label{color:var(--text3);font-size:11px;letter-spacing:.06em}
+
+/* ---------- 14. 模拟面试 ---------- */
+.interview-layout{grid-template-columns:288px 1fr;gap:16px}
+.chat-panel{border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:none;min-height:560px;background:var(--card)}
+.chat-header{padding:15px 20px;border-bottom:1px solid var(--border)}
+.chat-header .ch-title{font-size:14.5px;font-weight:600;color:var(--ink)}
+.chat-header .ch-sub{font-size:11.5px;color:var(--text2)}
+.chat-body{padding:20px;gap:14px}
+.msg{max-width:78%;font-size:13.5px;line-height:1.7;border-radius:14px;padding:11px 15px}
+.msg-ai{background:#F4F5F6;color:var(--text);border-bottom-left-radius:5px}
+.msg-user{background:var(--ink);color:#fff;border-bottom-right-radius:5px}
+.msg-system{background:var(--lime-soft);color:var(--lime-ink);
+  border:1px solid #DDEBAE;border-radius:10px;font-size:12.5px}
+.src-resume{background:#EDEFF2;color:#414852}
+.src-jd{background:var(--lime-soft);color:var(--lime-ink)}
+.src-competency{background:#F2F1F5;color:#4A4658}
+.chat-input{background:var(--card);border-top:1px solid var(--border);padding:12px 14px}
+.chat-input textarea{background:#FAFAFB;border:1px solid var(--border);
+  border-radius:10px;font-size:13.5px;height:44px;color:var(--text)}
+.chat-input textarea:focus{border-color:var(--lime2);box-shadow:0 0 0 3px rgba(200,243,106,.32)}
+.chat-input .btn-primary{background:var(--ink);border-radius:9px}
+.chat-input .btn-primary:hover{background:#000}
+.mic-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);width:44px;height:44px}
+.mic-btn:hover{background:#F4F5F6;border-color:#CFD3D8;color:var(--ink)}
+.mic-btn.listening{background:var(--ink);border-color:var(--ink);color:#fff}
+.is-header,.is-progress,.agents-panel,.score-preview{background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius);box-shadow:none}
+.is-title{font-size:14px;font-weight:600;color:var(--ink)}
+.is-progress-fill{background:var(--ink)}
+.ap-title{font-size:10.5px;letter-spacing:.1em;color:var(--text3)}
+.agent-status{border-bottom:1px solid #F0F1F3;font-size:12px}
+.as-dot.done{background:var(--ink)}
+.as-dot.running{background:#57B98A}
+.as-name{color:var(--text);font-weight:500}
+.tips-box{background:#FBF7EC;border:1px solid #EFE4C7;border-radius:var(--radius)}
+.tips-title,.tips-text{color:#8A6B1F}
+.iv-strip{background:var(--ink);border-radius:10px}
+.diff-option{border-radius:10px!important}
+.diff-option:hover{background:#F7F8F9!important}
+
+/* ---------- 15. 评估报告 ---------- */
+.report-header{text-align:left;margin-bottom:20px}
+.report-score-big{font-size:42px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.report-score-label{font-size:12.5px;color:var(--text2)}
+.iv-score-card{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px}
+.iv-score-card .isc-name{font-size:12px;font-weight:600;color:var(--ink)}
+.iv-score-card .isc-score{font-size:22px;font-weight:700;color:var(--ink)}
+.iv-score-card .isc-bar{background:#EFF0F2}
+.conflict-box{background:#FBF7EC;border:1px solid #EFE4C7;border-radius:12px}
+.conflict-box .cb-title{color:#8A6B1F;font-size:12.5px;font-weight:600}
+.committee-box{background:var(--ink);border-radius:var(--radius-lg);padding:22px}
+.growth-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.gc-30{background:#F1F2F4;color:#414852}
+.gc-60{background:var(--lime-soft);color:var(--lime-ink)}
+.gc-90{background:#F2F1F5;color:#4A4658}
+.top-item{background:#FAFAFB;border:1px solid var(--border);border-radius:10px}
+.top-text{font-size:12.5px}
+
+/* ---------- 16. 数据看板 ---------- */
+.metrics-grid{gap:12px}
+.metric-card{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:none;padding:18px}
+.metric-card .mc-icon{opacity:.16;font-size:22px}
+.metric-card .mc-label{font-size:11.5px;font-weight:500;color:var(--text2)}
+.metric-card .mc-value{font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.metrics-grid>.metric-card:first-child{background:var(--ink);border-color:var(--ink)}
+.metrics-grid>.metric-card:first-child .mc-label{color:rgba(255,255,255,.62)}
+.metrics-grid>.metric-card:first-child .mc-value{color:#fff}
+.metrics-grid>.metric-card:first-child .mc-icon{color:#fff;opacity:.16}
+.chart-container{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:none;padding:18px}
+.chart-container .cc-title{font-size:13px;font-weight:600;color:var(--ink)}
+.range-seg{background:#F4F5F6;border:1px solid var(--border);border-radius:9px}
+.range-seg .rs-btn.active{background:var(--ink);color:#fff;box-shadow:none}
+.event-item{border-bottom:1px solid #F0F1F3;font-size:12px}
+.funnel-bar-bg{background:#F2F3F5;border-radius:8px}
+.funnel-name{color:var(--text);font-weight:500}
+.heatmap-label{color:var(--text3)}
+
+/* ---------- 17. 历史记录 ---------- */
+.history-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.history-stat .hs-num{color:var(--ink);font-size:22px;font-weight:700}
+.history-item{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 16px}
+.history-item:hover{box-shadow:var(--shadow-lg);border-color:#CFD3D8}
+.hi-job{color:var(--ink);font-weight:600;font-size:13.5px}
+.history-qa{background:#FAFAFB;border:1px solid var(--border);border-radius:12px}
+.history-qa .hq{color:var(--ink);font-size:12.5px}
+.hdh-score{color:var(--ink)}
+
+/* ---------- 18. Agent 架构 ---------- */
+.agent-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.agent-card:hover{border-color:#CFD3D8;box-shadow:var(--shadow-lg);transform:none}
+.agent-detail{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.agent-detail .ad-log{background:#1B1E22;border-radius:8px;color:#9AA0A6}
+.ad-metric{background:#FAFAFB;border-radius:8px}
+.ad-status-running{background:var(--lime-soft);color:var(--lime-ink)}
+.ad-status-idle{background:#F1F2F4;color:#5F646B}
+.ad-status-done{background:#EDEFF2;color:#3D444C}
+.wf-title,.arch-title{color:var(--ink)}
+.wf-label,.arch-label{color:var(--text3)}
+.arch-layer{border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.arch-tag{border-radius:8px;font-weight:500}
+.pain-item{border:1px solid var(--border);border-radius:12px}
+
+/* ---------- 19. 弹层 / 空态 ---------- */
+.modal-overlay{background:rgba(20,24,28,.34);backdrop-filter:blur(2px)}
+.modal{border-radius:var(--radius-lg);padding:26px;box-shadow:0 24px 64px rgba(16,24,40,.2)}
+.modal h3{font-size:17px;font-weight:600;color:var(--ink)}
+.modal input{background:#FAFAFB;border:1px solid var(--border);border-radius:9px}
+.empty-state{color:var(--text2)}
+.es-icon{font-size:40px;opacity:.92}
+.typing-indicator span{background:var(--text3)}
+
+/* ---------- 20. 响应式 ---------- */
+@media(max-width:1180px){
+  :root{--sb-w:76px}
+  .sb-brand-text,.sb-group-title,.sb-label,.sb-foot{display:none}
+  .sb-brand{justify-content:center;padding:2px 0 18px}
+  .sidebar{padding:18px 10px}
+  .nav-link{justify-content:center;padding:10px 0}
+  .topbar{padding:0 22px}
+  .page{padding-left:22px;padding-right:22px}
+}
+@media(max-width:900px){
+  .interview-layout{grid-template-columns:1fr}
+  .hero-layout{grid-template-columns:1fr}
+  .competency-layout{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .interviewer-scores{grid-template-columns:repeat(2,1fr)}
+  .growth-timeline{grid-template-columns:1fr}
+  .ctree-container{grid-template-columns:1fr}
+  .ps-grid{grid-template-columns:1fr}
+  .topbar .tb-status{display:none}
+  .tb-title{font-size:17px}
+}
+</style>
 </head>
 <body>
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-brand"><span class="dot"></span>AI Career Copilot</div>
-  <div class="nav-links">
-    <div class="nav-link active" onclick="showPage('home')">首页</div>
-    <div class="nav-link" onclick="showPage('resume')">简历解析</div>
-    <div class="nav-link" onclick="showPage('interview')">AI 面试</div>
-    <div class="nav-link" onclick="showPage('report')">评分报告 ⭐</div>
-    <div class="nav-link" onclick="showPage('agents')">Agent 架构</div>
-    <div class="nav-link" onclick="showPage('dashboard')">数据看板</div>
-    <div class="nav-link" onclick="showPage('history')">面试记录</div>
-    <div class="nav-link" onclick="showPage('settings')">⚙️ 设置</div>
+<!-- ================= APP SHELL：左侧导航 + 顶部栏 ================= -->
+<aside class="sidebar" id="app-sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">AC</div>
+    <div class="sb-brand-text">
+      <span class="sb-name">Career Copilot</span>
+      <span class="sb-sub">AI 求职面试工作台</span>
+    </div>
   </div>
-  <div class="nav-right">
-    <div class="agent-count"><span class="ac-dot"></span>13 Agents Active</div>
-    <button class="btn-nav" onclick="showPage('interview')">开始使用 →</button>
+
+  <nav class="sb-nav">
+    <div class="sb-group">
+      <div class="sb-group-title">求职工作台</div>
+      <div class="nav-link active" data-page="home" onclick="showPage('home')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1.3"/><rect x="9" y="2" width="5" height="5" rx="1.3"/><rect x="2" y="9" width="5" height="5" rx="1.3"/><rect x="9" y="9" width="5" height="5" rx="1.3"/></svg></span>
+        <span class="sb-label">总览</span>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-title">求职准备</div>
+      <div class="nav-link" data-page="resume" onclick="showPage('resume')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 1.8h5.2L12.5 5v9.2H4z"/><path d="M9 1.8V5h3.5"/><path d="M6 8h4M6 10.6h4"/></svg></span>
+        <span class="sb-label">简历与岗位</span>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-title">面试中心</div>
+      <div class="nav-link" data-page="interview" onclick="showPage('interview')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.2 4.2A1.6 1.6 0 0 1 3.8 2.6h8.4a1.6 1.6 0 0 1 1.6 1.6v5.2a1.6 1.6 0 0 1-1.6 1.6H6.6L3.4 13.4V11H3.8a1.6 1.6 0 0 1-1.6-1.6z"/></svg></span>
+        <span class="sb-label">模拟面试</span>
+      </div>
+      <div class="nav-link" data-page="report" onclick="showPage('report')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.6 13.4h10.8"/><rect x="3.6" y="8.4" width="2.4" height="5" rx=".8"/><rect x="7.2" y="4.6" width="2.4" height="8.8" rx=".8"/><rect x="10.8" y="6.6" width="2.4" height="6.8" rx=".8"/></svg></span>
+        <span class="sb-label">评估报告</span>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-title">数据与架构</div>
+      <div class="nav-link" data-page="agents" onclick="showPage('agents')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="6.2" y="1.8" width="3.6" height="3" rx=".9"/><rect x="1.6" y="11.2" width="3.6" height="3" rx=".9"/><rect x="10.8" y="11.2" width="3.6" height="3" rx=".9"/><path d="M8 4.8v3.1M3.4 11.2V7.9h9.2v3.3M8 7.9v3.3"/></svg></span>
+        <span class="sb-label">Agent 架构</span>
+      </div>
+      <div class="nav-link" data-page="dashboard" onclick="showPage('dashboard')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.2 13.2V9.4M6 13.2V6.2M9.8 13.2V8M13.6 13.2V3.4"/></svg></span>
+        <span class="sb-label">数据看板</span>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-title">个人管理</div>
+      <div class="nav-link" data-page="history" onclick="showPage('history')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><path d="M8 4.6V8l2.4 1.6"/></svg></span>
+        <span class="sb-label">面试记录</span>
+      </div>
+      <div class="nav-link" data-page="settings" onclick="showPage('settings')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.4 5h4M9.4 5h4.2M2.4 11h2.4M7.6 11h6"/><circle cx="8" cy="5" r="1.7"/><circle cx="6.2" cy="11" r="1.7"/></svg></span>
+        <span class="sb-label">设置</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sb-foot">
+    <div class="sb-agent-pill"><span class="sb-dot"></span>13 Agents 在线</div>
   </div>
-</nav>
+</aside>
+
+<header class="topbar" id="app-topbar">
+  <div class="tb-left">
+    <div class="tb-crumb"><span>AI Career Copilot</span><span class="tb-sep">/</span><span id="tb-current">总览</span></div>
+    <h1 class="tb-title" id="tb-title">求职工作台</h1>
+  </div>
+  <div class="tb-right">
+    <div class="tb-status"><i></i>本地运行</div>
+    <button class="tb-btn tb-btn-ghost" onclick="showPage('settings')">设置</button>
+    <button class="tb-btn" onclick="showPage('resume')">＋ 上传简历</button>
+  </div>
+</header>
 
 <!-- HOME PAGE -->
 <div class="page active" id="page-home">
@@ -1106,9 +1499,7 @@ var _showOrig=showPage;showPage=function(page){
   currentPage=page;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   var t=document.getElementById('page-'+page);if(t)t.classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active');});
-  var m={home:0,resume:1,interview:2,report:3,agents:4,dashboard:5,history:6};
-  if(m[page]!==undefined){var ls=document.querySelectorAll('.nav-link');if(ls[m[page]])ls[m[page]].classList.add('active');}
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-page')===page);});
   if(page==='agents')renderAgentsPage();
   if(page==='history')renderHistoryPage();
   if(page==='dashboard'&&isAdminAuthenticated){renderDashboard();startSimulation();}
@@ -2393,9 +2784,7 @@ function showPage(page){
   currentPage = page;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  const map={home:0,resume:1,interview:2,report:3,agents:4,dashboard:5};
-  if(map[page]!==undefined){const links=document.querySelectorAll('.nav-link');if(links[map[page]])links[map[page]].classList.add('active');}
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.getAttribute('data-page')===page));
   if(page==='settings')loadSettings();
   if(page==='dashboard' && isAdminAuthenticated){renderDashboard();startSimulation();}
   window.scrollTo(0,0);
@@ -3419,6 +3808,42 @@ function startSimulation(){
 // Modal
 function showModal(title,body){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').textContent=body;document.getElementById('modal-overlay').classList.add('active');}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('active');}
+
+// ========== UI v4：顶栏标题联动 + 图表字体统一（纯展示层，不改业务逻辑） ==========
+(function(){
+  var PAGE_META={
+    home:['求职工作台','总览'],
+    resume:['简历与岗位','求职准备'],
+    interview:['模拟面试','面试中心'],
+    report:['评估报告','面试中心'],
+    agents:['Agent 架构','数据与架构'],
+    dashboard:['数据看板','数据与架构'],
+    history:['面试记录','个人管理'],
+    settings:['设置','个人管理']
+  };
+  function syncTopbar(page){
+    var meta=PAGE_META[page]||['求职工作台','总览'];
+    var t=document.getElementById('tb-title'),c=document.getElementById('tb-current');
+    if(t)t.textContent=meta[0];
+    if(c)c.textContent=meta[1];
+    document.title='AI Career Copilot · '+meta[0];
+  }
+  if(typeof showPage==='function'){
+    var _prevShowPage=showPage;
+    showPage=function(page){
+      var r=_prevShowPage.apply(this,arguments);
+      try{syncTopbar(page);}catch(e){}
+      return r;
+    };
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    try{syncTopbar('home');}catch(e){}
+  });
+  if(window.Chart){
+    Chart.defaults.font.family='"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif';
+    Chart.defaults.color='#7B818A';
+  }
+})();
 
 // Init
 window.addEventListener('DOMContentLoaded',()=>{trackEvent('app_open',{});});

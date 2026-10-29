@@ -20,7 +20,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     },
     show: false,  // 先隐藏，加载完再显示（避免白屏闪烁）
-    backgroundColor: '#0a1628',  // 深蓝色背景，匹配产品配色
+    backgroundColor: '#F5F6F7',  // 与 v4 浅灰白工作台配色一致，避免启动深色闪烁
     autoHideMenuBar: true  // 隐藏菜单栏，更像小程序
   });
 
