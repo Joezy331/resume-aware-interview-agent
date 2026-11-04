@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>管理员端 · 高保真原型全览</title>
+<style>/* ============================================================
+   AI Career Copilot · High-Fidelity Prototype Design System
+   Calm / professional / portfolio-grade. No AI-template feel.
+   ============================================================ */
+
+:root{
+  /* 与 EXE UI v4 完全对齐的浅灰白 SaaS 工作台令牌 */
+  --bg:#F5F6F7;
+  --bg-soft:#FAFAFA;
+  --panel:#FFFFFF;
+  --panel-2:#FCFDFB;
+
+  --ink:#202124;
+  --ink-2:#7B818A;
+  --ink-3:#9AA0A6;
+  --muted:#8A8F98;
+
+  --line:#E8EAED;
+  --line-2:#F0F2F4;
+  --line-strong:#DDE0E4;
+
+  /* 主强调色：荧光黄绿（与 EXE 一致） */
+  --pink:#C8F36A;
+  --pink-soft:#F1FBD4;
+  --pink-ink:#2E3B13;
+  --pink-line:#D9ECA0;
+
+  --green:#5B8C4A;
+  --green-soft:#EEF3EC;
+  --blue:#3E7CB1;
+  --blue-soft:#EAF1F8;
+  --amber:#C9A227;
+  --amber-soft:#FBF6E6;
+  --purple:#9A7BB5;
+
+  --shadow-sm:0 1px 2px rgba(32,33,36,.04),0 1px 3px rgba(32,33,36,.05);
+  --shadow-md:0 6px 18px rgba(32,33,36,.06),0 2px 6px rgba(32,33,36,.04);
+  --shadow-lg:0 16px 40px rgba(32,33,36,.10);
+
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:18px;
+
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --sidebar-w:236px;
+  --topbar-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--pink-soft);color:var(--pink-ink)}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  padding:20px 14px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#F1FBD4);
+  border:1px solid var(--line);
+  display:grid;place-items:center;font-size:18px;
+}
+.brand .name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand .sub{font-size:11px;color:var(--ink-3);margin-top:-2px}
+
+.nav-group{margin-top:6px}
+.nav-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;color:var(--ink-2);
+  font-size:13.5px;font-weight:500;transition:all .15s ease;
+  margin-bottom:2px;
+}
+.nav-link .ico{width:18px;text-align:center;opacity:.8}
+.nav-link:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-link.active{background:var(--pink);color:var(--pink-ink)}
+.nav-link.active .ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+.me{display:flex;align-items:center;gap:10px}
+.me .avatar{width:34px;height:34px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:16px}
+.me .nm{font-size:12.5px;font-weight:600}
+.me .rl{font-size:11px;color:var(--ink-3)}
+
+.workspace-switch{display:flex;gap:6px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:4px;margin-top:10px}
+.workspace-switch button{flex:1;padding:7px 0;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.workspace-switch button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  height:var(--topbar-h);flex:0 0 var(--topbar-h);
+  border-bottom:1px solid var(--line);background:rgba(247,247,245,.8);
+  backdrop-filter:saturate(1.2) blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{font-size:12px;color:var(--ink-3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right .pill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);padding:5px 10px;border-radius:999px;background:var(--panel)}
+.proto-flag{font-size:10.5px;letter-spacing:.06em;color:var(--pink-ink);background:var(--pink-soft);border:1px solid var(--pink-line);padding:5px 10px;border-radius:999px;font-weight:600}
+
+.view{padding:30px 32px 60px;max-width:1280px;width:100%;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:22px}
+.page-head .eyebrow{font-size:12px;color:var(--pink-ink);font-weight:600;letter-spacing:.04em}
+.page-head h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.page-head p{color:var(--ink-2);margin-top:6px;max-width:680px;font-size:13.5px}
+
+/* ---------- Layout grid ---------- */
+.grid{display:grid;gap:18px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-5{grid-template-columns:repeat(5,1fr)}
+.span-2{grid-column:span 2}
+.split{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.split-r{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card.hov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-title{font-size:13px;font-weight:650;color:var(--ink);display:flex;align-items:center;line-height:1.3;gap:8px}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);transform:translateY(0.5px)}
+.card-sub{font-size:12px;color:var(--ink-2);margin-top:3px}
+.card-pad-sm{padding:16px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:11px;font-size:13.5px;font-weight:600;
+  transition:all .16s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--pink);color:var(--pink-ink)}
+.btn-primary:hover{background:#B7E84F;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:var(--bg-soft);border-color:var(--ink-3)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-soft);color:var(--ink)}
+.btn-pink{background:var(--pink-soft);color:var(--pink-ink);border:1px solid var(--pink-line)}
+.btn-pink:hover{background:#ECF7D6}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.tag-pink{background:var(--pink-soft);color:var(--pink-ink);border-color:var(--pink-line)}
+.tag-green{background:var(--green-soft);color:#4d6b48;border-color:#DCE7D8}
+.tag-blue{background:var(--blue-soft);color:#46627e;border-color:#DCE6EE}
+.tag-amber{background:var(--amber-soft);color:#8a6d10;border-color:#EFE4BD}
+.tag-gray{background:var(--bg-soft);color:var(--ink-3);border-color:var(--line)}
+.tag-soft{background:var(--bg-soft);color:var(--ink-2)}
+
+/* ---------- Inputs ---------- */
+.input{
+  width:100%;padding:11px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;font-size:13.5px;background:var(--panel);color:var(--ink);
+  transition:border-color .15s, box-shadow .15s;font-family:inherit;
+}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.06)}
+.input::placeholder{color:var(--ink-3)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+label.field{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+
+/* ---------- Progress / bars ---------- */
+.progress{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.progress>.bar{height:100%;background:var(--ink);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.progress.pink>.bar{background:var(--pink)}
+.progress.green>.bar{background:var(--green)}
+.meter{display:flex;align-items:center;gap:10px}
+.meter .lab{font-size:12.5px;color:var(--ink-2);width:96px;flex:0 0 96px}
+.meter .val{font-size:12.5px;font-weight:650;width:38px;text-align:right;flex:0 0 38px}
+.meter .track{flex:1;height:7px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter .track>i{display:block;height:100%;background:var(--ink);border-radius:999px}
+
+/* ---------- Avatar ---------- */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:0 0 38px}
+.avatar.sm{width:30px;height:30px;font-size:14px;flex-basis:30px}
+.avatar.lg{width:52px;height:52px;font-size:24px;flex-basis:52px}
+.avatar.blue{background:var(--blue-soft);border-color:#DCE6EE}
+.avatar.green{background:var(--green-soft);border-color:#DCE7D8}
+.avatar.amber{background:var(--amber-soft);border-color:#EFE4BD}
+.avatar.purple{background:#F3EEF7;border-color:#E6DCF0}
+
+/* ---------- Stat ---------- */
+.stat .k{font-size:12px;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;color:var(--ink-3);font-weight:600}
+.stat .d{font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.stat .d.down{color:#D45D4D}
+
+/* ---------- List / rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.row:last-child{border-bottom:none}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:600}
+.row .meta{font-size:12px;color:var(--ink-3);margin-top:1px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-2)}
+.kv .v{font-weight:600}
+
+/* ---------- Dropdown / select ---------- */
+.select{
+  position:relative;display:inline-block;
+}
+.select>button{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);min-width:150px;justify-content:space-between;
+}
+.select .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;z-index:30;display:none}
+.select.open .menu{display:block}
+.select .menu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.select .menu button:hover{background:var(--bg-soft);color:var(--ink)}
+.select .menu button.on{color:var(--ink);font-weight:650}
+
+/* ---------- Tabs ---------- */
+.tabs{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.tabs button{padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Chat / interview ---------- */
+.chat{display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:86%;padding:13px 16px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.bubble.q{background:var(--ink);color:#fff;align-self:flex-start;border-bottom-left-radius:5px}
+.bubble.a{background:var(--panel);border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:5px}
+.bubble .who{font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+
+/* ---------- Agent status ---------- */
+.agent-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.agent-row:last-child{border-bottom:none}
+.status-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;position:relative}
+.status-dot.run{background:var(--green)}
+.status-dot.run::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.4;animation:ping 1.4s ease-out infinite}
+.status-dot.done{background:var(--blue)}
+.status-dot.wait{background:var(--ink-3)}
+.status-dot.warn{background:var(--amber)}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Empty / loading ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+.empty .ill{font-size:42px;opacity:.5;margin-bottom:10px}
+.empty p{font-size:13px}
+.skeleton{background:linear-gradient(90deg,var(--line-2) 25%,#EDEDE8 37%,var(--line-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;height:14px;margin:8px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:all .3s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-card{background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px}
+.toast-card .ic{color:var(--green)}
+
+/* ---------- Modal ---------- */
+.modal-mask{position:fixed;inset:0;background:rgba(24,24,27,.32);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;animation:fade .2s ease}
+.modal{background:var(--panel);border-radius:var(--r-lg);width:min(460px,92vw);padding:26px;box-shadow:var(--shadow-lg);animation:pop .25s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+
+/* ---------- Hero / upload ---------- */
+.upload-zone{
+  border:1.8px dashed var(--line-strong);border-radius:var(--r-lg);
+  background:var(--panel-2);padding:54px 30px;text-align:center;transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--pink);background:var(--pink-soft)}
+.upload-ill{font-size:46px;margin-bottom:12px}
+.upload-zone h3{font-size:18px;font-weight:700}
+.upload-zone p{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+/* ---------- Misc ---------- */
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.center{text-align:center}
+.right{text-align:right}
+.flex{display:flex}
+.between{display:flex;justify-content:space-between;align-items:center}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}
+.wrap{flex-wrap:wrap}
+.items-center{align-items:center}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.section-note{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.badge-step{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;flex:0 0 22px;box-sizing:border-box}
+.flow-hint{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+.note-line{border-left:3px solid var(--pink);background:var(--pink-soft);padding:11px 14px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--pink-ink)}
+.mock-tag{display:inline-flex;align-items:center;line-height:1;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);border:1px solid #EFE4BD;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:8px}
+
+/* donut legend */
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .li{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+
+/* ---------- Charts (shared chart toolkit) ---------- */
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.chart-legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.chart-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:block;line-height:1.5}
+.chart-note .mock-tag{margin-left:0;margin-right:8px}
+.grid-line{stroke:var(--line-2);stroke-width:1}
+.axis-lab{fill:var(--ink-3);font-size:10px;font-family:var(--font)}
+.bar-lab{fill:var(--ink-2);font-size:10.5px;font-family:var(--font)}
+.bar-val{fill:var(--ink);font-size:10.5px;font-weight:650;font-family:var(--font)}
+.spark{display:block}
+.ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring-row .ring-meta{flex:1;min-width:120px}
+.chart-empty{display:grid;place-items:center;min-height:150px;color:var(--ink-3);font-size:12.5px;gap:6px}
+.chart-empty .ill{font-size:26px;opacity:.45}
+
+/* bar entrance animation (used by charts + meters) */
+@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growBarY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chart rect.anim-x{transform-origin:left center;animation:growBar .7s cubic-bezier(.2,.7,.3,1) both}
+.chart rect.anim-y{transform-origin:center bottom;animation:growBarY .7s cubic-bezier(.2,.7,.3,1) both}
+/* 环形图中心数字：HTML 覆盖层（不依赖 SVG text-anchor） */
+.ring-wrap{position:relative;display:inline-flex;vertical-align:middle}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.15}
+.ring-center b{font-weight:700;color:#18181B;letter-spacing:-.01em}
+.ring-center i{font-style:normal;font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.ring-row .ring-wrap{flex:0 0 auto}
+.meter .track>i{transition:width .8s cubic-bezier(.2,.7,.3,1)}
+
+/* ---------- nav: star + agents-active + 开始使用 ---------- */
+.nav-star{color:#E0B341;font-size:11px;margin-left:2px}
+.agents-active{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);padding:0 2px 12px}
+.agents-active .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+.agents-active .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.45;animation:ping 1.6s ease-out infinite}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+
+/* ---------- 简历解析 4 步向导 ---------- */
+.wizard{display:flex;align-items:flex-start;gap:0}
+.wz-step{flex:1;position:relative;text-align:center}
+.wz-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--ink-2);font-weight:700;font-size:13px;transition:all .2s}
+.wz-t{font-size:12.5px;font-weight:600;margin-top:7px;color:var(--ink-2)}
+.wz-s{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.wz-step.on .wz-n{background:var(--ink);border-color:var(--ink);color:#fff}
+.wz-step.on .wz-t{color:var(--ink)}
+.wz-step.done .wz-n{background:var(--green);border-color:var(--green);color:#fff}
+.wz-step.done .wz-t{color:var(--green)}
+.wz-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--line);z-index:-0}
+.wz-step.done .wz-line{background:var(--green)}
+.agent-row.sm{padding:9px 0}
+.agent-row.sm .ttl{font-weight:600}
+
+
+/* ===== 聚合画板专用覆盖（Ardot 静态渲染） ===== */
+*{animation:none!important;transition:none!important}
+html,body{height:auto}
+body{background:#EDEEF0}
+.board{width:1440px;margin:0 auto;padding:44px 0 90px;display:flex;flex-direction:column;gap:34px;align-items:center}
+.board-head{width:1360px;background:#FFFFFF;border:1px solid #E8EAED;border-radius:18px;padding:30px 34px;
+  display:flex;align-items:center;gap:18px;box-shadow:0 6px 22px rgba(32,33,36,.05)}
+.board-head .chip{font-size:13px;font-weight:800;letter-spacing:.08em;padding:7px 14px;border-radius:999px;
+  background:#C8F36A;color:#2E3B13;flex:0 0 auto}
+.board-head.admin .chip{background:#2E3B13;color:#C8F36A}
+.board-head .htxt h1{font-size:24px;font-weight:750;letter-spacing:-.02em;margin:0}
+.board-head .htxt .sub{font-size:13px;color:#7B818A;margin-top:5px}
+.board-head .hmeta{margin-left:auto;flex:0 0 auto;text-align:right;font-size:12px;color:#5A616B;line-height:20px;display:flex;flex-direction:column;gap:4px}
+.board-head .hmeta .hm-line{display:block;white-space:nowrap;line-height:20px;height:20px}
+.frame-wrap{width:1440px}
+.frame-label{width:1360px;margin:0 auto 12px;display:flex;align-items:center;gap:12px}
+.frame-label .no{width:30px;height:30px;border-radius:9px;background:#6B8CAE;color:#fff;display:grid;place-items:center;
+  font-size:13px;font-weight:800;flex:0 0 30px}
+.frame-wrap.admin .frame-label .no{background:#2E3B13;color:#C8F36A}
+.frame-label .fl{font-size:16px;font-weight:700;color:#202124}
+.frame-label code{margin-left:auto;font-size:11px;color:#9AA0A6;background:#FFFFFF;border:1px solid #E8EAED;
+  padding:3px 9px;border-radius:7px;font-family:ui-monospace,monospace}
+.frame-box{width:1440px;min-height:900px;background:#FFFFFF;border:1px solid #E8EAED;border-radius:14px;
+  overflow:hidden;display:flex}
+.frame-box .app{min-height:900px!important;width:1440px}
+.frame-box .sidebar{position:relative!important;top:auto!important;height:auto!important;align-self:stretch}
+.frame-box .topbar{position:relative!important}
+.frame-box .view{animation:none!important}
+/* br 换行转块级节点：每行独立，Ardot 不再重叠 */
+.brk-li{display:block;min-height:1em}
+.brk-sp{display:block;height:10px}
+</style></head>
+<body><div class="board">
+  <div class="board-head admin">
+    <span class="chip">ADMIN</span>
+    <div class="htxt"><h1>管理员端 · 高保真原型全览</h1><div class="sub">与低保真管理员端 9 帧逐页对齐 · 运营 / 用户 / 面试 / 评分 / 岗位 / Agent / 日志 / 系统</div></div>
+    <div class="hmeta">
+      <div class="hm-line">简历感知 · AI 面试 · 多 Agent 评估</div>
+      <div class="hm-line">desktop 1440 · UI v4 · 2026.10.29</div>
+      <div class="hm-line">共 9 个功能页</div>
+    </div>
+  </div>
+  <div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">01</span><span class="fl">Overview 数据看板</span><code>a/dashboard</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link active" href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>数据看板</h1><div class="crumb">Admin · Overview</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN · SYSTEM OVERVIEW</div><span class="mock-tag">MOCK DATA</span><h2>系统数据看板</h2>
+    <p>面向管理员的产品运行全景。以下为演示数据。</p></div>
+    <div class="grid cols-4"><div class="card"><div class="stat"><div class="k">用户数</div><div class="v">1,284</div><div class="d ">+8.2%</div></div></div><div class="card"><div class="stat"><div class="k">累计面试</div><div class="v">3,602</div><div class="d ">+12%</div></div></div><div class="card"><div class="stat"><div class="k">平均评分</div><div class="v">74.6</div><div class="d ">+1.4</div></div></div><div class="card"><div class="stat"><div class="k">完成率</div><div class="v">91%</div><div class="d ">+3%</div></div></div></div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>面试趋势（近 12 周）</div><div class="mt-12"><svg viewBox="0 0 580 160" width="100%"><line x1="12" y1="46.0" x2="568" y2="46.0" stroke="#EFEFEA"></line><line x1="12" y1="80.0" x2="568" y2="80.0" stroke="#EFEFEA"></line><line x1="12" y1="114.0" x2="568" y2="114.0" stroke="#EFEFEA"></line><polygon points="12,148 12.0,67.0 62.5,73.3 113.1,53.0 163.6,62.4 214.2,49.9 264.7,57.7 315.3,39.0 365.8,45.3 416.4,35.9 466.9,40.6 517.5,26.6 568.0,32.8 568,148" fill="rgba(200,243,106,.10)"></polygon><polyline points="12.0,67.0 62.5,73.3 113.1,53.0 163.6,62.4 214.2,49.9 264.7,57.7 315.3,39.0 365.8,45.3 416.4,35.9 466.9,40.6 517.5,26.6 568.0,32.8" fill="none" stroke="#C8F36A" stroke-width="2.5" stroke-linejoin="round"></polyline><circle cx="568.0" cy="32.8" r="4" fill="#C8F36A"></circle></svg></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>岗位分布</div><div class="mt-12 flex gap-20 items-center"><span class="ring-wrap"><svg viewBox="0 0 180 180" width="150" height="150"><circle cx="90" cy="90" r="62" fill="none" stroke="#F0F0EC" stroke-width="22"></circle><path d="M 90.00 28.00 A 62 62 0 0 1 132.44 135.20" fill="none" stroke="#C8F36A" stroke-width="22" stroke-linecap="butt"></path><path d="M 132.44 135.20 A 62 62 0 0 1 47.56 135.20" fill="none" stroke="#7C9A78" stroke-width="22" stroke-linecap="butt"></path><path d="M 47.56 135.20 A 62 62 0 0 1 31.03 70.84" fill="none" stroke="#6B8CAE" stroke-width="22" stroke-linecap="butt"></path><path d="M 31.03 70.84 A 62 62 0 0 1 60.13 35.67" fill="none" stroke="#9A7BB5" stroke-width="22" stroke-linecap="butt"></path><path d="M 60.13 35.67 A 62 62 0 0 1 90.00 28.00" fill="none" stroke="#C9A227" stroke-width="22" stroke-linecap="butt"></path></svg><span class="ring-center"><b style="font-size:20px">100</b><i>份</i></span></span><div class="legend"><div class="li"><span class="sw" style="background:#C8F36A"></span>AI 产品经理 · 38%</div><div class="li"><span class="sw" style="background:#7C9A78"></span>产品经理 · 24%</div><div class="li"><span class="sw" style="background:#6B8CAE"></span>数据分析 · 18%</div><div class="li"><span class="sw" style="background:#9A7BB5"></span>AI 运营 · 12%</div><div class="li"><span class="sw" style="background:#C9A227"></span>其他 · 8%</div></div></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>能力维度分布</div><div class="mt-12"><div class="meter"><span class="lab">沟通表达</span><span class="track"><i style="width:82%;background:#C8F36A"></i></span><span class="val">82</span></div><div class="meter"><span class="lab">商业洞察</span><span class="track"><i style="width:74%;background:#7C9A78"></i></span><span class="val">74</span></div><div class="meter"><span class="lab">技术深度</span><span class="track"><i style="width:76%;background:#6B8CAE"></i></span><span class="val">76</span></div><div class="meter"><span class="lab">领导力</span><span class="track"><i style="width:70%;background:#9A7BB5"></i></span><span class="val">70</span></div><div class="meter"><span class="lab">战略思维</span><span class="track"><i style="width:78%;background:#C9A227"></i></span><span class="val">78</span></div><div class="meter"><span class="lab">文化匹配</span><span class="track"><i style="width:80%;background:#52525B"></i></span><span class="val">80</span></div></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>面试难度分布</div><div class="mt-12"><div class="meter"><span class="lab">校招</span><span class="track"><i style="width:18%;background:#C8F36A"></i></span><span class="val">18</span></div><div class="meter"><span class="lab">普通社招</span><span class="track"><i style="width:40%;background:#7C9A78"></i></span><span class="val">40</span></div><div class="meter"><span class="lab">大厂</span><span class="track"><i style="width:24%;background:#6B8CAE"></i></span><span class="val">24</span></div><div class="meter"><span class="lab">BAT</span><span class="track"><i style="width:12%;background:#9A7BB5"></i></span><span class="val">12</span></div><div class="meter"><span class="lab">Leader</span><span class="track"><i style="width:6%;background:#C9A227"></i></span><span class="val">6</span></div></div>
+        <div class="divider"></div><div class="card-title"><span class="dot"></span>Agent 健康度</div><div class="mt-8"><div class="meter"><span class="lab">HR Agent 98%</span><span class="track"><i style="width:98%;background:var(--green)"></i></span><span class="val">98</span></div><div class="meter"><span class="lab">Business Agent 97%</span><span class="track"><i style="width:97%;background:var(--green)"></i></span><span class="val">97</span></div><div class="meter"><span class="lab">Professional Agent 96%</span><span class="track"><i style="width:96%;background:var(--green)"></i></span><span class="val">96</span></div><div class="meter"><span class="lab">Leader Agent 95%</span><span class="track"><i style="width:95%;background:var(--green)"></i></span><span class="val">95</span></div><div class="meter"><span class="lab">Chief Evaluation 99%</span><span class="track"><i style="width:99%;background:var(--green)"></i></span><span class="val">99</span></div></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>用户增长趋势</div><div class="card-sub">近 8 周累计用户数</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">1386.7</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">1054.2</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">721.6</text><path d="M36.0 157.4 L108.9 135.0 L181.7 116.3 L254.6 102.0 L327.4 85.6 L400.3 71.6 L473.1 56.1 L546.0 41.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#6B8CAE" opacity=".08"></path><path d="M36.0 157.4 L108.9 135.0 L181.7 116.3 L254.6 102.0 L327.4 85.6 L400.3 71.6 L473.1 56.1 L546.0 41.6" fill="none" stroke="#6B8CAE" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="157.4" r="3" fill="#6B8CAE"></circle><circle cx="108.9" cy="135.0" r="3" fill="#6B8CAE"></circle><circle cx="181.7" cy="116.3" r="3" fill="#6B8CAE"></circle><circle cx="254.6" cy="102.0" r="3" fill="#6B8CAE"></circle><circle cx="327.4" cy="85.6" r="3" fill="#6B8CAE"></circle><circle cx="400.3" cy="71.6" r="3" fill="#6B8CAE"></circle><circle cx="473.1" cy="56.1" r="3" fill="#6B8CAE"></circle><circle cx="546.0" cy="41.6" r="3" fill="#6B8CAE"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">W1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">W2</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">W3</text><text class="axis-lab" x="249.0" y="198.0" font-size="10.0">W4</text><text class="axis-lab" x="321.8" y="198.0" font-size="10.0">W5</text><text class="axis-lab" x="394.7" y="198.0" font-size="10.0">W6</text><text class="axis-lab" x="467.5" y="198.0" font-size="10.0">W7</text><text class="axis-lab" x="540.4" y="198.0" font-size="10.0">W8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>面试完成率趋势</div><div class="card-sub">近 30 周完成率（%）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">100.4</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">87.2</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">73.9</text><path d="M36.0 118.9 L108.9 106.4 L181.7 112.6 L254.6 93.9 L327.4 81.3 L400.3 87.6 L473.1 75.1 L546.0 62.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#7C9A78" opacity=".08"></path><path d="M36.0 118.9 L108.9 106.4 L181.7 112.6 L254.6 93.9 L327.4 81.3 L400.3 87.6 L473.1 75.1 L546.0 62.6" fill="none" stroke="#7C9A78" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="118.9" r="3" fill="#7C9A78"></circle><circle cx="108.9" cy="106.4" r="3" fill="#7C9A78"></circle><circle cx="181.7" cy="112.6" r="3" fill="#7C9A78"></circle><circle cx="254.6" cy="93.9" r="3" fill="#7C9A78"></circle><circle cx="327.4" cy="81.3" r="3" fill="#7C9A78"></circle><circle cx="400.3" cy="87.6" r="3" fill="#7C9A78"></circle><circle cx="473.1" cy="75.1" r="3" fill="#7C9A78"></circle><circle cx="546.0" cy="62.6" r="3" fill="#7C9A78"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">W1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">W5</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">W9</text><text class="axis-lab" x="246.2" y="198.0" font-size="10.0">W13</text><text class="axis-lab" x="319.0" y="198.0" font-size="10.0">W17</text><text class="axis-lab" x="391.9" y="198.0" font-size="10.0">W21</text><text class="axis-lab" x="464.7" y="198.0" font-size="10.0">W25</text><text class="axis-lab" x="537.6" y="198.0" font-size="10.0">W29</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>评分分布</div><div class="card-sub">全平台面试得分分布</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="360" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="360" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">22</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">44</text><rect class="anim-y" x="46.0" y="136.0" width="34.0" height="18.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="57.1" y="130.0" font-size="10.5">6%</text><text class="bar-lab" x="54.2" y="170.0" font-size="10.5">&lt;60</text><rect class="anim-y" x="112.0" y="100.1" width="34.0" height="53.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="94.1" font-size="10.5">18%</text><text class="bar-lab" x="114.3" y="170.0" font-size="10.5">60-69</text><rect class="anim-y" x="178.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="34.2" font-size="10.5">38%</text><text class="bar-lab" x="180.3" y="170.0" font-size="10.5">70-79</text><rect class="anim-y" x="244.0" y="70.2" width="34.0" height="83.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="64.2" font-size="10.5">28%</text><text class="bar-lab" x="246.3" y="170.0" font-size="10.5">80-89</text><rect class="anim-y" x="310.0" y="124.1" width="34.0" height="29.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="118.1" font-size="10.5">10%</text><text class="bar-lab" x="318.2" y="170.0" font-size="10.5">90+</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>任务队列积压</div><div class="card-sub">近 8 个时间片的待处理任务数</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="558" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="558" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">8</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">16</text><rect class="anim-y" x="46.0" y="89.0" width="34.0" height="65.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="51.9" y="83.0" font-size="10.5">8 个</text><text class="bar-lab" x="57.1" y="170.0" font-size="10.5">T1</text><rect class="anim-y" x="112.0" y="64.6" width="34.0" height="89.4" rx="5" fill="#18181B"></rect><text class="bar-val" x="114.9" y="58.6" font-size="10.5">11 个</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">T2</text><rect class="anim-y" x="178.0" y="80.8" width="34.0" height="73.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="183.9" y="74.8" font-size="10.5">9 个</text><text class="bar-lab" x="189.1" y="170.0" font-size="10.5">T3</text><rect class="anim-y" x="244.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="246.9" y="34.2" font-size="10.5">14 个</text><text class="bar-lab" x="255.1" y="170.0" font-size="10.5">T4</text><rect class="anim-y" x="310.0" y="56.5" width="34.0" height="97.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="312.9" y="50.5" font-size="10.5">12 个</text><text class="bar-lab" x="321.1" y="170.0" font-size="10.5">T5</text><rect class="anim-y" x="376.0" y="72.7" width="34.0" height="81.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="378.9" y="66.7" font-size="10.5">10 个</text><text class="bar-lab" x="387.1" y="170.0" font-size="10.5">T6</text><rect class="anim-y" x="442.0" y="48.3" width="34.0" height="105.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="444.9" y="42.3" font-size="10.5">13 个</text><text class="bar-lab" x="453.1" y="170.0" font-size="10.5">T7</text><rect class="anim-y" x="508.0" y="56.5" width="34.0" height="97.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="510.9" y="50.5" font-size="10.5">12 个</text><text class="bar-lab" x="519.1" y="170.0" font-size="10.5">T8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>后台模块</div>
+      <div class="grid cols-3 mt-12" style="gap:12px">
+        <div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/users')"><div class="muted small">用户数据</div></div><div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/interviews')"><div class="muted small">面试数据</div></div><div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/jobs')"><div class="muted small">岗位数据</div></div><div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/agent-detail')"><div class="muted small">Agent 详情</div></div><div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/models')"><div class="muted small">模型调用</div></div><div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('#/a/system')"><div class="muted small">系统状态</div></div>
+      </div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">02</span><span class="fl">Users 用户数据</span><code>a/users</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>用户数据</h1><div class="crumb">Admin · Users</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN</div><span class="mock-tag">MOCK DATA</span><h2>用户数据</h2></div>
+    <div class="card"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--ink-3);border-bottom:1px solid var(--line)"><th style="padding:10px 8px;font-weight:600">用户</th><th style="padding:10px 8px;font-weight:600">目标岗位</th><th style="padding:10px 8px;font-weight:600">面试数</th><th style="padding:10px 8px;font-weight:600">平均分</th></tr></thead><tbody><tr><td><div class="flex items-center gap-12"><div class="avatar sm">🐱</div>江同学</div></td><td>AI 产品经理</td><td>8</td><td><b>78</b></td><td>09-29</td><td><span class="tag tag-green">活跃</span></td></tr><tr><td><div class="flex items-center gap-12"><div class="avatar sm">🐱</div>林同学</div></td><td>数据分析师</td><td>5</td><td><b>71</b></td><td>09-25</td><td><span class="tag tag-green">活跃</span></td></tr><tr><td><div class="flex items-center gap-12"><div class="avatar sm">🐱</div>王同学</div></td><td>产品经理</td><td>3</td><td><b>69</b></td><td>09-20</td><td><span class="tag tag-gray">沉默</span></td></tr><tr><td><div class="flex items-center gap-12"><div class="avatar sm">🐱</div>赵同学</div></td><td>AI 运营</td><td>6</td><td><b>74</b></td><td>09-28</td><td><span class="tag tag-green">活跃</span></td></tr></tbody></table></div><div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>用户增长趋势</div><div class="card-sub">近 8 周累计注册用户数</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">1386.7</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">1054.2</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">721.6</text><path d="M36.0 157.4 L108.9 135.0 L181.7 116.3 L254.6 102.0 L327.4 85.6 L400.3 71.6 L473.1 56.1 L546.0 41.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#6B8CAE" opacity=".08"></path><path d="M36.0 157.4 L108.9 135.0 L181.7 116.3 L254.6 102.0 L327.4 85.6 L400.3 71.6 L473.1 56.1 L546.0 41.6" fill="none" stroke="#6B8CAE" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="157.4" r="3" fill="#6B8CAE"></circle><circle cx="108.9" cy="135.0" r="3" fill="#6B8CAE"></circle><circle cx="181.7" cy="116.3" r="3" fill="#6B8CAE"></circle><circle cx="254.6" cy="102.0" r="3" fill="#6B8CAE"></circle><circle cx="327.4" cy="85.6" r="3" fill="#6B8CAE"></circle><circle cx="400.3" cy="71.6" r="3" fill="#6B8CAE"></circle><circle cx="473.1" cy="56.1" r="3" fill="#6B8CAE"></circle><circle cx="546.0" cy="41.6" r="3" fill="#6B8CAE"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">W1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">W2</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">W3</text><text class="axis-lab" x="249.0" y="198.0" font-size="10.0">W4</text><text class="axis-lab" x="321.8" y="198.0" font-size="10.0">W5</text><text class="axis-lab" x="394.7" y="198.0" font-size="10.0">W6</text><text class="axis-lab" x="467.5" y="198.0" font-size="10.0">W7</text><text class="axis-lab" x="540.4" y="198.0" font-size="10.0">W8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>活跃 / 沉默占比</div><div class="card-sub">共 1,284 位注册用户</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="54" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="60" cy="60" r="54" fill="none" stroke="#7C9A78" stroke-width="12" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="78.0" transform="rotate(-90 60 60)"></circle></svg><span class="ring-center"><b style="font-size:28px">77%</b><i>活跃率</i></span></span><div class="ring-meta"><svg class="chart" viewBox="0 0 236 66" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">活跃</text><rect x="64" y="12" width="122" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="64" y="12" width="116.2" height="12" rx="6" fill="#C8F36A"></rect><text class="bar-val" x="214.4" y="23">986</text><text class="bar-lab" x="6" y="51" font-size="10.5">沉默</text><rect x="64" y="40" width="122" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="64" y="40" width="35.1" height="12" rx="6" fill="#7C9A78"></rect><text class="bar-val" x="214.4" y="51">298</text></svg></div></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">03</span><span class="fl">Interviews 面试数据</span><code>a/interviews</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>面试数据</h1><div class="crumb">Admin · Interviews</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN</div><span class="mock-tag">MOCK DATA</span><h2>面试数据</h2></div>
+    <div class="card"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--ink-3);border-bottom:1px solid var(--line)"><th style="padding:10px 8px;font-weight:600">面试编号</th><th style="padding:10px 8px;font-weight:600">岗位</th><th style="padding:10px 8px;font-weight:600">难度</th><th style="padding:10px 8px;font-weight:600">评分</th><th style="padding:10px 8px;font-weight:600">完成率</th></tr></thead><tbody><tr><td>INT-2041</td><td>AI 产品经理</td><td><span class="tag tag-soft">标准</span></td><td><b>78</b></td><td>92%</td></tr><tr><td>INT-2040</td><td>数据分析师</td><td><span class="tag tag-soft">挑战</span></td><td><b>71</b></td><td>88%</td></tr><tr><td>INT-2039</td><td>产品经理</td><td><span class="tag tag-soft">标准</span></td><td><b>69</b></td><td>90%</td></tr><tr><td>INT-2038</td><td>AI 运营</td><td><span class="tag tag-soft">轻量</span></td><td><b>74</b></td><td>95%</td></tr></tbody></table></div><div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>完成率趋势</div><div class="card-sub">近 30 周（%）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">100.4</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">87.2</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">73.9</text><path d="M36.0 118.9 L108.9 106.4 L181.7 112.6 L254.6 93.9 L327.4 81.3 L400.3 87.6 L473.1 75.1 L546.0 62.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#7C9A78" opacity=".08"></path><path d="M36.0 118.9 L108.9 106.4 L181.7 112.6 L254.6 93.9 L327.4 81.3 L400.3 87.6 L473.1 75.1 L546.0 62.6" fill="none" stroke="#7C9A78" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="118.9" r="3" fill="#7C9A78"></circle><circle cx="108.9" cy="106.4" r="3" fill="#7C9A78"></circle><circle cx="181.7" cy="112.6" r="3" fill="#7C9A78"></circle><circle cx="254.6" cy="93.9" r="3" fill="#7C9A78"></circle><circle cx="327.4" cy="81.3" r="3" fill="#7C9A78"></circle><circle cx="400.3" cy="87.6" r="3" fill="#7C9A78"></circle><circle cx="473.1" cy="75.1" r="3" fill="#7C9A78"></circle><circle cx="546.0" cy="62.6" r="3" fill="#7C9A78"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">W1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">W5</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">W9</text><text class="axis-lab" x="246.2" y="198.0" font-size="10.0">W13</text><text class="axis-lab" x="319.0" y="198.0" font-size="10.0">W17</text><text class="axis-lab" x="391.9" y="198.0" font-size="10.0">W21</text><text class="axis-lab" x="464.7" y="198.0" font-size="10.0">W25</text><text class="axis-lab" x="537.6" y="198.0" font-size="10.0">W29</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>评分分布</div><div class="card-sub">全部面试得分的区间占比</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="360" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="360" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">22</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">44</text><rect class="anim-y" x="46.0" y="136.0" width="34.0" height="18.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="57.1" y="130.0" font-size="10.5">6%</text><text class="bar-lab" x="54.2" y="170.0" font-size="10.5">&lt;60</text><rect class="anim-y" x="112.0" y="100.1" width="34.0" height="53.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="94.1" font-size="10.5">18%</text><text class="bar-lab" x="114.3" y="170.0" font-size="10.5">60-69</text><rect class="anim-y" x="178.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="34.2" font-size="10.5">38%</text><text class="bar-lab" x="180.3" y="170.0" font-size="10.5">70-79</text><rect class="anim-y" x="244.0" y="70.2" width="34.0" height="83.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="64.2" font-size="10.5">28%</text><text class="bar-lab" x="246.3" y="170.0" font-size="10.5">80-89</text><rect class="anim-y" x="310.0" y="124.1" width="34.0" height="29.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="118.1" font-size="10.5">10%</text><text class="bar-lab" x="318.2" y="170.0" font-size="10.5">90+</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">04</span><span class="fl">Scores 评分数据</span><code>a/scores</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>评分数据</h1><div class="crumb">Admin · Scores</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN · SCORES</div><span class="mock-tag">MOCK DATA</span><h2>评分数据</h2>
+    <p>全站面试评分的六维均值与区间分布，用于校准动态权重模板。</p></div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card"><div class="card-title"><span class="dot"></span>📐 六维均值</div>
+        <div class="mt-12"><div class="meter"><span class="lab">沟通表达</span><span class="track"><i style="width:82%;background:var(--green)"></i></span><span class="val">82</span></div><div class="meter"><span class="lab">商业洞察</span><span class="track"><i style="width:76%;background:var(--ink)"></i></span><span class="val">76</span></div><div class="meter"><span class="lab">技术深度</span><span class="track"><i style="width:71%;background:var(--ink)"></i></span><span class="val">71</span></div><div class="meter"><span class="lab">领导力</span><span class="track"><i style="width:80%;background:var(--green)"></i></span><span class="val">80</span></div><div class="meter"><span class="lab">战略思维</span><span class="track"><i style="width:74%;background:var(--ink)"></i></span><span class="val">74</span></div><div class="meter"><span class="lab">文化匹配</span><span class="track"><i style="width:83%;background:var(--green)"></i></span><span class="val">83</span></div></div>
+        <div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>六维能力雷达</div>
+        <div class="mt-8 center"><svg viewBox="0 0 280 256" width="100%"><polygon points="140.0,105.0 159.9,116.5 159.9,139.5 140.0,151.0 120.1,139.5 120.1,116.5" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,82.0 179.8,105.0 179.8,151.0 140.0,174.0 100.2,151.0 100.2,105.0" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,59.0 199.8,93.5 199.8,162.5 140.0,197.0 80.2,162.5 80.2,93.5" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,36.0 219.7,82.0 219.7,174.0 140.0,220.0 60.3,174.0 60.3,82.0" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><line x1="140" y1="128" x2="140.0" y2="36.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="219.7" y2="82.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="219.7" y2="174.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="140.0" y2="220.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="60.3" y2="174.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="60.3" y2="82.0" stroke="#ECECE8"></line><polygon points="140.0,52.6 200.6,93.0 196.6,160.7 140.0,201.6 81.0,162.0 73.9,89.8" fill="rgba(200,243,106,.18)" stroke="#C8F36A" stroke-width="2"></polygon><circle cx="140.0" cy="52.6" r="3" fill="#C8F36A"></circle><circle cx="200.6" cy="93.0" r="3" fill="#C8F36A"></circle><circle cx="196.6" cy="160.7" r="3" fill="#C8F36A"></circle><circle cx="140.0" cy="201.6" r="3" fill="#C8F36A"></circle><circle cx="81.0" cy="162.0" r="3" fill="#C8F36A"></circle><circle cx="73.9" cy="89.8" r="3" fill="#C8F36A"></circle><text x="119.0" y="17.5" font-size="10.5" fill="#777">沟通表达</text><text x="217.7" y="74.5" font-size="10.5" fill="#777">商业洞察</text><text x="217.7" y="188.5" font-size="10.5" fill="#777">技术深度</text><text x="124.3" y="245.5" font-size="10.5" fill="#777">领导力</text><text x="20.3" y="188.5" font-size="10.5" fill="#777">战略思维</text><text x="20.3" y="74.5" font-size="10.5" fill="#777">文化匹配</text></svg></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>评分分布</div><div class="card-sub">全部面试得分的区间占比</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="360" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="360" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">22</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">44</text><rect class="anim-y" x="46.0" y="136.0" width="34.0" height="18.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="57.1" y="130.0" font-size="10.5">6%</text><text class="bar-lab" x="54.2" y="170.0" font-size="10.5">&lt;60</text><rect class="anim-y" x="112.0" y="100.1" width="34.0" height="53.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="94.1" font-size="10.5">18%</text><text class="bar-lab" x="114.3" y="170.0" font-size="10.5">60-69</text><rect class="anim-y" x="178.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="34.2" font-size="10.5">38%</text><text class="bar-lab" x="180.3" y="170.0" font-size="10.5">70-79</text><rect class="anim-y" x="244.0" y="70.2" width="34.0" height="83.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="64.2" font-size="10.5">28%</text><text class="bar-lab" x="246.3" y="170.0" font-size="10.5">80-89</text><rect class="anim-y" x="310.0" y="124.1" width="34.0" height="29.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="118.1" font-size="10.5">10%</text><text class="bar-lab" x="318.2" y="170.0" font-size="10.5">90+</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>六维均值</div><div class="card-sub">沟通/文化较高，技术维度偏低</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 178" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">沟通表达</text><rect x="88" y="12" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="12" width="280.4" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="23">82 分</text><text class="bar-lab" x="6" y="51" font-size="10.5">商业洞察</text><rect x="88" y="40" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="40" width="259.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="51">76 分</text><text class="bar-lab" x="6" y="79" font-size="10.5">技术深度</text><rect x="88" y="68" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="68" width="242.8" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="79">71 分</text><text class="bar-lab" x="6" y="107" font-size="10.5">领导力</text><rect x="88" y="96" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="96" width="273.6" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="107">80 分</text><text class="bar-lab" x="6" y="135" font-size="10.5">战略思维</text><rect x="88" y="124" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="124" width="253.1" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="135">74 分</text><text class="bar-lab" x="6" y="163" font-size="10.5">文化匹配</text><rect x="88" y="152" width="342" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="88" y="152" width="283.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="447.9" y="163">83 分</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>维度均值用于校准动态权重模板</div>
+      <div class="mt-8 muted" style="line-height:1.85">Score Agent 依据岗位类型套用不同权重模板（product / tech / ai / data / ops）。六维均值用于持续校准各模板的区分度，技术深度相对偏低时可针对性提升该维度题目权重。</div></div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">05</span><span class="fl">Jobs 岗位数据</span><code>a/jobs</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>岗位数据</h1><div class="crumb">Admin · Jobs</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN</div><span class="mock-tag">实时（来自 Job Match Agent）</span><h2>岗位数据</h2></div>
+    <div class="card"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--ink-3);border-bottom:1px solid var(--line)"><th style="padding:10px 8px;font-weight:600">岗位</th><th style="padding:10px 8px;font-weight:600">平均匹配</th><th style="padding:10px 8px;font-weight:600">发展路径</th><th style="padding:10px 8px;font-weight:600">常见差距</th></tr></thead><tbody><tr><td><b>AI 产品经理</b></td><td><span style="color:var(--green);font-weight:700">92%</span></td><td class="muted">AI PM → 高级 AI PM → AI 产品总监</td><td class="muted">需更多模型评估经验</td></tr><tr><td><b>产品经理</b></td><td><span style="color:var(--green);font-weight:700">88%</span></td><td class="muted">PM → 高级PM → 产品总监</td><td class="muted">B2C 产品经验不足</td></tr><tr><td><b>数据产品经理</b></td><td><span style="color:var(--green);font-weight:700">85%</span></td><td class="muted">数据分析师→数据PM→高级数据PM</td><td class="muted">数仓架构知识待加深</td></tr><tr><td><b>AIGC 产品经理</b></td><td><span style="color:var(--green);font-weight:700">83%</span></td><td class="muted">AIGC PM → 高级 PM → 创新负责人</td><td class="muted">AIGC工具链经验不足</td></tr><tr><td><b>AI 运营</b></td><td><span style="color:var(--green);font-weight:700">80%</span></td><td class="muted">AI运营→高级运营→运营经理</td><td class="muted">MLOps 基础待学习</td></tr><tr><td><b>数据分析师</b></td><td><span style="color:var(--green);font-weight:700">79%</span></td><td class="muted">初级→分析师→高级→分析经理</td><td class="muted">统计学待深入</td></tr><tr><td><b>提示词工程师</b></td><td><span style="color:var(--green);font-weight:700">77%</span></td><td class="muted">PE → 高级PE → AI架构师</td><td class="muted">系统化训练待加强</td></tr><tr><td><b>商业分析师</b></td><td><span style="color:var(--green);font-weight:700">76%</span></td><td class="muted">BA→高级BA→主管BA</td><td class="muted">行业知识待深入</td></tr></tbody></table></div><div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>岗位匹配度 Top 8</div><div class="card-sub">Job Match Agent 输出</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="558" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="558" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">53</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">107</text><rect class="anim-y" x="46.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="54.2" y="34.2" font-size="10.5">92%</text><text class="bar-lab" x="48.3" y="170.0" font-size="10.5">AI PM</text><rect class="anim-y" x="112.0" y="45.2" width="34.0" height="108.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="120.2" y="39.2" font-size="10.5">88%</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">PM</text><rect class="anim-y" x="178.0" y="48.9" width="34.0" height="105.1" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="186.2" y="42.9" font-size="10.5">85%</text><text class="bar-lab" x="178.6" y="170.0" font-size="10.5">数据PM</text><rect class="anim-y" x="244.0" y="51.3" width="34.0" height="102.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="45.3" font-size="10.5">83%</text><text class="bar-lab" x="243.4" y="170.0" font-size="10.5">AIGC P</text><rect class="anim-y" x="310.0" y="55.0" width="34.0" height="99.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="49.0" font-size="10.5">80%</text><text class="bar-lab" x="307.7" y="170.0" font-size="10.5">AI 运营</text><rect class="anim-y" x="376.0" y="56.3" width="34.0" height="97.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="384.2" y="50.3" font-size="10.5">79%</text><text class="bar-lab" x="372.0" y="170.0" font-size="10.5">数据分析</text><rect class="anim-y" x="442.0" y="58.8" width="34.0" height="95.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="450.2" y="52.8" font-size="10.5">77%</text><text class="bar-lab" x="443.3" y="170.0" font-size="10.5">提示词</text><rect class="anim-y" x="508.0" y="60.0" width="34.0" height="94.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="516.2" y="54.0" font-size="10.5">76%</text><text class="bar-lab" x="504.0" y="170.0" font-size="10.5">商业分析</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>岗位类型分布</div><div class="card-sub">用户选择目标岗位的占比</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">AI 产品经理</text><rect x="118" y="12" width="312" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="118" y="12" width="118.6" height="12" rx="6" fill="#C8F36A"></rect><text class="bar-val" x="458.4" y="23">38%</text><text class="bar-lab" x="6" y="51" font-size="10.5">产品经理</text><rect x="118" y="40" width="312" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="118" y="40" width="74.9" height="12" rx="6" fill="#7C9A78"></rect><text class="bar-val" x="458.4" y="51">24%</text><text class="bar-lab" x="6" y="79" font-size="10.5">数据分析</text><rect x="118" y="68" width="312" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="118" y="68" width="56.2" height="12" rx="6" fill="#6B8CAE"></rect><text class="bar-val" x="458.4" y="79">18%</text><text class="bar-lab" x="6" y="107" font-size="10.5">AI 运营</text><rect x="118" y="96" width="312" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="118" y="96" width="37.4" height="12" rx="6" fill="#9A7BB5"></rect><text class="bar-val" x="458.4" y="107">12%</text><text class="bar-lab" x="6" y="135" font-size="10.5">其他</text><rect x="118" y="124" width="312" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="118" y="124" width="25.0" height="12" rx="6" fill="#C9A227"></rect><text class="bar-val" x="464.2" y="135">8%</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">06</span><span class="fl">Agents 运行监控</span><code>a/agents</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link active" href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>Agent 运行监控</h1><div class="crumb">Admin · Agents</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN · AGENT MONITOR</div><span class="mock-tag">DEMO</span><h2>Agent 运行监控</h2>
+    <p>13 个 Agent 的实时运行状态。点击任一 Agent 查看详情。</p></div>
+    <div class="card"><div class="card-title"><span class="dot"></span>Agent 列表</div><div class="mt-12" onclick="go('#/a/agent-detail')" style="cursor:pointer"><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">Resume Parser</div><div class="meta">1284 次调用 · 成功率 100% · 最后 09:58</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">0.9s</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">Job Match</div><div class="meta">1284 次调用 · 成功率 100% · 最后 09:58</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">1.2s</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">JD Agent</div><div class="meta">1180 次调用 · 成功率 99% · 最后 09:55</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">1.5s</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">Competency</div><div class="meta">1180 次调用 · 成功率 100% · 最后 09:55</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">0.7s</span></div></div><div class="agent-row"><span class="status-dot run"></span><div class="main"><div class="ttl">Interview Agent</div><div class="meta">3602 次调用 · 成功率 98% · 最后 now</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">2.8s</span><span class="tag tag-soft">1,284 tok</span></div></div><div class="agent-row"><span class="status-dot run"></span><div class="main"><div class="ttl">Follow-up Agent</div><div class="meta">2950 次调用 · 成功率 97% · 最后 now</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">1.1s</span><span class="tag tag-soft">640 tok</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">HR Interviewer</div><div class="meta">3602 次调用 · 成功率 99% · 最后 09:40</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">1.6s</span><span class="tag tag-soft">420 tok</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">Business Interviewer</div><div class="meta">3602 次调用 · 成功率 98% · 最后 09:40</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">1.9s</span><span class="tag tag-soft">510 tok</span></div></div><div class="agent-row"><span class="status-dot warn"></span><div class="main"><div class="ttl">Professional Interviewer</div><div class="meta">3602 次调用 · 成功率 95% · 最后 09:38</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">3.4s</span><span class="tag tag-soft">690 tok</span></div></div><div class="agent-row"><span class="status-dot done"></span><div class="main"><div class="ttl">Leader Interviewer</div><div class="meta">3602 次调用 · 成功率 98% · 最后 09:39</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">2.0s</span><span class="tag tag-soft">480 tok</span></div></div><div class="agent-row"><span class="status-dot run"></span><div class="main"><div class="ttl">Chief Evaluation</div><div class="meta">3602 次调用 · 成功率 99% · 最后 now</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">2.2s</span><span class="tag tag-soft">320 tok</span></div></div><div class="agent-row"><span class="status-dot wait"></span><div class="main"><div class="ttl">Score Agent</div><div class="meta">3602 次调用 · 成功率 99% · 最后 09:30</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">—</span></div></div><div class="agent-row"><span class="status-dot wait"></span><div class="main"><div class="ttl">Summary Agent</div><div class="meta">3602 次调用 · 成功率 100% · 最后 09:30</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">—</span></div></div></div></div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>平均耗时趋势</div><div class="card-sub">近 30 分钟（秒）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">3.3</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">2.6</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">1.8</text><path d="M36.0 154.1 L138.0 120.9 L240.0 43.4 L342.0 76.6 L444.0 98.8 L546.0 65.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#9A7BB5" opacity=".08"></path><path d="M36.0 154.1 L138.0 120.9 L240.0 43.4 L342.0 76.6 L444.0 98.8 L546.0 65.6" fill="none" stroke="#9A7BB5" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="154.1" r="3" fill="#9A7BB5"></circle><circle cx="138.0" cy="120.9" r="3" fill="#9A7BB5"></circle><circle cx="240.0" cy="43.4" r="3" fill="#9A7BB5"></circle><circle cx="342.0" cy="76.6" r="3" fill="#9A7BB5"></circle><circle cx="444.0" cy="98.8" r="3" fill="#9A7BB5"></circle><circle cx="546.0" cy="65.6" r="3" fill="#9A7BB5"></circle><text class="axis-lab" x="22.0" y="198.0" font-size="10.0">10:00</text><text class="axis-lab" x="124.0" y="198.0" font-size="10.0">10:05</text><text class="axis-lab" x="226.0" y="198.0" font-size="10.0">10:10</text><text class="axis-lab" x="328.0" y="198.0" font-size="10.0">10:15</text><text class="axis-lab" x="430.0" y="198.0" font-size="10.0">10:20</text><text class="axis-lab" x="532.0" y="198.0" font-size="10.0">10:25</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>Token 消耗分布</div><div class="card-sub">各 Agent 单轮 Token 消耗</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">Interview</text><rect x="120" y="12" width="310" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="120" y="12" width="295.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="429.0" y="23">1284 tok</text><text class="bar-lab" x="6" y="51" font-size="10.5">Follow-up</text><rect x="120" y="40" width="310" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="120" y="40" width="147.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="434.8" y="51">640 tok</text><text class="bar-lab" x="6" y="79" font-size="10.5">Professional</text><rect x="120" y="68" width="310" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="120" y="68" width="158.7" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="434.8" y="79">690 tok</text><text class="bar-lab" x="6" y="107" font-size="10.5">Business</text><rect x="120" y="96" width="310" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="120" y="96" width="117.3" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="434.8" y="107">510 tok</text><text class="bar-lab" x="6" y="135" font-size="10.5">Leader</text><rect x="120" y="124" width="310" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="120" y="124" width="110.4" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="434.8" y="135">480 tok</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>调用次数分布</div><div class="card-sub">近 24 小时累计调用次数</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 374" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">Resume Parser</text><rect x="158" y="12" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="12" width="92.3" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="23">1284</text><text class="bar-lab" x="6" y="51" font-size="10.5">Job Match</text><rect x="158" y="40" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="40" width="92.3" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="51">1284</text><text class="bar-lab" x="6" y="79" font-size="10.5">JD Agent</text><rect x="158" y="68" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="68" width="84.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="79">1180</text><text class="bar-lab" x="6" y="107" font-size="10.5">Competency</text><rect x="158" y="96" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="96" width="84.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="107">1180</text><text class="bar-lab" x="6" y="135" font-size="10.5">Interview Agent</text><rect x="158" y="124" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="124" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="135">3602</text><text class="bar-lab" x="6" y="163" font-size="10.5">Follow-up Agent</text><rect x="158" y="152" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="152" width="212.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="163">2950</text><text class="bar-lab" x="6" y="191" font-size="10.5">HR Interviewer</text><rect x="158" y="180" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="180" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="191">3602</text><text class="bar-lab" x="6" y="219" font-size="10.5">Business Interviewer</text><rect x="158" y="208" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="208" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="219">3602</text><text class="bar-lab" x="6" y="247" font-size="10.3">Professional Interviewer</text><rect x="158" y="236" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="236" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="247">3602</text><text class="bar-lab" x="6" y="275" font-size="10.5">Leader Interviewer</text><rect x="158" y="264" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="264" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="275">3602</text><text class="bar-lab" x="6" y="303" font-size="10.5">Chief Evaluation</text><rect x="158" y="292" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="292" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="303">3602</text><text class="bar-lab" x="6" y="331" font-size="10.5">Score Agent</text><rect x="158" y="320" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="320" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="331">3602</text><text class="bar-lab" x="6" y="359" font-size="10.5">Summary Agent</text><rect x="158" y="348" width="272" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="158" y="348" width="259.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="359">3602</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>运行状态分布</div><div class="card-sub">13 个 Agent 的实时状态</div><div class="mt-12"><svg class="chart" viewBox="0 0 320 172" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="142.0" x2="298" y2="142.0"></line><text class="axis-lab" x="4" y="145.5">0</text><line class="grid-line" x1="30" y1="82.0" x2="298" y2="82.0"></line><text class="axis-lab" x="4" y="85.5">4</text><line class="grid-line" x1="30" y1="22.0" x2="298" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">8</text><rect class="anim-y" x="46.5" y="97.7" width="34.0" height="44.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="52.4" y="91.7" font-size="10.5">3 个</text><text class="bar-lab" x="42.9" y="158.0" font-size="10.5">running</text><rect class="anim-y" x="113.5" y="38.6" width="34.0" height="103.4" rx="5" fill="#18181B"></rect><text class="bar-val" x="119.4" y="32.6" font-size="10.5">7 个</text><text class="bar-lab" x="118.7" y="158.0" font-size="10.5">done</text><rect class="anim-y" x="180.5" y="112.4" width="34.0" height="29.6" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.4" y="106.4" font-size="10.5">2 个</text><text class="bar-lab" x="176.9" y="158.0" font-size="10.5">waiting</text><rect class="anim-y" x="247.5" y="127.2" width="34.0" height="14.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="253.4" y="121.2" font-size="10.5">1 个</text><text class="bar-lab" x="243.9" y="158.0" font-size="10.5">warning</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">07</span><span class="fl">Agent Detail 详情</span><code>a/agent-detail</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>Agent 详情</h1><div class="crumb">Admin · Agent</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN · AGENT DETAIL</div><span class="mock-tag">DEMO DATA</span><h2>Interview Agent</h2></div>
+    <div class="split">
+      <div class="card"><div class="kv"><span class="k">状态</span><span class="v">Completed <span class="tag tag-green">ok</span></span></div>
+        <div class="kv"><span class="k">耗时</span><span class="v">2.8s</span></div>
+        <div class="kv"><span class="k">Token</span><span class="v">1,284</span></div>
+        <div class="kv"><span class="k">模型</span><span class="v">GPT-4o-mini (Demo)</span></div>
+        <div class="kv"><span class="k">错误</span><span class="v">无</span></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>本次执行</div>
+        <div class="kv"><span class="k">Input</span><span class="v">Resume + JD + 上一轮回答</span></div>
+        <div class="mt-12 small muted mb-8">Process</div><div class="row" style="border:none;padding:5px 0">↓ 读取简历与 JD</div><div class="row" style="border:none;padding:5px 0">↓ 匹配能力维度</div><div class="row" style="border:none;padding:5px 0">↓ 生成情境问题</div><div class="row" style="border:none;padding:5px 0">↓ 标注追问信号</div>
+        <div class="kv mt-8"><span class="k">Output</span><span class="v">本轮面试问题 + 下一轮追问策略</span></div></div>
+    </div>
+    <div class="grid cols-2 mt-16">
+      <div class="card"><div class="card-title"><span class="dot"></span>该 Agent 耗时趋势</div><div class="card-sub">近 30 分钟（秒）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">3.3</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">2.6</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">1.8</text><path d="M36.0 154.1 L138.0 120.9 L240.0 43.4 L342.0 76.6 L444.0 98.8 L546.0 65.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#9A7BB5" opacity=".08"></path><path d="M36.0 154.1 L138.0 120.9 L240.0 43.4 L342.0 76.6 L444.0 98.8 L546.0 65.6" fill="none" stroke="#9A7BB5" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="154.1" r="3" fill="#9A7BB5"></circle><circle cx="138.0" cy="120.9" r="3" fill="#9A7BB5"></circle><circle cx="240.0" cy="43.4" r="3" fill="#9A7BB5"></circle><circle cx="342.0" cy="76.6" r="3" fill="#9A7BB5"></circle><circle cx="444.0" cy="98.8" r="3" fill="#9A7BB5"></circle><circle cx="546.0" cy="65.6" r="3" fill="#9A7BB5"></circle><text class="axis-lab" x="22.0" y="198.0" font-size="10.0">10:00</text><text class="axis-lab" x="124.0" y="198.0" font-size="10.0">10:05</text><text class="axis-lab" x="226.0" y="198.0" font-size="10.0">10:10</text><text class="axis-lab" x="328.0" y="198.0" font-size="10.0">10:15</text><text class="axis-lab" x="430.0" y="198.0" font-size="10.0">10:20</text><text class="axis-lab" x="532.0" y="198.0" font-size="10.0">10:25</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>Token 消耗对比</div><div class="card-sub">与其他 Agent 的单轮对比</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="360" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="360" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">745</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">1489</text><rect class="anim-y" x="46.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="39.5" y="34.2" font-size="10.5">1284 tok</text><text class="bar-lab" x="36.5" y="170.0" font-size="10.5">Interview</text><rect class="anim-y" x="112.0" y="97.3" width="34.0" height="56.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="108.4" y="91.3" font-size="10.5">640 tok</text><text class="bar-lab" x="102.5" y="170.0" font-size="10.5">Follow-up</text><rect class="anim-y" x="178.0" y="92.8" width="34.0" height="61.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="174.4" y="86.8" font-size="10.5">690 tok</text><text class="bar-lab" x="163.0" y="170.0" font-size="9.5">Professional</text><rect class="anim-y" x="244.0" y="108.8" width="34.0" height="45.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="240.4" y="102.8" font-size="10.5">510 tok</text><text class="bar-lab" x="237.5" y="170.0" font-size="10.5">Business</text><rect class="anim-y" x="310.0" y="111.5" width="34.0" height="42.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="306.4" y="105.5" font-size="10.5">480 tok</text><text class="bar-lab" x="309.4" y="170.0" font-size="10.5">Leader</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-3 mt-16">
+      <div class="card"><div class="card-title"><span class="dot"></span>成功率</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="46" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="52" cy="52" r="46" fill="none" stroke="#7C9A78" stroke-width="12" stroke-linecap="round" stroke-dasharray="289.0" stroke-dashoffset="5.8" transform="rotate(-90 52 52)"></circle></svg><span class="ring-center"><b style="font-size:24px">98%</b><i>近 24h</i></span></span><div class="ring-meta small muted"><div class="brk-li">3,602 次调用</div><div class="brk-li">失败 42 次</div><div class="brk-li">错误：无</div></div></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>各阶段耗时</div><div class="card-sub">Pipeline 单步骤耗时</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 122" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">读取简历与 JD</text><rect x="126" y="12" width="304" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="126" y="12" width="182.4" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="23">0.6s</text><text class="bar-lab" x="6" y="51" font-size="10.5">匹配能力维度</text><rect x="126" y="40" width="304" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="126" y="40" width="273.6" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="51">0.9s</text><text class="bar-lab" x="6" y="79" font-size="10.5">生成情境问题</text><rect x="126" y="68" width="304" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="126" y="68" width="243.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="79">0.8s</text><text class="bar-lab" x="6" y="107" font-size="10.5">标注追问信号</text><rect x="126" y="96" width="304" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="126" y="96" width="152.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="107">0.5s</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>Token / 调用</div><div class="card-sub">与历史均值对比</div><div class="mt-12"><svg class="chart" viewBox="0 0 320 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="298" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="298" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">745</text><line class="grid-line" x1="30" y1="22.0" x2="298" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">1489</text><rect class="anim-y" x="80.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="73.5" y="34.2" font-size="10.5">1284 tok</text><text class="bar-lab" x="86.5" y="170.0" font-size="10.5">本次</text><rect class="anim-y" x="214.0" y="49.4" width="34.0" height="104.6" rx="5" fill="#18181B"></rect><text class="bar-val" x="207.5" y="43.4" font-size="10.5">1180 tok</text><text class="bar-lab" x="220.5" y="170.0" font-size="10.5">均值</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="mt-16"><button class="btn btn-secondary" onclick="go('#/a/agents')">← 返回监控</button></div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">08</span><span class="fl">Logs 运行日志</span><code>a/logs</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>运行日志</h1><div class="crumb">Admin · Logs</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN</div><span class="mock-tag">MOCK DATA</span><h2>运行日志 / 系统情况</h2></div>
+    <div class="card"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--ink-3);border-bottom:1px solid var(--line)"><th style="padding:10px 8px;font-weight:600">时间</th><th style="padding:10px 8px;font-weight:600">级别</th><th style="padding:10px 8px;font-weight:600">消息</th><th style="padding:10px 8px;font-weight:600">状态</th></tr></thead><tbody><tr><td class="muted">11:02</td><td><span class="tag tag-gray">INFO</span></td><td>Agent 管线启动</td><td><span class="tag tag-green">已恢复</span></td></tr><tr><td class="muted">10:47</td><td><span class="tag tag-amber">WARN</span></td><td>Scorer 延迟升高</td><td><span class="tag tag-green">已恢复</span></td></tr><tr><td class="muted">10:21</td><td><span class="tag tag-pink">ERROR</span></td><td>Interview JSON 解析失败→兜底</td><td><span class="tag tag-green">已恢复</span></td></tr><tr><td class="muted">09:58</td><td><span class="tag tag-gray">INFO</span></td><td>新增 12 场面试</td><td><span class="tag tag-green">已恢复</span></td></tr><tr><td class="muted">09:40</td><td><span class="tag tag-gray">INFO</span></td><td>Chief 仲裁 1 处评分冲突</td><td><span class="tag tag-green">已恢复</span></td></tr></tbody></table></div><div class="grid cols-3 mt-20">
+      <div class="card center stat"><div class="k">系统整体</div><div class="v" style="color:var(--green);font-size:22px">正常</div></div>
+      <div class="card center stat"><div class="k">近 1h 错误</div><div class="v">2</div></div>
+      <div class="card center stat"><div class="k">已自动恢复</div><div class="v">2</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>日志级别分布</div><div class="card-sub">近 24 小时各级别日志数量</div><div class="mt-12"><svg class="chart" viewBox="0 0 320 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="298" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="298" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">22</text><line class="grid-line" x1="30" y1="22.0" x2="298" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">44</text><rect class="anim-y" x="57.7" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="60.6" y="34.2" font-size="10.5">38 条</text><text class="bar-lab" x="62.9" y="170.0" font-size="10.5">INFO</text><rect class="anim-y" x="147.0" y="133.0" width="34.0" height="21.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="152.9" y="127.0" font-size="10.5">7 条</text><text class="bar-lab" x="152.2" y="170.0" font-size="10.5">WARN</text><rect class="anim-y" x="236.3" y="148.0" width="34.0" height="6.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="242.2" y="142.0" font-size="10.5">2 条</text><text class="bar-lab" x="238.6" y="170.0" font-size="10.5">ERROR</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>近 8 时段日志量</div><div class="card-sub">日志吞吐趋势（示意）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">77.8</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">55.6</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">33.4</text><path d="M36.0 149.9 L108.9 101.2 L181.7 164.9 L254.6 78.8 L327.4 123.7 L400.3 37.6 L473.1 90.0 L546.0 131.2 L 546.0 182.0 L 36.0 182.0 Z" fill="#6B8CAE" opacity=".08"></path><path d="M36.0 149.9 L108.9 101.2 L181.7 164.9 L254.6 78.8 L327.4 123.7 L400.3 37.6 L473.1 90.0 L546.0 131.2" fill="none" stroke="#6B8CAE" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="149.9" r="3" fill="#6B8CAE"></circle><circle cx="108.9" cy="101.2" r="3" fill="#6B8CAE"></circle><circle cx="181.7" cy="164.9" r="3" fill="#6B8CAE"></circle><circle cx="254.6" cy="78.8" r="3" fill="#6B8CAE"></circle><circle cx="327.4" cy="123.7" r="3" fill="#6B8CAE"></circle><circle cx="400.3" cy="37.6" r="3" fill="#6B8CAE"></circle><circle cx="473.1" cy="90.0" r="3" fill="#6B8CAE"></circle><circle cx="546.0" cy="131.2" r="3" fill="#6B8CAE"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">T1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">T2</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">T3</text><text class="axis-lab" x="249.0" y="198.0" font-size="10.0">T4</text><text class="axis-lab" x="321.8" y="198.0" font-size="10.0">T5</text><text class="axis-lab" x="394.7" y="198.0" font-size="10.0">T6</text><text class="axis-lab" x="467.5" y="198.0" font-size="10.0">T7</text><text class="axis-lab" x="540.4" y="198.0" font-size="10.0">T8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>说明</div>
+      <div class="mt-8 muted" style="line-height:1.85">系统运行情况视图为规划方向，日志样本用于演示监控形态。ERROR 均已触发兜底逻辑（JSON 解析失败回退默认问题），页面不崩溃。</div></div></main></div></div></div>
+    </div>
+<div class="frame-wrap admin">
+      <div class="frame-label"><span class="no">09</span><span class="fl">System 系统状态</span><code>a/system</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">后台 · 架构视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>系统运行状态</h1><div class="crumb">Admin · System</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">ADMIN · SYSTEM</div><span class="mock-tag">DEMO</span><h2>系统运行状态</h2></div>
+    <div class="grid cols-2"><div class="card"><div class="card-title"><span class="dot"></span>运行状态</div><div class="mt-12"><div class="row"><div class="main"><div class="ttl">服务状态</div></div><span class="tag tag-green">运行中</span></div><div class="row"><div class="main"><div class="ttl">API 可用率</div></div><span class="tag tag-green">99.7%</span></div><div class="row"><div class="main"><div class="ttl">平均时延</div></div><span class="tag tag-green">1.9s</span></div><div class="row"><div class="main"><div class="ttl">待处理队列</div></div><span class="tag tag-green">12</span></div><div class="row"><div class="main"><div class="ttl">错误率(24h)</div></div><span class="tag tag-green">0.3%</span></div><div class="row"><div class="main"><div class="ttl">存储使用</div></div><span class="tag tag-green">41%</span></div></div></div>
+    <div class="card"><div class="card-title"><span class="dot"></span>13-Agent 架构</div><div class="mt-12"><span class="tag tag-soft" style="margin:0 6px 8px 0">1. Resume Parser</span><span class="tag tag-soft" style="margin:0 6px 8px 0">2. Job Match</span><span class="tag tag-soft" style="margin:0 6px 8px 0">3. JD Agent</span><span class="tag tag-soft" style="margin:0 6px 8px 0">4. Competency Framework</span><span class="tag tag-soft" style="margin:0 6px 8px 0">5. Interview Agent</span><span class="tag tag-soft" style="margin:0 6px 8px 0">6. Follow-up Agent</span><span class="tag tag-soft" style="margin:0 6px 8px 0">7. HR Interviewer</span><span class="tag tag-soft" style="margin:0 6px 8px 0">8. Business Interviewer</span><span class="tag tag-soft" style="margin:0 6px 8px 0">9. Professional Interviewer</span><span class="tag tag-soft" style="margin:0 6px 8px 0">10. Leader Interviewer</span><span class="tag tag-soft" style="margin:0 6px 8px 0">11. Chief Evaluation</span><span class="tag tag-soft" style="margin:0 6px 8px 0">12. Score Agent</span><span class="tag tag-soft" style="margin:0 6px 8px 0">13. Summary Agent</span></div>
+      <div class="divider"></div><div class="section-note">架构与真实多 Agent 管线一致（见 docs/competency_framework.md）</div></div></div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>API 可用率</div><div class="card-sub">近 8 周（%）</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">107.9</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">97.7</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">87.5</text><path d="M36.0 84.2 L108.9 83.4 L181.7 85.0 L254.6 81.8 L327.4 82.6 L400.3 81.0 L473.1 83.4 L546.0 82.6 L 546.0 182.0 L 36.0 182.0 Z" fill="#7C9A78" opacity=".08"></path><path d="M36.0 84.2 L108.9 83.4 L181.7 85.0 L254.6 81.8 L327.4 82.6 L400.3 81.0 L473.1 83.4 L546.0 82.6" fill="none" stroke="#7C9A78" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="84.2" r="3" fill="#7C9A78"></circle><circle cx="108.9" cy="83.4" r="3" fill="#7C9A78"></circle><circle cx="181.7" cy="85.0" r="3" fill="#7C9A78"></circle><circle cx="254.6" cy="81.8" r="3" fill="#7C9A78"></circle><circle cx="327.4" cy="82.6" r="3" fill="#7C9A78"></circle><circle cx="400.3" cy="81.0" r="3" fill="#7C9A78"></circle><circle cx="473.1" cy="83.4" r="3" fill="#7C9A78"></circle><circle cx="546.0" cy="82.6" r="3" fill="#7C9A78"></circle><text class="axis-lab" x="30.4" y="198.0" font-size="10.0">W1</text><text class="axis-lab" x="103.3" y="198.0" font-size="10.0">W2</text><text class="axis-lab" x="176.1" y="198.0" font-size="10.0">W3</text><text class="axis-lab" x="249.0" y="198.0" font-size="10.0">W4</text><text class="axis-lab" x="321.8" y="198.0" font-size="10.0">W5</text><text class="axis-lab" x="394.7" y="198.0" font-size="10.0">W6</text><text class="axis-lab" x="467.5" y="198.0" font-size="10.0">W7</text><text class="axis-lab" x="540.4" y="198.0" font-size="10.0">W8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>队列积压</div><div class="card-sub">近 8 个时间片待处理任务数</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="558" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="558" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">8</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">16</text><rect class="anim-y" x="46.0" y="89.0" width="34.0" height="65.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="51.9" y="83.0" font-size="10.5">8 个</text><text class="bar-lab" x="57.1" y="170.0" font-size="10.5">T1</text><rect class="anim-y" x="112.0" y="64.6" width="34.0" height="89.4" rx="5" fill="#18181B"></rect><text class="bar-val" x="114.9" y="58.6" font-size="10.5">11 个</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">T2</text><rect class="anim-y" x="178.0" y="80.8" width="34.0" height="73.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="183.9" y="74.8" font-size="10.5">9 个</text><text class="bar-lab" x="189.1" y="170.0" font-size="10.5">T3</text><rect class="anim-y" x="244.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="246.9" y="34.2" font-size="10.5">14 个</text><text class="bar-lab" x="255.1" y="170.0" font-size="10.5">T4</text><rect class="anim-y" x="310.0" y="56.5" width="34.0" height="97.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="312.9" y="50.5" font-size="10.5">12 个</text><text class="bar-lab" x="321.1" y="170.0" font-size="10.5">T5</text><rect class="anim-y" x="376.0" y="72.7" width="34.0" height="81.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="378.9" y="66.7" font-size="10.5">10 个</text><text class="bar-lab" x="387.1" y="170.0" font-size="10.5">T6</text><rect class="anim-y" x="442.0" y="48.3" width="34.0" height="105.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="444.9" y="42.3" font-size="10.5">13 个</text><text class="bar-lab" x="453.1" y="170.0" font-size="10.5">T7</text><rect class="anim-y" x="508.0" y="56.5" width="34.0" height="97.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="510.9" y="50.5" font-size="10.5">12 个</text><text class="bar-lab" x="519.1" y="170.0" font-size="10.5">T8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-3 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>可用率</div><div class="card-sub">目标 ≥ 99.5%</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="46" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="52" cy="52" r="46" fill="none" stroke="#7C9A78" stroke-width="12" stroke-linecap="round" stroke-dasharray="289.0" stroke-dashoffset="0.9" transform="rotate(-90 52 52)"></circle></svg><span class="ring-center"><b style="font-size:24px">99.7%</b><i>24h</i></span></span></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>存储使用</div><div class="card-sub">41% / 200 GB</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="46" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="52" cy="52" r="46" fill="none" stroke="#6B8CAE" stroke-width="12" stroke-linecap="round" stroke-dasharray="289.0" stroke-dashoffset="170.5" transform="rotate(-90 52 52)"></circle></svg><span class="ring-center"><b style="font-size:24px">41%</b><i>已用</i></span></span></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>错误率</div><div class="card-sub">阈值 ≤ 1%</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="46" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="52" cy="52" r="46" fill="none" stroke="#C8F36A" stroke-width="12" stroke-linecap="round" stroke-dasharray="289.0" stroke-dashoffset="288.2" transform="rotate(-90 52 52)"></circle></svg><span class="ring-center"><b style="font-size:24px">0.3%</b><i>24h</i></span></span></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+</div></body></html>

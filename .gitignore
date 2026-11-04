@@ -70,3 +70,6 @@ electron-app/*.log
 *.prerevert
 .cleanup_log.txt
 .persist_test.txt
+
+# 测试输出产物（非源码，含测试用简历）
+electron-app/tests/_*_out.json

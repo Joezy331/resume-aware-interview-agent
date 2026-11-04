@@ -6,6 +6,8 @@
 <title>AI Career Copilot V3.0 — 简历感知智能面试平台</title>
 <script src="chart.umd.min.js"></script>
 <script src="job-matching.js"></script>
+<script src="job-library.js"></script>
+<script src="jd-core.js"></script>
 <style>:root{
   --navy:#0a1628;--navy2:#13284a;--blue:#1d6fd1;--indigo:#4f46e5;
   --purple:#8b5cf6;--pink:#ec4899;--cyan:#06b6d4;--teal:#14b8a6;
@@ -798,6 +800,200 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
   .topbar .tb-status{display:none}
   .tb-title{font-size:17px}
 }
+
+/* ==================== 首页 Landing · p1 排版 ==================== */
+#page-home .lp{
+  background:#F3F3EF;
+  border:1px solid #E4E4DD;
+  border-radius:26px;
+  overflow:hidden;
+  box-shadow:0 1px 2px rgba(17,24,39,.04);
+  margin-bottom:16px;
+}
+/* ---- 顶部导航 ---- */
+#page-home .lp-nav{
+  display:flex;align-items:center;gap:20px;
+  padding:15px 24px;
+}
+#page-home .lp-brand{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+#page-home .lp-mark{
+  width:23px;height:23px;border-radius:7px;background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+}
+#page-home .lp-mark i{
+  width:9px;height:9px;border-radius:2px;background:var(--lime);
+  display:block;transform:rotate(45deg);
+}
+#page-home .lp-brand-t{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+#page-home .lp-menu{display:flex;align-items:center;gap:22px;margin-left:auto}
+#page-home .lp-menu a{
+  font-size:12.5px;color:#6B7075;cursor:pointer;white-space:nowrap;
+  transition:color .16s;
+}
+#page-home .lp-menu a:hover{color:var(--ink)}
+#page-home .lp-menu a.on{color:var(--ink);font-weight:600}
+#page-home .lp-nav-cta{
+  flex:0 0 auto;margin-left:24px;height:32px;padding:0 14px;
+  border:none;border-radius:999px;background:var(--ink);color:#fff;
+  font-size:12px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:opacity .16s;
+}
+#page-home .lp-nav-cta:hover{opacity:.88}
+#page-home .lp-nav-cta span{font-size:11px;opacity:.7}
+
+/* ---- Hero 两栏 ---- */
+#page-home .lp-hero{
+  display:grid;grid-template-columns:minmax(320px,40%) 1fr;
+  gap:52px;align-items:center;
+  padding:36px 40px 34px 46px;
+}
+
+/* 左侧：浮动卡片 + 标签 */
+#page-home .lp-visual{
+  position:relative;height:404px;
+  display:flex;align-items:center;justify-content:center;
+}
+#page-home .lp-pin{
+  position:absolute;z-index:3;white-space:nowrap;
+  padding:5px 10px;border-radius:6px;
+  background:var(--lime);color:var(--lime-ink);
+  font-size:11px;font-weight:600;letter-spacing:.01em;
+  box-shadow:0 1px 2px rgba(17,24,39,.07);
+}
+#page-home .lp-pin.p1{left:-6px;top:52px;transform:rotate(-7deg)}
+#page-home .lp-pin.p2{left:-8px;top:120px;transform:rotate(-3deg)}
+#page-home .lp-pin.p3{left:6px;bottom:88px;transform:rotate(-6deg)}
+#page-home .lp-pin.p4{right:-12px;top:16px;transform:rotate(5deg)}
+
+#page-home .lp-card{
+  position:relative;z-index:2;width:268px;
+  background:#fff;border:1px solid #E6E6E0;border-radius:14px;
+  padding:15px;transform:rotate(-2.2deg);
+  box-shadow:0 20px 44px rgba(17,24,39,.11),0 2px 6px rgba(17,24,39,.05);
+}
+#page-home .lp-card-head{
+  display:flex;align-items:center;gap:6px;margin-bottom:12px;
+  font-size:9.5px;color:#8A8F94;letter-spacing:.07em;text-transform:uppercase;
+}
+#page-home .lp-dot{width:5px;height:5px;border-radius:50%;background:var(--lime2);flex:0 0 5px}
+#page-home .lp-card-head em{font-style:normal;margin-left:auto;opacity:.7}
+#page-home .lp-card-h{
+  font-size:18px;font-weight:600;color:var(--ink);
+  line-height:1.28;letter-spacing:-.012em;margin-bottom:6px;
+}
+#page-home .lp-card-h .lp-sub{color:#A2A7AC}
+#page-home .lp-card-p{font-size:10.5px;color:#8A8F94;line-height:1.6}
+#page-home .lp-bubble{
+  margin-top:11px;padding:8px 10px;border-radius:9px;
+  background:#F7F7F3;border:1px solid #ECECE5;
+  font-size:10.5px;color:#4E545A;line-height:1.55;
+}
+#page-home .lp-score{
+  margin-top:11px;padding:9px 10px;border-radius:10px;
+  background:var(--lime-soft);border:1px solid #E2EFBA;
+}
+#page-home .lp-score-l{font-size:9px;color:#6E7A52;letter-spacing:.06em}
+#page-home .lp-score-v{font-size:21px;font-weight:700;color:var(--lime-ink);line-height:1.15}
+#page-home .lp-bar{height:4px;border-radius:2px;background:#E3E3DA;margin-top:6px;overflow:hidden}
+#page-home .lp-bar i{display:block;height:100%;background:var(--lime2);border-radius:2px}
+
+#page-home .lp-path{
+  position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:4;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  padding:7px 14px;border-radius:999px;
+  background:#fff;border:1px solid #E6E6E0;
+  font-size:10.5px;color:#5A6066;
+  box-shadow:0 1px 2px rgba(17,24,39,.05);
+}
+#page-home .lp-path b{color:var(--lime-ink);font-weight:700}
+#page-home .lp-meta{
+  position:absolute;left:50%;bottom:6px;transform:translateX(-50%);
+  font-size:8.5px;color:#A0A5AA;letter-spacing:.15em;
+  text-transform:uppercase;white-space:nowrap;
+}
+
+/* 右侧：文案 */
+#page-home .lp-copy{max-width:560px}
+#page-home .lp-copy h1{
+  font-size:48px;font-weight:600;line-height:1.08;
+  letter-spacing:-.024em;color:var(--ink);
+  margin:0 0 16px;
+}
+#page-home .lp-copy h1 .lp-dim{color:#8E9499;margin-left:6px}
+#page-home .lp-copy p{
+  font-size:13.5px;color:#5F656B;line-height:1.68;
+  max-width:432px;margin:0 0 24px;
+}
+#page-home .lp-actions{display:flex;gap:10px;margin-bottom:13px;flex-wrap:wrap}
+#page-home .lp-btn{
+  height:40px;padding:0 18px;border-radius:9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:opacity .16s,background .16s,border-color .16s;
+}
+#page-home .lp-btn-dark{background:var(--ink);color:#fff;border:1px solid var(--ink)}
+#page-home .lp-btn-dark:hover{opacity:.87}
+#page-home .lp-btn-dark span{font-size:11px;opacity:.65}
+#page-home .lp-btn-ghost{background:transparent;color:var(--ink);border:1px solid #D9D9D3}
+#page-home .lp-btn-ghost:hover{background:#fff;border-color:#C3C3BC}
+#page-home .lp-note{
+  display:flex;align-items:center;gap:5px;
+  font-size:11.5px;color:#8A8F94;margin-bottom:24px;cursor:pointer;
+}
+#page-home .lp-note span{font-size:10px;opacity:.8}
+#page-home .lp-social{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+#page-home .lp-chips{display:flex;gap:6px;flex-wrap:wrap}
+#page-home .lp-chips span{
+  font-size:10.5px;color:#5F656B;padding:4px 9px;border-radius:999px;
+  background:#fff;border:1px solid #E6E6E0;white-space:nowrap;
+}
+#page-home .lp-avatars{display:flex;align-items:center}
+#page-home .lp-avatars i{
+  width:24px;height:24px;border-radius:50%;margin-left:-6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-style:normal;font-weight:600;
+  background:#ECECE6;color:#6B7075;border:1.5px solid #F3F3EF;
+}
+#page-home .lp-avatars i:first-child{margin-left:0}
+#page-home .lp-avatars i:last-child{background:var(--lime);color:var(--lime-ink)}
+
+/* ---- 底部 5 列 ---- */
+#page-home .lp-trust{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  border-top:1px solid #E4E4DD;
+}
+#page-home .lp-ti{padding:18px 18px 20px;border-right:1px solid #E4E4DD}
+#page-home .lp-ti:last-child{border-right:none}
+#page-home .lp-ti-q{
+  font-size:10.5px;color:#6B7075;line-height:1.62;
+  margin-bottom:13px;min-height:50px;
+}
+#page-home .lp-ti-b{display:flex;align-items:center;gap:8px}
+#page-home .lp-ti-num{
+  width:22px;height:22px;border-radius:50%;flex:0 0 22px;
+  display:flex;align-items:center;justify-content:center;
+  background:#ECECE6;color:#6B7075;
+  font-size:9px;font-weight:700;letter-spacing:.02em;
+}
+#page-home .lp-ti-meta b{display:block;font-size:11px;font-weight:600;color:var(--ink);line-height:1.4}
+#page-home .lp-ti-meta em{display:block;font-size:9.5px;color:#868C92;font-style:normal;line-height:1.4}
+
+/* ---- 响应式 ---- */
+@media (max-width:1240px){
+  #page-home .lp-menu{gap:16px}
+  #page-home .lp-menu a:nth-child(n+5){display:none}
+  #page-home .lp-copy h1{font-size:39px}
+}
+@media (max-width:1080px){
+  #page-home .lp-hero{grid-template-columns:1fr;gap:30px;padding:28px 26px 26px}
+  #page-home .lp-visual{height:330px;order:2}
+  #page-home .lp-copy{order:1;max-width:none}
+  #page-home .lp-trust{grid-template-columns:repeat(2,1fr)}
+  #page-home .lp-ti:nth-child(2n){border-right:none}
+  #page-home .lp-ti:nth-child(n+3){border-top:1px solid #E4E4DD}
+  #page-home .lp-pin.p4{right:0}
+}
 </style>
 </head>
 <body>
@@ -825,6 +1021,10 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
       <div class="nav-link" data-page="resume" onclick="showPage('resume')">
         <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 1.8h5.2L12.5 5v9.2H4z"/><path d="M9 1.8V5h3.5"/><path d="M6 8h4M6 10.6h4"/></svg></span>
         <span class="sb-label">简历与岗位</span>
+      </div>
+      <div class="nav-link" data-page="jd" onclick="showPage('jd')">
+        <span class="sb-ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2.6" width="12" height="10.8" rx="1.6"/><path d="M5 6.2h6M5 9h4"/><circle cx="12.2" cy="12.2" r="2.6" fill="#C8F36A" stroke="none"/><path d="M12.2 10.9v2.6M10.9 12.2h2.6" stroke="#2E3B13" stroke-width="1.1"/></svg></span>
+        <span class="sb-label">JD 智能分析</span>
       </div>
     </div>
 
@@ -885,81 +1085,97 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
 <!-- HOME PAGE -->
 <div class="page active" id="page-home">
   <!-- Hero Section -->
-  <div class="hero">
-    <div class="hero-badges">
-      <span class="hero-badge ai">🤖 AI Powered</span>
-      <span class="hero-badge resume">📄 Resume Aware</span>
-      <span class="hero-badge multi">🧠 Multi Agent</span>
-    </div>
-    <h1>面向 AI 时代的<br><span class="grad">智能求职</span><br>面试助手</h1>
-    <p>上传简历，AI 自动解析、匹配岗位、动态生成面试问题、多轮追问，最<br>终输出个性化评分报告与成长建议。</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary btn-lg" onclick="showPage('resume')">↑ 上传简历，立即开始</button>
-      <button class="btn btn-outline btn-lg" onclick="showPage('dashboard')">查看 Dashboard</button>
+  <section class="lp">
+    <!-- 顶部导航 -->
+    <div class="lp-nav">
+      <div class="lp-brand">
+        <span class="lp-mark"><i></i></span>
+        <span class="lp-brand-t">AI Career Copilot</span>
+      </div>
+      <nav class="lp-menu">
+        <a class="on" onclick="showPage('home')">首页</a>
+        <a onclick="showPage('dashboard')">Dashboard</a>
+        <a onclick="showPage('interview')">模拟面试</a>
+        <a onclick="showPage('report')">评估报告</a>
+        <a onclick="showPage('history')">历史记录</a>
+        <a onclick="showPage('agents')">多 Agent</a>
+      </nav>
+      <button class="lp-nav-cta" onclick="showPage('resume')">上传简历 <span>→</span></button>
     </div>
 
-    <!-- Chat Preview -->
-    <div class="hero-layout" style="margin-top:48px;">
-      <div style="text-align:left;">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">AI Career Copilot 的核心流程：</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📤</span><span style="font-size:13px;font-weight:600;">上传简历</span><span style="font-size:11px;color:var(--text2);">PDF/Word/TXT</span></div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🔍</span><span style="font-size:13px;font-weight:600;">Resume Parser</span><span style="font-size:11px;color:var(--text2);">结构化抽取</span></div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📋</span><span style="font-size:13px;font-weight:600;">岗位匹配</span><span style="font-size:11px;color:var(--text2);">JD 匹配分析</span></div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">💬</span><span style="font-size:13px;font-weight:600;">AI 面试</span><span style="font-size:11px;color:var(--text2);">动态问题生成</span></div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📊</span><span style="font-size:13px;font-weight:600;">AI 评分</span><span style="font-size:11px;color:var(--text2);">多维度评估</span></div>
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📝</span><span style="font-size:13px;font-weight:600;">AI 总结报告</span><span style="font-size:11px;color:var(--text2);">个性化建议</span></div>
-        </div>
-        <div style="margin-top:20px;padding:16px;background:var(--navy);border-radius:12px;color:#fff;">
-          <div style="font-size:12px;font-weight:700;margin-bottom:6px;">ARCHITECTURE</div>
-          <div style="font-size:13px;margin-bottom:8px;">Multi-Agent Orchestration</div>
-          <div style="font-size:11px;opacity:.7;margin-bottom:10px;">基于 LangChain 的 Agent 编排框架，支持并行调用、<br>结果聚合与异常降级。</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">LangChain</span>
-            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">OpenAI</span>
-            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">FastAPI</span>
-            <span style="padding:3px 10px;background:rgba(255,255,255,.1);border-radius:6px;font-size:10px;">Pinecone</span>
+    <!-- Hero 两栏 -->
+    <div class="lp-hero">
+      <!-- 左：浮动卡片 + 标签 -->
+      <div class="lp-visual">
+        <span class="lp-pin p1">Resume Parser</span>
+        <span class="lp-pin p2">岗位匹配</span>
+        <span class="lp-pin p3">多轮追问</span>
+        <span class="lp-pin p4">多维评分</span>
+
+        <div class="lp-card">
+          <div class="lp-card-head">
+            <span class="lp-dot"></span>
+            <span>Interview Agent</span>
+            <em>· 04</em>
+          </div>
+          <div class="lp-card-h">实时追问<br><span class="lp-sub">由简历驱动</span></div>
+          <div class="lp-card-p">基于简历 · JD · 能力模型<br>生成下一问</div>
+          <div class="lp-bubble">「用户增长分析」中你如何定义北极星指标？</div>
+          <div class="lp-score">
+            <div class="lp-score-l">实时评分</div>
+            <div class="lp-score-v">82</div>
+            <div class="lp-bar"><i style="width:82%"></i></div>
           </div>
         </div>
+
+        <div class="lp-path"><b>◎</b> 13 Agents · Resume-Aware · 就绪</div>
+        <div class="lp-meta">Local Runtime · FastAPI · LangChain</div>
       </div>
-      <div class="chat-preview">
-        <div class="cp-header">
-          <div class="cp-avatar">💬</div>
-          <div class="cp-info">
-            <div class="cp-name">Interview Agent</div>
-            <div class="cp-role">Resume-Aware · PM Role</div>
+
+      <!-- 右：文案 -->
+      <div class="lp-copy">
+        <h1>面向 AI 时代的<br>智能求职<span class="lp-dim">面试助手</span></h1>
+        <p>上传简历，AI 自动解析、匹配岗位、动态生成面试问题、多轮追问，最终输出个性化评分报告与成长建议。</p>
+        <div class="lp-actions">
+          <button class="lp-btn lp-btn-dark" onclick="showPage('resume')">上传简历，立即开始 <span>→</span></button>
+          <button class="lp-btn lp-btn-ghost" onclick="showPage('dashboard')">查看 Dashboard</button>
+        </div>
+        <div class="lp-note" onclick="showPage('agents')">How it works <span>↓</span></div>
+        <div class="lp-social">
+          <div class="lp-chips">
+            <span>🤖 AI Powered</span>
+            <span>📄 Resume Aware</span>
+            <span>🧠 Multi Agent</span>
           </div>
-          <div class="cp-status">● 就绪中</div>
-        </div>
-        <div class="cp-msg">
-          <strong>AI</strong> &nbsp;我注意到你的简历中有「用户增长分析」的项目经验。能描述一下你在该项目中如何定义北极星指标，并推动数据驱动决策吗？
-        </div>
-        <div class="cp-msg-user">
-          我们定义的北极星指标是 DAU/MAU 比值，也就是用户粘性。我主导了从埋点设计到 A/B 测试的完整链路......
-        </div>
-        <div class="cp-msg">
-          <strong>AI</strong> &nbsp;很好思路路。追问一下：A/B 测试的样本量如何分层？遇到 Simpson's Paradox 怎么处理？
-        </div>
-        <div class="cp-msg-mini"><strong>AI</strong> &nbsp; ●●●</div>
-        <div class="cp-score-popup">
-          <div class="cp-score-label">实时评分</div>
-          <div class="cp-score-val">82</div>
-          <div class="cp-score-label" style="margin-top:6px;">🎯 思维深度</div>
-          <div class="cp-score-bar"><div class="cp-score-fill" style="width:82%"></div></div>
-          <div class="cp-score-label" style="margin-top:6px;">💡 业务实现</div>
-          <div class="cp-score-bar"><div class="cp-score-fill" style="width:70%"></div></div>
+          <div class="lp-avatars"><i>江</i><i>面</i><i>评</i><i>+</i></div>
         </div>
       </div>
     </div>
 
-    <!-- Stats Bar -->
-    <div style="display:flex;justify-content:center;gap:48px;margin-top:48px;flex-wrap:wrap;">
-      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">5</div><div style="font-size:12px;color:var(--text2);">AI Agent 协作</div></div>
-      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">87%</div><div style="font-size:12px;color:var(--text2);">面试通过率提升</div></div>
-      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">1,240+</div><div style="font-size:12px;color:var(--text2);">已服务候选人</div></div>
-      <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--navy);">4.8</div><div style="font-size:12px;color:var(--text2);">用户满意度</div></div>
+    <!-- 底部 5 列 -->
+    <div class="lp-trust">
+      <div class="lp-ti">
+        <div class="lp-ti-q">自动解析简历中的教育、项目、技能与量化成果，输出结构化画像。</div>
+        <div class="lp-ti-b"><span class="lp-ti-num">01</span><span class="lp-ti-meta"><b>Resume Parser</b><em>结构化抽取</em></span></div>
+      </div>
+      <div class="lp-ti">
+        <div class="lp-ti-q">按简历能力推荐岗位，给出匹配度评分与能力缺口清单。</div>
+        <div class="lp-ti-b"><span class="lp-ti-num">02</span><span class="lp-ti-meta"><b>岗位匹配</b><em>JD 分析 · Match Score</em></span></div>
+      </div>
+      <div class="lp-ti">
+        <div class="lp-ti-q">基于简历、JD 与能力模型生成问题，并随回答实时追问。</div>
+        <div class="lp-ti-b"><span class="lp-ti-num">03</span><span class="lp-ti-meta"><b>多轮追问</b><em>动态问题生成</em></span></div>
+      </div>
+      <div class="lp-ti">
+        <div class="lp-ti-q">5 位虚拟面试官交叉打分，自动识别评分冲突并给出裁决。</div>
+        <div class="lp-ti-b"><span class="lp-ti-num">04</span><span class="lp-ti-meta"><b>多维评分</b><em>6 维度 · 动态权重</em></span></div>
+      </div>
+      <div class="lp-ti">
+        <div class="lp-ti-q">输出录用概率预测、改进建议与可执行的成长计划。</div>
+        <div class="lp-ti-b"><span class="lp-ti-num">05</span><span class="lp-ti-meta"><b>成长报告</b><em>个性化建议</em></span></div>
+      </div>
     </div>
-  </div>
+  </section>
 
   
   <!-- V3.0: 5 位虚拟面试官 -->
@@ -1211,6 +1427,189 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
   </div>
 </div>
 
+<!-- JD 智能分析 PAGE（双模式：手动输入真实 JD / AI 生成行业标准 JD） -->
+<style id="jd-page-css">
+#page-jd .jdpg-modes{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+#page-jd .jdpg-mode{cursor:pointer;transition:box-shadow .2s,transform .2s;border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;}
+#page-jd .jdpg-mode:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+#page-jd .jdpg-mode-ico{width:44px;height:44px;border-radius:12px;background:var(--lime-soft,#F1FBD4);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+#page-jd .jdpg-mode-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+#page-jd .jdpg-mode-desc{font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:14px;min-height:42px;}
+#page-jd .jdpg-steps{display:flex;gap:8px;margin-bottom:14px;}
+#page-jd .jdpg-step{flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:12.5px;color:var(--text2);}
+#page-jd .jdpg-step .jdpg-step-num{width:22px;height:22px;border-radius:50%;background:var(--bg);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;}
+#page-jd .jdpg-step.active{border-color:var(--lime);background:var(--lime-soft,#F1FBD4);color:var(--lime-ink,#2E3B13);font-weight:700;}
+#page-jd .jdpg-step.active .jdpg-step-num{background:var(--lime);color:var(--lime-ink,#2E3B13);}
+#page-jd .jdpg-step.done .jdpg-step-num{background:var(--ink);color:#fff;}
+#page-jd .jdpg-tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:14px;}
+#page-jd .jdpg-tab{padding:7px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:12.5px;color:var(--text2);cursor:pointer;}
+#page-jd .jdpg-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+#page-jd .jdpg-level{padding:7px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:12.5px;color:var(--text2);cursor:pointer;}
+#page-jd .jdpg-level.active{background:var(--lime);border-color:var(--lime);color:var(--lime-ink,#2E3B13);font-weight:700;}
+#page-jd .jdpg-dim{margin-bottom:10px;}
+#page-jd .jdpg-dim-head{display:flex;justify-content:space-between;font-size:12px;color:var(--ink);margin-bottom:4px;}
+#page-jd .jdpg-dim-bar{height:8px;border-radius:999px;background:var(--bg);overflow:hidden;}
+#page-jd .jdpg-dim-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#8BC34A,var(--lime,#C8F36A));}
+#page-jd .jdpg-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+#page-jd .jdpg-badge-primary{background:var(--lime);color:var(--lime-ink,#2E3B13);}
+#page-jd .jdpg-badge-ext{background:var(--bg);color:var(--text2);}
+#page-jd .jdpg-badge-manual{background:#dbeafe;color:#1d4ed8;}
+#page-jd .jdpg-badge-ref{background:var(--lime-soft,#F1FBD4);color:var(--lime-ink,#2E3B13);}
+#page-jd textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:13px;resize:vertical;font-family:inherit;box-sizing:border-box;}
+#page-jd input[type=text]{padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;}
+@media (max-width:960px){#page-jd .jdpg-modes{grid-template-columns:1fr;}}
+</style>
+<div class="page" id="page-jd">
+  <div style="margin-bottom:16px;">
+    <div style="font-size:22px;font-weight:700;color:var(--ink);">JD 智能分析</div>
+    <div style="font-size:13px;color:var(--text2);margin-top:4px;">从真实招聘要求到行业岗位标准，帮助求职者明确岗位要求与自身能力差距。</div>
+  </div>
+
+  <!-- 双入口 -->
+  <div class="jdpg-modes" id="jdpg-entry">
+    <div class="card jdpg-mode" onclick="jdpgOpenMode('manual')">
+      <div class="jdpg-mode-ico">🎯</div>
+      <div class="jdpg-mode-title">模式一 · 已有目标岗位？</div>
+      <div class="jdpg-mode-desc">粘贴招聘信息或上传 JD 文件 / 截图，快速分析岗位职责、技能要求、学历与工作经验等硬性与优先条件。</div>
+      <button class="btn btn-primary" onclick="event.stopPropagation();jdpgOpenMode('manual')">开始 JD 分析</button>
+    </div>
+    <div class="card jdpg-mode" onclick="jdpgOpenMode('gen')">
+      <div class="jdpg-mode-ico">✨</div>
+      <div class="jdpg-mode-title">模式二 · 还不确定适合什么岗位？</div>
+      <div class="jdpg-mode-desc">上传个人简历，AI 根据你的经历推荐岗位，并生成行业标准参考 JD，自动完成简历匹配与能力差距分析。</div>
+      <button class="btn btn-outline" onclick="event.stopPropagation();jdpgOpenMode('gen')">根据简历生成 JD</button>
+    </div>
+  </div>
+
+  <!-- ===== 模式一：手动输入 ===== -->
+  <div id="jdpg-manual" style="display:none;margin-top:16px;">
+    <div class="card">
+      <div class="card-title">模式一 · 手动输入真实 JD</div>
+      <p style="font-size:12.5px;color:var(--text2);margin-bottom:10px;">从 Boss直聘、拉勾、猎聘、智联等平台复制 JD 粘贴到下方，或上传 JD 文件 / 截图。系统保留原始文本，不做改写。</p>
+      <textarea id="jdpg-manual-input" rows="7" placeholder="粘贴职位描述到这里...&#10;&#10;例如：&#10;岗位职责：&#10;1. 负责AI产品规划与设计...&#10;任职要求：&#10;1. 本科及以上学历..."></textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="jdpgAnalyzeManual()">🔍 开始 JD 分析</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('jdpg-manual-file').click()">📄 上传 JD 文件</button>
+        <input id="jdpg-manual-file" type="file" accept=".txt,.pdf,.docx,.doc" style="display:none" onchange="jdpgManualFile(this)">
+        <button class="btn btn-secondary" onclick="document.getElementById('jdpg-manual-img').click()">🖼️ 上传 JD 截图（OCR）</button>
+        <input id="jdpg-manual-img" type="file" accept="image/*" style="display:none" onchange="jdpgManualImage(this)">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);cursor:pointer;">
+          <input type="checkbox" id="jdpg-manual-link-resume" checked> 关联当前简历做匹配分析
+        </label>
+        <span id="jdpg-manual-status" style="font-size:12px;color:var(--blue);font-weight:600;"></span>
+      </div>
+      <div id="jdpg-manual-tip" style="margin-top:8px;font-size:11.5px;color:var(--text2);"></div>
+    </div>
+    <div id="jdpg-manual-result" style="display:none;margin-top:14px;"></div>
+  </div>
+
+  <!-- ===== 模式二：智能生成（三步向导）===== -->
+  <div id="jdpg-gen" style="display:none;margin-top:16px;">
+    <div class="jdpg-steps" id="jdpg-steps">
+      <div class="jdpg-step active" id="jdpg-stp1"><span class="jdpg-step-num">1</span><span>简历信息确认</span></div>
+      <div class="jdpg-step" id="jdpg-stp2"><span class="jdpg-step-num">2</span><span>岗位推荐与选择</span></div>
+      <div class="jdpg-step" id="jdpg-stp3"><span class="jdpg-step-num">3</span><span>生成与分析</span></div>
+    </div>
+
+    <!-- 第一步：简历信息确认 -->
+    <div id="jdpg-w1">
+      <div class="card">
+        <div class="card-title">第一步 · 简历信息确认</div>
+        <div id="jdpg-w1-none">
+          <p style="font-size:13px;color:var(--text2);line-height:1.7;">尚未检测到已解析的简历。你可以先到「简历与岗位」页上传完整简历（推荐，支持 PDF/DOCX/图片 OCR），或直接在下方粘贴简历文本继续。</p>
+          <div style="display:flex;gap:10px;margin:10px 0;">
+            <button class="btn btn-outline" onclick="showPage('resume')">前往上传简历</button>
+            <button class="btn btn-secondary" onclick="jdpgUseSample()">使用示例简历</button>
+          </div>
+          <textarea id="jdpg-w1-paste" rows="6" placeholder="或直接粘贴简历内容（教育背景 / 技能 / 项目 / 实习经历）..."></textarea>
+          <div style="text-align:center;margin-top:10px;"><button class="btn btn-primary" onclick="jdpgParseInlineResume()">解析并继续</button></div>
+        </div>
+        <div id="jdpg-w1-edit" style="display:none;">
+          <p style="font-size:12.5px;color:var(--text2);margin-bottom:10px;">请确认以下信息是否准确，可直接修改错误内容（修改仅用于本次 JD 生成与匹配分析）：</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div><div style="font-size:12px;color:var(--text2);margin-bottom:4px;">教育背景</div><input type="text" id="jdpg-f-edu" style="width:100%;"></div>
+            <div><div style="font-size:12px;color:var(--text2);margin-bottom:4px;">工作经验</div><input type="text" id="jdpg-f-exp" style="width:100%;"></div>
+          </div>
+          <div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--text2);margin-bottom:4px;">专业技能（顿号分隔）</div><input type="text" id="jdpg-f-skills" style="width:100%;"></div>
+          <div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--text2);margin-bottom:4px;">项目 / 实习经历（每行一条：名称：描述）</div><textarea id="jdpg-f-projects" rows="4"></textarea></div>
+          <div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--text2);margin-bottom:4px;">成果与亮点（每行一条）</div><textarea id="jdpg-f-highlights" rows="3"></textarea></div>
+          <div style="text-align:center;"><button class="btn btn-primary" onclick="jdpgConfirmResume()">确认简历信息，进入岗位推荐 →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第二步：岗位推荐与选择 -->
+    <div id="jdpg-w2" style="display:none;">
+      <div class="card">
+        <div class="card-title">第二步 · 岗位推荐与选择</div>
+        <p style="font-size:12.5px;color:var(--text2);margin-bottom:12px;">基于简历证据与岗位库能力标签推荐，点击卡片选用岗位；也可直接修改岗位名称与期望级别。</p>
+        <div id="jdpg-rec-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;"></div>
+        <div style="border-top:1px dashed var(--border);padding-top:14px;">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">目标岗位（可修改）：</div>
+          <div style="display:flex;gap:10px;margin-bottom:14px;">
+            <input type="text" id="jdpg-job-input" placeholder="如：AI 产品经理、数据分析师..." style="flex:1;">
+            <button class="btn btn-secondary" onclick="jdpgRefreshRecs()">重新推荐</button>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">期望岗位级别：</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="jdpg-levels"></div>
+          <div style="text-align:center;margin-top:18px;"><button class="btn btn-primary btn-lg" onclick="jdpgGenerate()">✨ 生成行业标准 JD 并分析匹配</button></div>
+          <div id="jdpg-gen-status" style="display:none;text-align:center;margin-top:12px;font-size:13px;color:var(--blue);font-weight:600;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三步：生成与分析结果 -->
+    <div id="jdpg-w3" style="display:none;">
+      <div class="card" id="jdpg-progress-card" style="display:none;">
+        <div class="card-title">JD Agent 工作中…</div>
+        <div id="jdpg-progress-text" style="font-size:13px;color:var(--blue);font-weight:600;padding:8px 0;">正在生成行业标准 JD…</div>
+        <div style="height:8px;border-radius:999px;background:var(--bg);overflow:hidden;margin-top:8px;"><div id="jdpg-progress-bar" style="height:100%;width:30%;border-radius:999px;background:var(--lime);transition:width .5s;"></div></div>
+      </div>
+      <div id="jdpg-result" style="display:none;">
+        <div class="card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:18px;font-weight:700;color:var(--ink);" id="jdpg-res-title">—</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px;" id="jdpg-res-meta"></div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px;color:var(--text2);">岗位匹配度</div>
+              <div style="font-size:26px;font-weight:700;color:var(--ink);" id="jdpg-res-score">—</div>
+            </div>
+          </div>
+          <div class="jdpg-tabs" style="margin-top:14px;" id="jdpg-tabs">
+            <div class="jdpg-tab active" onclick="jdpgTab('overview')">岗位概览</div>
+            <div class="jdpg-tab" onclick="jdpgTab('duty')">核心职责</div>
+            <div class="jdpg-tab" onclick="jdpgTab('qual')">任职资格</div>
+            <div class="jdpg-tab" onclick="jdpgTab('skill')">专业技能</div>
+            <div class="jdpg-tab" onclick="jdpgTab('kpi')">KPI 与交付</div>
+            <div class="jdpg-tab" onclick="jdpgTab('match')">简历匹配度</div>
+            <div class="jdpg-tab" onclick="jdpgTab('gap')">能力差距分析</div>
+            <div class="jdpg-tab" onclick="jdpgTab('advice')">学习与面试建议</div>
+          </div>
+          <div id="jdpg-tab-body" style="min-height:180px;"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--border);padding-top:14px;margin-top:8px;">
+            <button class="btn btn-secondary" onclick="jdpgViewFull()">📋 查看完整 JD</button>
+            <button class="btn btn-secondary" onclick="jdpgEditJob()">✏️ 编辑目标岗位</button>
+            <button class="btn btn-secondary" onclick="jdpgGenerate(true)">🔄 重新生成</button>
+            <button class="btn btn-primary" onclick="jdpgSave(true)">💾 保存 JD</button>
+            <button class="btn btn-secondary" onclick="jdpgCopy()">📑 复制 JD</button>
+            <button class="btn btn-outline" onclick="jdpgGoInterview()">🎤 继续进入模拟面试</button>
+            <span id="jdpg-save-status" style="font-size:12px;color:var(--success);font-weight:600;align-self:center;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JD 历史记录 ===== -->
+  <div class="card" style="margin-top:16px;" id="jdpg-history-card">
+    <div class="card-title">🗂️ JD 历史记录</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">手动输入的 JD 保留原文，生成的 JD 保留生成版本；保存在本机 localStorage，不会上传。</p>
+    <div id="jdpg-history-list"></div>
+  </div>
+</div>
+
 <!-- INTERVIEW PAGE -->
 <div class="page" id="page-interview">
   <div id="interview-start" class="empty-state">
@@ -1357,7 +1756,10 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
     </div>
 
     <div style="margin-bottom:18px;">
-      <label style="font-size:13px;font-weight:600;color:var(--navy);display:block;margin-bottom:6px;">模型（全部免费）</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+        <label style="font-size:13px;font-weight:600;color:var(--navy);flex:1;">模型（从 Cline 服务自动同步）</label>
+        <button class="btn btn-sm btn-outline" id="btn-sync-models" onclick="refreshClineModels()">🔄 从 Cline 同步可用模型</button>
+      </div>
       <select id="settings-model" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;background:#fff;">
         <option value="cline-free/mimo-v2.6-flash">Cline Free · Mimo V2.6 Flash（默认推荐 · 支持图片简历识别）</option>
         <option value="cline-free/step-5-preview">Cline Free · Step 5 Preview（推理更强 · 支持图片简历识别）</option>
@@ -1365,12 +1767,9 @@ code{background:#F1F2F4;padding:1px 5px;border-radius:5px;font-size:.92em}
         <option value="cline-free/muse-spark-1.3-contributor">Cline Free · Muse Spark 1.3（⚠️ 上游返回 502：当前地区不可用）</option>
         <option value="auto">🤖 智能切换 — 出题/评分/追问/报告自动选用可用模型</option>
       </select>
-      <div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.7;">
-        可用性实测（Base URL <code>http://localhost:8787/v1</code>）：<br>
-        ✅ <code>cline-free/mimo-v2.6-flash</code> · ✅ <code>cline-free/step-5-preview</code> · ✅ <code>cline-free/solar-mini4</code><br>
-        ⚠️ <code>cline-free/muse-spark-1.3-contributor</code>：上游返回
-        <code>502 access forbidden ... not available in your region</code>，属服务端区域限制，非本应用可修复。<br>
-        图片简历 OCR 需要多模态模型，会自动使用 Mimo V2.6 Flash / Step 5 Preview，与此处选择无关。
+      <div id="settings-models-status" style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.7;">
+        Cline 模型池会<strong>不定时更新</strong>（如 mimo / step-5 已被服务端更换为 nemotron / beam 等新模型）。点击上方「从 Cline 同步可用模型」即可拉取当前真实可用的列表；<br>
+        同步结果写入 local_api_config.json（available_models），<strong>下次启动自动恢复</strong>、无需重新同步；「智能切换」与图片简历 OCR 的候选模型也会随列表一并更新。
       </div>
     </div>
 
@@ -1502,6 +1901,7 @@ var _showOrig=showPage;showPage=function(page){
   document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-page')===page);});
   if(page==='agents')renderAgentsPage();
   if(page==='history')renderHistoryPage();
+  if(page==='jd'&&typeof renderJDPage==='function')renderJDPage();
   if(page==='dashboard'&&isAdminAuthenticated){renderDashboard();startSimulation();}
   if(page==='report'&&interviewState.completed)renderReportV3();
   window.scrollTo(0,0);
@@ -2059,8 +2459,12 @@ function isKnownTool(c){ var t=String(c).toLowerCase().replace(/[\s/]+/g,''); re
 
 function analyzeJDText(text){
   var title='目标岗位';var resp=[];var hard=[];var soft=[];var biz=[];var tools=[];var edu='本科及以上';var focus='综合能力、岗位匹配';
-  var titleMatch=text.match(/(?:岗位名称|职位名称|招聘职位|招聘岗位|岗位|职位)[：: ]*(.+)/);
-  if(titleMatch){title=titleMatch[1].trim().replace(/\s*[（(].*$/,'').substring(0,20);}
+  var titleMatch=text.match(/(?:岗位名称|职位名称|招聘职位|招聘岗位)[：: ]*(.+)/) || text.match(/(?:岗位|职位)[：: ]*(.+)/);
+  if(titleMatch){
+    var cand=titleMatch[1].trim().replace(/\s*[（(].*$/,'').substring(0,20);
+    // 排除把「岗位职责/任职要求/职位描述」等表头误当岗位名
+    if(cand && !/职责|要求|描述|内容|条件|福利|薪资|地点/.test(cand)) title=cand;
+  }
   var raw=String(text).replace(/\r/g,'');
   var lines=raw.split(/\n+/).map(function(l){return l.trim();}).filter(function(l){return l.length>1;});
   var section='other';
@@ -2100,8 +2504,8 @@ function analyzeJDText(text){
   function processContent(l, sec){
     var cleaned=cleanItem(l);
     if(cleaned.length<3)return;
-    // 工具行：仅当较短时才整体当工具列表（长段落不吞）
-    if(cleaned.length<=40 && /工具|平台|软件|系统|框架|语言|Jira|Figma|Axure|SQL|Python|Excel|PPT|Tableau|PowerPoint|PRD|Sketch|Notion|Slack|Amplitude|Mixpanel|Adobe|Photoshop|Premiere|Final\s*Cut|墨刀|蓝湖|禅道/i.test(cleaned)){
+    // 工具行：仅当较短、且不含职责动词时才整体当工具列表（长段落/职责句不吞）
+    if(cleaned.length<=40 && !/负责|主导|参与|设计|跟进|落地|输出|撰写|搭建|推动|优化|评审|交付/.test(cleaned) && /工具|平台|软件|系统|框架|语言|Jira|Figma|Axure|SQL|Python|Excel|PPT|Tableau|PowerPoint|PRD|Sketch|Notion|Slack|Amplitude|Mixpanel|Adobe|Photoshop|Premiere|Final\s*Cut|墨刀|蓝湖|禅道/i.test(cleaned)){
       pullTools(cleaned).forEach(function(t){ if(tools.length<10)tools.push(t); });
       return;
     }
@@ -2127,7 +2531,7 @@ function analyzeJDText(text){
     sentences.slice(0,6).forEach(function(s){hard.push(clip(s));});
   }
   if(resp.length===0)resp=['依据岗位描述开展工作','与跨职能团队协作达成目标'];
-  if(hard.length===0)hard=['具备岗位所需的专业技能与项目经验'];
+  if(hard.length===0)hard=tools.length?tools.slice(0,4):['具备岗位所需的专业技能与项目经验'];
   if(soft.length===0)soft=['沟通表达能力','团队协作精神'];
   if(biz.length===0)biz=['业务理解能力','数据驱动决策'];
   if(tools.length===0)tools=['Office 套件','常用协作工具'];
@@ -3334,14 +3738,94 @@ var DEFAULT_MODEL='cline-free/mimo-v2.6-flash';
 /* 保留在下拉框中但明确标注不可用的模型（用户可显式选择，不参与自动降级判断） */
 var KNOWN_UNAVAILABLE=['cline-free/muse-spark-1.3-contributor'];
 
+/* ========== Cline 可用模型同步 ==========
+ * Cline 模型池不定时更新（实测已从 mimo/step-5 更换为 nemotron/beam 等）。
+ * 「设置」页一键同步 GET /v1/models → 写入 local_api_config.json（主进程持久化）→
+ * 启动时自动恢复；同步后下拉框、智能切换降级池（AVAILABLE_MODELS）、
+ * 图片 OCR 视觉模型池（VISION_MODELS）、默认模型全部跟随更新。 */
+var clineModels=[];
+function deriveVisionModels(models){
+  var ids=(models||[]).map(function(m){return (m&&m.id)||m;}).filter(Boolean);
+  var vis=ids.filter(function(id){return /(^|\/)[^\/]*(vl|vision|vlm)[^\/]*$/i.test(id);});
+  return vis.length?vis:null;
+}
+function fmtModelsTime(iso){try{var d=new Date(iso);return isNaN(d.getTime())?'':d.toLocaleString('zh-CN',{hour12:false});}catch(e){return '';}}
+function friendlyModelName(m){
+  var label=(m.label&&m.label!==m.id)?m.label:'';
+  var short=m.id.replace(/^cline-free\//,'');
+  return (label&&label!==short)?(short+' · '+label):short;
+}
+function applyModelOptions(models,keepValue){
+  var sel=document.getElementById('settings-model');if(!sel)return;
+  var prev=(keepValue!==undefined&&keepValue!==null)?keepValue:sel.value;
+  sel.innerHTML='';
+  models.forEach(function(m){
+    var o=document.createElement('option');o.value=m.id;o.textContent=friendlyModelName(m);sel.appendChild(o);
+  });
+  var ao=document.createElement('option');ao.value='auto';ao.textContent='🤖 智能切换 — 出题/评分/追问/报告自动选用可用模型';sel.appendChild(ao);
+  var vals=Array.prototype.slice.call(sel.options).map(function(o){return o.value;});
+  if(vals.indexOf(prev)===-1)prev=(AVAILABLE_MODELS.indexOf(DEFAULT_MODEL)>-1)?DEFAULT_MODEL:'auto';
+  sel.value=(vals.indexOf(prev)>-1)?prev:vals[0];
+}
+function setModelsStatus(html){var el=document.getElementById('settings-models-status');if(el)el.innerHTML=html;}
+function adoptSyncedModels(models){
+  clineModels=models;
+  AVAILABLE_MODELS=models.map(function(m){return m.id;});
+  var vis=deriveVisionModels(models);
+  if(vis)VISION_MODELS=vis;
+  if(AVAILABLE_MODELS.indexOf(DEFAULT_MODEL)===-1)DEFAULT_MODEL=AVAILABLE_MODELS[0]||DEFAULT_MODEL;
+}
+function refreshClineModels(){
+  if(!(window.electronAPI&&window.electronAPI.listModels)){setModelsStatus('⚠️ 当前环境不支持同步（需在桌面版中使用）');return;}
+  var btn=document.getElementById('btn-sync-models');
+  if(btn){btn.disabled=true;btn.textContent='⏳ 同步中...';}
+  setModelsStatus('⏳ 正在从 Cline 服务拉取 <code>/v1/models</code> ...');
+  window.electronAPI.listModels().then(function(res){
+    if(btn){btn.disabled=false;btn.textContent='🔄 从 Cline 同步可用模型';}
+    if(res&&res.ok&&res.models&&res.models.length){
+      adoptSyncedModels(res.models);
+      applyModelOptions(res.models);
+      var t=fmtModelsTime(res.updatedAt);
+      var head=(res.source==='live'
+        ?'✅ 已同步 <b>'+res.models.length+'</b> 个可用模型'+(t?'（'+t+'）':'')+'，并已写入 local_api_config.json，下次启动自动恢复。'
+        :'⚠️ Cline 服务暂不可达，已回退到上次同步的缓存'+(t?'（'+t+'）':'')+'。'+(res.error?(' 原因：'+res.error):''));
+      setModelsStatus(head+'<br>当前列表：'+res.models.map(function(m){return '<code>'+m.id+'</code>';}).join(' · ')
+        +'<br>「智能切换」与图片简历 OCR 的候选模型已随本列表一并更新；OCR 会自动选用带 VL / 视觉能力的模型。');
+    }else{
+      setModelsStatus('❌ 同步失败：'+((res&&res.error)||'未知错误')+'。请确认 Cline 本地服务已启动（在 ClineFreePool 目录执行 <code>node start.mjs</code>），或稍后重试。');
+    }
+  }).catch(function(e){
+    if(btn){btn.disabled=false;btn.textContent='🔄 从 Cline 同步可用模型';}
+    setModelsStatus('❌ 同步失败：'+((e&&e.message)?e.message:e));
+  });
+}
+/* 启动即恢复上次同步的模型列表（无需 Cline 在线） */
+(function initClineModels(){
+  if(!(window.electronAPI&&window.electronAPI.getLocalConfig))return;
+  window.electronAPI.getLocalConfig().then(function(c){
+    if(c&&Array.isArray(c.availableModels)&&c.availableModels.length){
+      var models=c.availableModels.map(function(id){return {id:id,label:id,isDefault:false};});
+      adoptSyncedModels(models);
+      applyModelOptions(models);
+      var t=fmtModelsTime(c.modelsUpdatedAt);
+      setModelsStatus('✅ 已恢复上次同步的 <b>'+c.availableModels.length+'</b> 个模型'+(t?'（同步于 '+t+'）':'')+'。点击上方「从 Cline 同步」可获取最新列表。<br>当前列表：'+c.availableModels.map(function(id){return '<code>'+id+'</code>';}).join(' · '));
+    }
+  }).catch(function(){});
+})();
+
 function getAIModelForStage(stage){
   var c=getAIConfig();
   if(c.model==='auto'){
     var m=MODEL_MAP[stage]||MODEL_MAP.default;
+    /* Cline 模型池不定时更新：映射中的模型若已从服务下线，
+     * 自动落到当前同步列表的第一个（is_default / cline-free 优先排序） */
+    if(AVAILABLE_MODELS.length&&AVAILABLE_MODELS.indexOf(m.model)===-1)return AVAILABLE_MODELS[0];
     return m.model;
   }
-  // 历史遗留的失效模型名（用户此前保存过）→ 自动降级到默认可用模型
-  if(AVAILABLE_MODELS.indexOf(c.model)===-1 && c.model!=='auto')return DEFAULT_MODEL;
+  // 历史遗留的失效模型名（用户此前保存过）→ 自动降级；降级目标本身下线时用同步列表第一个
+  if(AVAILABLE_MODELS.indexOf(c.model)===-1 && c.model!=='auto'){
+    return (AVAILABLE_MODELS.length&&AVAILABLE_MODELS.indexOf(DEFAULT_MODEL)===-1)?AVAILABLE_MODELS[0]:DEFAULT_MODEL;
+  }
   return c.model;
 }
 
@@ -3809,11 +4293,564 @@ function startSimulation(){
 function showModal(title,body){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').textContent=body;document.getElementById('modal-overlay').classList.add('active');}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('active');}
 
+// ========== JD 智能分析模块（双模式：手动输入真实 JD / AI 生成行业标准 JD）==========
+/* 复用能力：analyzeJDText（本地解析）/ callAI + extractJSON（AI 链路）/
+ * maybeDownscaleForOCR + baiduOcr（截图 OCR）/ parseResumeFile（文件提取）/
+ * JobLibrary（岗位库推荐）/ JDCore（Prompt + 数据模型 acc_jd_v1）。
+ * 与面试历史 acc_history_v1 同机制（localStorage），互不冲突。 */
+var jdpgState={mode:null,step:1,resume:null,recs:null,selectedJob:null,level:'实习生',jd:null,match:null,record:null,genToken:0,manualJD:null,manualMatch:null,manualRecord:null};
+
+function jdpgEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function jdpgStatus(id,msg){var el=document.getElementById(id);if(el)el.textContent=msg||'';}
+
+function jdpgOpenMode(mode){
+  jdpgState.mode=mode;
+  document.getElementById('jdpg-entry').style.display='none';
+  document.getElementById('jdpg-manual').style.display=(mode==='manual')?'block':'none';
+  document.getElementById('jdpg-gen').style.display=(mode==='gen')?'block':'none';
+  if(mode==='gen'){ jdpgInitGen(); }
+  if(mode==='manual'){
+    var has=!!parsedResume;
+    var tip=document.getElementById('jdpg-manual-tip');
+    if(tip)tip.textContent=has?('已关联当前简历：'+(parsedResume.name||'未命名')+'（分析后自动进行简历匹配）'):'未检测到已解析简历，分析后将只输出岗位解析结果（可先到「简历与岗位」页上传简历）';
+  }
+  window.scrollTo(0,0);
+}
+function jdpgBackToEntry(){
+  jdpgState.mode=null;
+  document.getElementById('jdpg-entry').style.display='grid';
+  document.getElementById('jdpg-manual').style.display='none';
+  document.getElementById('jdpg-gen').style.display='none';
+}
+
+function renderJDPage(){
+  if(!jdpgState.mode){document.getElementById('jdpg-entry').style.display='grid';document.getElementById('jdpg-manual').style.display='none';document.getElementById('jdpg-gen').style.display='none';}
+  jdpgRenderHistory();
+}
+
+/* ---------- 模式二 · 三步向导 ---------- */
+function jdpgSetStep(n){
+  jdpgState.step=n;
+  for(var i=1;i<=3;i++){
+    var st=document.getElementById('jdpg-stp'+i);if(!st)continue;
+    st.classList.toggle('active',i===n);st.classList.toggle('done',i<n);
+    var w=document.getElementById('jdpg-w'+i);if(w)w.style.display=(i===n)?'block':'none';
+  }
+  window.scrollTo(0,0);
+}
+function jdpgInitGen(){
+  if(parsedResume){ jdpgState.resume=JSON.parse(JSON.stringify(parsedResume)); jdpgFillResumeForm(); jdpgSetStep(1); }
+  else { jdpgSetStep(1); document.getElementById('jdpg-w1-none').style.display='block'; document.getElementById('jdpg-w1-edit').style.display='none'; }
+}
+function jdpgUseSample(){
+  jdpgState.resume=JSON.parse(JSON.stringify(SAMPLE_RESUME));
+  jdpgFillResumeForm();
+  jdpgSetStep(1);
+}
+function jdpgParseInlineResume(){
+  var text=document.getElementById('jdpg-w1-paste').value.trim();
+  if(!text||text.length<20){alert('请粘贴至少 20 字的简历内容，或到「简历与岗位」页上传完整简历。');return;}
+  jdpgState.resume=analyzeResumeText(text,'内联粘贴简历');
+  jdpgFillResumeForm();
+  jdpgSetStep(1);
+}
+function jdpgFillResumeForm(){
+  var r=jdpgState.resume||{};
+  document.getElementById('jdpg-w1-none').style.display='none';
+  document.getElementById('jdpg-w1-edit').style.display='block';
+  document.getElementById('jdpg-f-edu').value=r.education||'';
+  document.getElementById('jdpg-f-exp').value=r.experience||'';
+  document.getElementById('jdpg-f-skills').value=(r.skills||[]).join('、');
+  document.getElementById('jdpg-f-projects').value=(r.projects||[]).map(function(p){return (p.name||'')+'：'+(p.desc||'');}).join('\n');
+  document.getElementById('jdpg-f-highlights').value=(r.highlights||[]).join('\n');
+}
+function jdpgConfirmResume(){
+  var r=JSON.parse(JSON.stringify(jdpgState.resume||{}));
+  r.education=document.getElementById('jdpg-f-edu').value.trim();
+  r.experience=document.getElementById('jdpg-f-exp').value.trim();
+  r.skills=document.getElementById('jdpg-f-skills').value.split(/[、,，;；]/).map(function(s){return s.trim();}).filter(Boolean);
+  r.projects=document.getElementById('jdpg-f-projects').value.split('\n').map(function(l){
+    var line=l.trim();if(!line)return null;
+    var i=line.indexOf('：')>=0?line.indexOf('：'):line.indexOf(':');
+    return (i>0)?{name:line.slice(0,i).trim(),role:'核心成员',desc:line.slice(i+1).trim()}:{name:line.slice(0,30),role:'核心成员',desc:line};
+  }).filter(Boolean);
+  r.highlights=document.getElementById('jdpg-f-highlights').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  jdpgState.resume=r;
+  jdpgRefreshRecs();
+  jdpgSetStep(2);
+}
+function jdpgRefreshRecs(){
+  var r=jdpgState.resume;
+  if(!r){alert('请先完成简历信息确认');jdpgSetStep(1);return;}
+  var rec=JobLibrary.recommend(resumeToText(r),r,{topN:5});
+  jdpgState.recs=rec;
+  var grid=document.getElementById('jdpg-rec-grid');
+  if(!rec.jobs.length){
+    grid.innerHTML='<div style="padding:16px;color:var(--text2);font-size:13px;grid-column:1/-1;">未能从当前简历中提取到足够的职业证据，请补充教育背景、技能与项目经历，或直接在下方输入目标岗位。</div>';
+  }else{
+    grid.innerHTML=rec.jobs.map(function(j,i){
+      return '<div class="card jdpg-rec" id="jdpg-rec-'+i+'" onclick="jdpgSelectRec('+i+')" style="cursor:pointer;padding:16px;border:1px solid var(--border);border-radius:var(--radius);">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">'
+        +'<div><span style="font-size:14.5px;font-weight:700;color:var(--ink);">'+jdpgEsc(j.job_title)+'</span>'
+        +' <span style="font-size:11px;color:var(--text2);">'+jdpgEsc(j.industry_name)+'</span></div>'
+        +'<span class="jdpg-badge '+(j.is_primary?'jdpg-badge-primary':'jdpg-badge-ext')+'">'+j.recommend_type+'</span></div>'
+        +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+        +'<div class="jdpg-dim-bar" style="flex:1;"><div class="jdpg-dim-fill" style="width:'+j.match_score+'%;"></div></div>'
+        +'<span style="font-size:13px;font-weight:700;color:var(--ink);">'+j.match_score+'</span></div>'
+        +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:6px;">'+jdpgEsc(j.recommend_reason)+'</div>'
+        +(j.advantages.length?('<div style="font-size:11.5px;color:var(--success);margin-bottom:3px;">✓ 已有优势：'+jdpgEsc(j.advantages.join('、'))+'</div>'):'')
+        +(j.gaps.length?('<div style="font-size:11.5px;color:var(--warning);">△ 待提升：'+jdpgEsc(j.gaps.join('、'))+'</div>'):'')
+        +'</div>';
+    }).join('');
+  }
+  jdpgSelectRec(rec.jobs.length?0:-1);
+  jdpgRenderLevels();
+}
+function jdpgSelectRec(i){
+  var rec=jdpgState.recs;if(!rec)return;
+  jdpgState.selectedJobIndex=i;
+  if(i>=0&&rec.jobs[i]){
+    jdpgState.selectedJob=rec.jobs[i].job_title;
+    document.querySelectorAll('#jdpg-rec-grid .jdpg-rec').forEach(function(c,k){
+      c.style.borderColor=(k===i)?'var(--lime)':'var(--border)';
+      c.style.boxShadow=(k===i)?'var(--shadow-lg)':'none';
+    });
+  }
+  document.getElementById('jdpg-job-input').value=jdpgState.selectedJob||'';
+}
+function jdpgRenderLevels(){
+  var box=document.getElementById('jdpg-levels');
+  box.innerHTML=JDCore.LEVELS.map(function(l){
+    return '<span class="jdpg-level'+(l===jdpgState.level?' active':'')+'" onclick="jdpgSetLevel(\''+l+'\')">'+l+'</span>';
+  }).join('');
+}
+function jdpgSetLevel(l){
+  jdpgState.level=l; jdpgRenderLevels();
+}
+
+/* 生成进度 UI */
+function jdpgProgress(pct,msg){
+  document.getElementById('jdpg-progress-card').style.display='block';
+  document.getElementById('jdpg-progress-text').textContent=msg;
+  document.getElementById('jdpg-progress-bar').style.width=pct+'%';
+}
+function jdpgProgressDone(){
+  document.getElementById('jdpg-progress-card').style.display='none';
+}
+
+/* JD 模块专用的模型兜底调用：当前阶段模型失败/输出不可用时，
+ * 依次换用已同步的其它可用模型重试（Cline 模型池不定时下线，避免直接降级到本地兜底） */
+function jdpgAIWithRetry(messages,temperature,stage,maxTokens){
+  var primary='';
+  try{primary=getAIModelForStage(stage);}catch(e){}
+  var pool=[primary].concat((typeof AVAILABLE_MODELS!=='undefined'&&AVAILABLE_MODELS)?AVAILABLE_MODELS:[]);
+  var seen={};pool=pool.filter(function(m){ if(!m||seen[m])return false; seen[m]=1; return true; }).slice(0,3);
+  function tryOne(i){
+    if(i>=pool.length)return Promise.resolve({ok:false,error:'全部候选模型均调用失败'});
+    return callAI(messages,temperature,stage,{model:pool[i],maxTokens:maxTokens||4096}).then(function(res){
+      if(res&&res.ok&&res.text&&String(res.text).trim().length>40)return res;
+      return tryOne(i+1);
+    }).catch(function(){return tryOne(i+1);});
+  }
+  return tryOne(0);
+}
+
+/* 第三步：生成行业标准 JD + 自动匹配分析 */
+function jdpgGenerate(isRegen){
+  var r=jdpgState.resume;
+  if(!r){alert('请先完成简历信息确认');jdpgSetStep(1);return;}
+  var job=(document.getElementById('jdpg-job-input').value||'').trim()||jdpgState.selectedJob;
+  if(!job){alert('请选择推荐岗位或输入目标岗位名称');return;}
+  jdpgState.selectedJob=job;
+  jdpgSetStep(3);
+  document.getElementById('jdpg-result').style.display='none';
+  var token=++jdpgState.genToken;
+  var info=JobLibrary.getJob(job)||{};
+  var industry=info.industry?JobLibrary.industryName(info.industry):(jdpgState.recs&&jdpgState.recs.jobs[0]?jdpgState.recs.jobs[0].industry_name:'');
+  jdpgProgress(20,'正在生成「'+job+'（'+jdpgState.level+'）」行业标准 JD…');
+  if(typeof setAgentStatus==='function'){try{setAgentStatus('jd','running');}catch(e){}}
+
+  var resumeText=resumeToText(r);
+  var messages=JDCore.buildJDGenMessages({resumeText:resumeText,resumeStruct:r,industry:industry,jobTitle:job,level:jdpgState.level});
+
+  jdpgAIWithRetry(messages,0.7,'jd_gen',4096).then(function(res){
+    if(token!==jdpgState.genToken)return;
+    var jd=null;
+    if(res&&res.ok&&res.text){
+      jd=JDCore.normalizeGeneratedJD(extractJSON(res.text));
+      if(jd&&res.model)jd._model=res.model;
+    }
+    if(!jd){
+      // 模型不可用/输出异常：本地通用 JD 兜底（保证流程不崩，可重试）
+      jd=JDCore.normalizeGeneratedJD({
+        job_title:job,industry:industry||'行业参考',job_function:(info.family==='tech'||info.family==='data')?'技术部':'相关职能部门',
+        job_level:jdpgState.level,job_type:'行业参考',work_direction:(info.tags||[]).slice(0,3).join('、'),
+        job_summary:'未能连接 AI 服务，以下为基于岗位库能力标签的本地参考 JD。点击「重新生成」可在服务恢复后获得完整行业标准 JD。',
+        responsibilities:(info.tags||[]).slice(0,5).map(function(t){return {task:t+'相关工作',action:'依据岗位标准执行并交付结果',outcome:'完成该模块的目标产出'};}),
+        required_qualifications:['本科在读或以上学历（行业参考）'].concat((info.tags||[]).slice(0,3)),
+        preferred_qualifications:['相关项目或实习经历（行业参考）'],
+        professional_skills:(info.tags||[]).map(function(t){return {category:'核心业务技能',skill:t,level:'必须掌握'};}),
+        experience_requirements:['实习生/应届生以课程项目、实习经历作为经验参考'],
+        kpi_indicators:[{name:'任务交付质量',note:'行业参考'}],
+        work_scenarios:['在指导下完成岗位相关基础工作'],
+        career_path:['专业路线：' + job + ' → 资深' + job],
+        confidence_notes:['当前为本地兜底数据，AI 服务不可用，建议点击「重新生成」']
+      });
+      jd._fallback=true;
+    }
+    jdpgProgress(60,'JD 生成完成，正在进行简历匹配分析…');
+    jdpgState.jd=jd;
+    return jdpgRunMatch(job,resumeText,jd).then(function(match){
+      if(token!==jdpgState.genToken)return;
+      jdpgState.match=match;
+      jdpgState.record=JDCore.newJDRecord({
+        sourceType:'industry_reference',jobTitle:jd.job_title||job,industry:jd.industry||industry,level:jd.job_level||jdpgState.level,
+        content:jd,match:match,resumeId:'local',resumeTitle:r.name||'当前简历'
+      });
+      var sv=JDCore.saveJDRecord(jdpgState.record);
+      jdpgProgressDone();
+      if(typeof setAgentStatus==='function'){try{setAgentStatus('jd','done');}catch(e){}}
+      jdpgRenderResult();
+      document.getElementById('jdpg-result').style.display='block';
+      jdpgStatus('jdpg-save-status',sv.ok?'已自动保存到历史记录 ✓':'');
+      jdpgRenderHistory();
+      window.scrollTo(0,0);
+    });
+  }).catch(function(err){
+    if(token!==jdpgState.genToken)return;
+    jdpgProgressDone();
+    alert('JD 生成失败：'+((err&&err.message)||err)+'。请检查设置页模型服务后点击「重新生成」。');
+  });
+}
+function jdpgRunMatch(job,resumeText,jd){
+  var messages=JDCore.buildMatchMessages({resumeText:resumeText,resumeStruct:jdpgState.resume,jobTitle:job,level:jdpgState.level,industry:jd.industry,isTech:!!(JobLibrary.getJob(job)||{}).tech,jd:jd});
+  return jdpgAIWithRetry(messages,0.5,'jd_match',3500).then(function(res){
+    var m=(res&&res.ok&&res.text)?JDCore.normalizeMatchResult(extractJSON(res.text),JDCore.weightsFor(job)):null;
+    return m||JDCore.localMatchFallback(jd,resumeText,jdpgState.resume,JDCore.weightsFor(job));
+  }).catch(function(){
+    return JDCore.localMatchFallback(jd,resumeText,jdpgState.resume,JDCore.weightsFor(job));
+  });
+}
+
+/* 结果 Tab 渲染 */
+function jdpgTab(name){
+  document.querySelectorAll('#jdpg-tabs .jdpg-tab').forEach(function(t){t.classList.remove('active');});
+  event.target.classList.add('active');
+  var jd=jdpgState.jd,m=jdpgState.match;
+  var body=document.getElementById('jdpg-tab-body');
+  body.innerHTML=jdpgTabHTML(name,jd,m);
+}
+function jdpgTabHTML(name,jd,m){
+  function sec(title,inner){return '<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 8px;">'+title+'</div>'+inner;}
+  function ul(arr){return '<ul style="margin:0;padding-left:18px;font-size:12.5px;color:var(--ink);line-height:1.9;">'+(arr||[]).map(function(x){return '<li>'+jdpgEsc(x)+'</li>';}).join('')+'</ul>';}
+  if(name==='overview'){
+    var basic='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px;">'
+      +[['标准岗位名称',jd.job_title],['所属行业',jd.industry],['所属职能部门',jd.job_function],['岗位级别',jd.job_level],['岗位类型',jd.job_type],['典型工作方向',jd.work_direction]]
+      .map(function(kv){return '<div style="padding:8px 12px;background:var(--bg);border-radius:8px;"><span style="color:var(--text2);">'+jdpgEsc(kv[0])+'：</span><b>'+jdpgEsc(kv[1]||'—')+'</b></div>';}).join('')+'</div>';
+    return sec('岗位基本信息',basic)
+      +(jd.job_summary?sec('岗位概述','<div style="font-size:12.5px;color:var(--ink);line-height:1.9;padding:10px 12px;background:var(--lime-soft,#F1FBD4);border-radius:8px;">'+jdpgEsc(jd.job_summary)+'</div>'):'')
+      +(jd.experience_requirements.length?sec('工作经验要求',ul(jd.experience_requirements)):'')
+      +(jd.confidence_notes.length?sec('说明（行业参考标注）','<div style="font-size:11.5px;color:var(--text2);line-height:1.8;">'+jdpgEsc(jd.confidence_notes.join('；'))+'</div>'):'');
+  }
+  if(name==='duty'){
+    return jd.responsibilities.length?('<div style="display:flex;flex-direction:column;gap:8px;">'+jd.responsibilities.map(function(r,i){
+      return '<div style="padding:12px 14px;border:1px solid var(--border);border-radius:10px;"><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;">'+(i+1)+'. '+jdpgEsc(r.task)+'</div>'
+        +(r.action?('<div style="font-size:12px;color:var(--text2);">执行动作：'+jdpgEsc(r.action)+'</div>'):'')
+        +(r.outcome?('<div style="font-size:12px;color:var(--success);">交付结果：'+jdpgEsc(r.outcome)+'</div>'):'')+'</div>';
+    }).join('')+'</div>'):'<div style="color:var(--text2);font-size:13px;padding:12px;">暂无职责数据</div>';
+  }
+  if(name==='qual'){
+    return sec('✅ 必备条件',ul(jd.required_qualifications))+sec('⭐ 优先条件（加分项）',ul(jd.preferred_qualifications));
+  }
+  if(name==='skill'){
+    var byCat={};
+    jd.professional_skills.forEach(function(s){ (byCat[s.category]=byCat[s.category]||[]).push(s); });
+    var lvColor={'必须掌握':'var(--danger)','熟悉即可':'var(--warning)','加分项':'var(--success)'};
+    return Object.keys(byCat).map(function(cat){
+      return sec(cat, '<div style="display:flex;flex-wrap:wrap;gap:8px;">'+byCat[cat].map(function(s){
+        return '<span style="padding:6px 12px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--ink);">'+jdpgEsc(s.skill)
+          +' <b style="color:'+(lvColor[s.level]||'var(--text2)')+'">· '+jdpgEsc(s.level)+'</b></span>';
+      }).join('')+'</div>');
+    }).join('')||'<div style="color:var(--text2);font-size:13px;padding:12px;">暂无技能数据</div>';
+  }
+  if(name==='kpi'){
+    return '<div style="display:flex;flex-direction:column;gap:8px;">'+jd.kpi_indicators.map(function(k){
+      return '<div style="padding:10px 14px;background:var(--bg);border-radius:10px;font-size:12.5px;"><b style="color:var(--ink);">'+jdpgEsc(k.name)+'</b>'
+        +(k.note?('<span style="color:var(--text2);"> — '+jdpgEsc(k.note)+'</span>'):'')+'</div>';
+    }).join('')+'</div>'
+      +sec('典型工作场景',ul(jd.work_scenarios))
+      +sec('发展路径',ul(jd.career_path));
+  }
+  if(name==='match')return jdpgMatchHTML(m);
+  if(name==='gap'){
+    if(!m)return '<div style="color:var(--text2);font-size:13px;padding:12px;">暂无匹配分析数据</div>';
+    return sec('💪 核心优势',ul(m.strengths))+sec('⚠️ 主要能力差距',ul(m.gaps));
+  }
+  if(name==='advice'){
+    if(!m)return '<div style="color:var(--text2);font-size:13px;padding:12px;">暂无建议数据</div>';
+    return sec('📝 简历优化建议',ul(m.resume_suggestions))+sec('🎤 面试准备建议',ul(m.interview_suggestions))+sec('📚 推荐学习路径',ul(m.learning_path));
+  }
+  return '';
+}
+function jdpgMatchHTML(m){
+  if(!m)return '<div style="color:var(--text2);font-size:13px;padding:12px;">暂无匹配分析数据</div>';
+  var dims=m.dimensions.map(function(d){
+    return '<div class="jdpg-dim"><div class="jdpg-dim-head"><span>'+jdpgEsc(d.name)+(d.weight?(' · '+d.weight+'%'):'')+'</span><b>'+d.score+'</b></div>'
+      +'<div class="jdpg-dim-bar"><div class="jdpg-dim-fill" style="width:'+d.score+'%;"></div></div>'
+      +(d.evidence?('<div style="font-size:11.5px;color:var(--text2);margin-top:4px;line-height:1.6;">依据：'+jdpgEsc(d.evidence)+'</div>'):'')+'</div>';
+  }).join('');
+  function olist(arr,color,icon){
+    return '<div style="display:flex;flex-direction:column;gap:6px;">'+(arr||[]).map(function(o){
+      return '<div style="padding:10px 14px;background:var(--bg);border-radius:10px;font-size:12.5px;line-height:1.7;"><b style="color:'+color+';">'+icon+' '+jdpgEsc(o.item)+'</b>'
+        +(o.evidence?('<div style="color:var(--text2);margin-top:3px;">证据：'+jdpgEsc(o.evidence)+'</div>'):'')
+        +(o.gap?('<div style="color:var(--warning);margin-top:3px;">差距：'+jdpgEsc(o.gap)+'</div>'):'')
+        +(o.note?('<div style="color:var(--text2);margin-top:3px;">'+jdpgEsc(o.note)+'</div>'):'')+'</div>';
+    }).join('')+'</div>';
+  }
+  return '<div style="font-size:12px;color:var(--text2);margin-bottom:10px;">匹配分数依据六维权重计算，结论均关联简历/JD 具体证据；「未体现」≠不具备，供面试确认参考。</div>'
+    +'<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:10px;">六维能力匹配</div>'+dims
+    +'<div style="font-size:13.5px;font-weight:700;color:var(--success);margin:14px 0 8px;">已满足的岗位要求（'+m.satisfied.length+'）</div>'+olist(m.satisfied,'var(--success)','✅')
+    +'<div style="font-size:13.5px;font-weight:700;color:var(--warning);margin:14px 0 8px;">部分满足（'+m.partial.length+'）</div>'+olist(m.partial,'var(--warning)','◐')
+    +'<div style="font-size:13.5px;font-weight:700;color:var(--text2);margin:14px 0 8px;">简历中未体现（'+m.missing.length+'）</div>'+olist(m.missing,'var(--text2)','○')
+    +(m.to_confirm.length?('<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 8px;">❓ 待面试确认</div><div style="font-size:12.5px;color:var(--text2);line-height:1.8;">'+jdpgEsc(m.to_confirm.join('；'))+'</div>'):'');
+}
+function jdpgRenderResult(){
+  var jd=jdpgState.jd,m=jdpgState.match;
+  if(!jd)return;
+  document.getElementById('jdpg-res-title').textContent=(jd.job_title||jdpgState.selectedJob)+(jd.job_level?('（'+jd.job_level+'）'):'');
+  document.getElementById('jdpg-res-meta').textContent=[jd.industry,jd.job_function,jd.job_type].filter(Boolean).join(' · ')+(jd._fallback?' · 本地兜底数据':'');
+  document.getElementById('jdpg-res-score').textContent=(m?m.overall_match:'—')+(m?' 分':'');
+  document.querySelectorAll('#jdpg-tabs .jdpg-tab').forEach(function(t,i){t.classList.toggle('active',i===0);});
+  document.getElementById('jdpg-tab-body').innerHTML=jdpgTabHTML('overview',jd,m);
+}
+function jdpgViewFull(){
+  var jd=jdpgState.jd;if(!jd)return;
+  showModal('完整行业标准 JD（'+(jd.job_title||'')+'）',JDCore.jdToText(jd));
+}
+function jdpgEditJob(){ jdpgSetStep(2); }
+function jdpgSave(showTip){
+  var rec=jdpgState.record;
+  if(!rec){alert('暂无可保存的 JD，请先生成');return;}
+  rec.match=jdpgState.match;rec.match_score=jdpgState.match?jdpgState.match.overall_match:null;
+  var r=JDCore.saveJDRecord(rec);
+  jdpgStatus('jdpg-save-status',r.ok?('已保存到历史记录 ✓（'+fmtTime(rec.updatedAt)+'）'):('保存失败：'+r.error));
+  jdpgRenderHistory();
+}
+function jdpgCopy(){
+  var jd=jdpgState.jd;if(!jd)return;
+  var text=JDCore.jdToText(jd);
+  jdpgDoCopy(text,'jdpg-save-status','JD 已复制到剪贴板 ✓');
+}
+function jdpgGoInterview(){
+  if(!jdpgState.jd&&!jdpgState.manualJD){alert('请先生成或分析 JD');return;}
+  var job=jdpgState.selectedJob||(jdpgState.jd&&jdpgState.jd.job_title)||(jdpgState.manualJD&&jdpgState.manualJD.title);
+  if(job){
+    selectedJobMatch=job;
+    var info=JobLibrary.getJob(job);
+    if(info&&typeof selectJobType==='function'){
+      var typeMap={product:'product',tech:'tech',data:'data',ops:'ops'};
+      try{selectJobType(typeMap[info.family]||'general');}catch(e){}
+    }
+  }
+  goToInterview();
+}
+function jdpgDoCopy(text,statusId,msg){
+  function fallback(){
+    var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');jdpgStatus(statusId,msg);}catch(e){alert('复制失败，请手动选择文本复制');}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){jdpgStatus(statusId,msg);}).catch(fallback);
+  }else fallback();
+}
+
+/* ---------- 模式一 · 手动输入真实 JD ---------- */
+function jdpgAnalyzeManual(textArg){
+  var text=textArg||document.getElementById('jdpg-manual-input').value.trim();
+  if(!text||text.length<20){alert('请粘贴完整的职位描述（至少 20 字）');return;}
+  jdpgStatus('jdpg-manual-status','⏳ 本地解析中…');
+  var jd=analyzeJDText(text);
+  jdpgState.manualJD=jd; jdpgState.manualMatch=null;
+  var html=''
+    +'<div class="card"><div class="card-title">📋 JD 解析结果 — '+jdpgEsc(jd.title||'目标岗位')+'</div>'
+    +jdpgManualSection('岗位职责', '<ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.9;">'+jd.resp.map(function(r){return '<li>'+jdpgEsc(r)+'</li>';}).join('')+'</ul>')
+    +jdpgManualSection('硬技能要求', jdpgTagList(jd.hard,'var(--ink)'))
+    +jdpgManualSection('软技能要求', jdpgTagList(jd.soft,'var(--ink)'))
+    +jdpgManualSection('工具要求', jdpgTagList(jd.tools,'var(--blue)'))
+    +jdpgManualSection('学历要求', '<div style="font-size:12.5px;color:var(--ink);">'+jdpgEsc(jd.edu)+'</div>')
+    +jdpgManualSection('面试重点', '<div style="font-size:12.5px;color:var(--ink);">'+jdpgEsc(jd.focus)+'</div>')
+    +'<div id="jdpg-manual-ai" style="margin-top:6px;"></div>'
+    +'<details style="margin-top:12px;"><summary style="cursor:pointer;font-size:12.5px;color:var(--blue);">查看 JD 原文（未改写）</summary>'
+    +'<pre style="margin-top:8px;padding:12px;background:var(--bg);border-radius:8px;font-size:11.5px;line-height:1.7;white-space:pre-wrap;max-height:300px;overflow:auto;">'+jdpgEsc(text)+'</pre></details>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--border);padding-top:12px;margin-top:12px;">'
+    +'<button class="btn btn-primary" onclick="jdpgSaveManual()">💾 保存到 JD 历史</button>'
+    +'<button class="btn btn-secondary" onclick="jdpgCopyManual()">📑 复制解析结果</button>'
+    +(jdpgState.manualMatch?'':'')
+    +'<button class="btn btn-outline" onclick="jdpgGoInterview()">🎤 继续进入模拟面试</button>'
+    +'<span id="jdpg-manual-save-status" style="font-size:12px;color:var(--success);font-weight:600;align-self:center;"></span></div>'
+    +'<div id="jdpg-manual-match-wrap" style="margin-top:6px;"></div>'
+    +'</div>';
+  var box=document.getElementById('jdpg-manual-result');
+  box.innerHTML=html; box.style.display='block';
+  jdpgStatus('jdpg-manual-status','');
+  // 保存记录（manual 保留原文）
+  jdpgState.manualRecord=JDCore.newJDRecord({sourceType:'manual',jobTitle:jd.title,industry:'',level:'',rawText:text,structured:jd});
+  JDCore.saveJDRecord(jdpgState.manualRecord);
+  jdpgRenderHistory();
+  // 关联简历 → 匹配分析（AI 优先，本地兜底）
+  var link=document.getElementById('jdpg-manual-link-resume');
+  if(link&&link.checked&&parsedResume){
+    jdpgStatus('jdpg-manual-status','⏳ 正在进行简历匹配分析…');
+    var pseudoJD={job_title:jd.title,industry:'',required_qualifications:jd.hard.concat(jd.soft),responsibilities:jd.resp.map(function(t){return {task:t,action:'',outcome:''};}),professional_skills:jd.hard.map(function(h){return {category:'核心业务技能',skill:h,level:'必须掌握'};})};
+    jdpgRunMatch(jd.title,resumeToText(parsedResume),pseudoJD).then(function(m){
+      jdpgState.manualMatch=m;
+      jdpgState.manualRecord.match=m;jdpgState.manualRecord.match_score=m.overall_match;
+      JDCore.saveJDRecord(jdpgState.manualRecord);
+      jdpgStatus('jdpg-manual-status','');
+      var wrap=document.getElementById('jdpg-manual-match-wrap');
+      if(wrap)wrap.innerHTML='<div style="font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 4px;">🎯 与当前简历的匹配分析</div><div class="jdpg-tabs" style="border:none;padding:0;margin-bottom:6px;"><div class="jdpg-tab active" onclick="jdpgManualMatchTab(\'match\')">匹配度</div><div class="jdpg-tab" onclick="jdpgManualMatchTab(\'gap\')">能力差距</div><div class="jdpg-tab" onclick="jdpgManualMatchTab(\'advice\')">学习与面试建议</div></div><div id="jdpg-manual-match-body">'+jdpgMatchHTML(m)+'</div>';
+    });
+  }
+  // AI 深度分析（硬性/优先条件区分）：可选增强，失败静默
+  if(window.electronAPI&&window.electronAPI.aiChat){
+    jdpgManualAIDeep(text,jd);
+  }
+  window.scrollTo(0,0);
+}
+function jdpgManualAIDeep(text,jd){
+  var box=document.getElementById('jdpg-manual-ai');if(!box)return;
+  var messages=[
+    {role:'system',content:'你是资深 HR。分析用户提供的真实招聘 JD，只输出一个 JSON 对象，不要输出其他文字：{"experience_required":"工作经验要求","hard_requirements":["硬性必备条件"],"preferred_conditions":["优先条件/加分项"],"salary_note":"薪资信息（若有，仅转述原文）"}。不得编造原文没有的信息。'},
+    {role:'user',content:String(text).slice(0,2500)}
+  ];
+  callAI(messages,0.3,'jd_gen',{maxTokens:1200}).then(function(res){
+    if(!res||!res.ok||!res.text)return;
+    var o=extractJSON(res.text);if(!o)return;
+    var b=document.getElementById('jdpg-manual-ai');if(!b)return;
+    b.innerHTML='<div style="border-top:1px dashed var(--border);padding-top:10px;margin-top:10px;">'
+      +(o.experience_required?('<div style="font-size:12.5px;margin-bottom:4px;"><b>🧭 AI 提取 · 工作经验要求：</b><span style="color:var(--text2);">'+jdpgEsc(o.experience_required)+'</span></div>'):'')
+      +((o.hard_requirements&&o.hard_requirements.length)?('<div style="font-size:12.5px;margin-bottom:4px;"><b>🚫 硬性必备条件：</b><span style="color:var(--text2);">'+jdpgEsc([].concat(o.hard_requirements).join('；'))+'</span></div>'):'')
+      +((o.preferred_conditions&&o.preferred_conditions.length)?('<div style="font-size:12.5px;"><b>⭐ 优先条件（加分项）：</b><span style="color:var(--text2);">'+jdpgEsc([].concat(o.preferred_conditions).join('；'))+'</span></div>'):'')
+      +'</div>';
+  }).catch(function(){});
+}
+function jdpgManualMatchTab(name){
+  var m=jdpgState.manualMatch;if(!m)return;
+  var body=document.getElementById('jdpg-manual-match-body');if(!body)return;
+  body.innerHTML=jdpgMatchHTML(name==='match'?m:m);
+  if(name==='gap')body.innerHTML=jdpgTabHTML('gap',jdpgState.manualJD,m);
+  if(name==='advice')body.innerHTML=jdpgTabHTML('advice',jdpgState.manualJD,m);
+}
+function jdpgManualSection(title,inner){
+  return '<div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">'+title+'</div>'+inner+'</div>';
+}
+function jdpgTagList(arr,color){
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px;">'+(arr||[]).map(function(t){return '<span class="tag" style="background:var(--bg);color:'+(color||'var(--ink)')+';">'+jdpgEsc(t)+'</span>';}).join('')+'</div>';
+}
+function jdpgSaveManual(){
+  var rec=jdpgState.manualRecord;if(!rec){alert('请先完成 JD 分析');return;}
+  var r=JDCore.saveJDRecord(rec);
+  jdpgStatus('jdpg-manual-save-status',r.ok?('已保存到历史记录 ✓（'+fmtTime(Date.now())+'）'):('保存失败：'+r.error));
+  jdpgRenderHistory();
+}
+function jdpgCopyManual(){
+  var jd=jdpgState.manualJD;if(!jd)return;
+  jdpgDoCopy(JDCore.manualJDToText(jd),'jdpg-manual-save-status','解析结果已复制到剪贴板 ✓');
+}
+/* JD 文件上传（TXT 直读；PDF/DOCX 复用主进程解析能力） */
+function jdpgManualFile(input){
+  var file=input.files&&input.files[0];if(!file)return;
+  var name=file.name||'';var ext=(name.split('.').pop()||'').toLowerCase();
+  function done(text){
+    if(!text||text.trim().length<20){alert('未能从文件中提取到足够的 JD 文本，请改用粘贴方式。');return;}
+    document.getElementById('jdpg-manual-input').value=text.trim();
+    jdpgAnalyzeManual(text.trim());
+  }
+  if(ext==='txt'){
+    var reader=new FileReader();
+    reader.onload=function(e){done(e.target.result);};
+    reader.readAsText(file);
+    return;
+  }
+  if(!(window.electronAPI&&window.electronAPI.parseResumeFile)){alert('当前环境不支持文件解析，请改用「粘贴 JD 文本」。');return;}
+  jdpgStatus('jdpg-manual-status','⏳ 正在提取文件文字…');
+  window.electronAPI.parseResumeFile(file.path).then(function(res){
+    jdpgStatus('jdpg-manual-status','');
+    if(!res||!res.ok){alert((res&&res.error)?res.error:'文件解析失败，请改用粘贴方式。');return;}
+    done(res.text);
+  }).catch(function(err){jdpgStatus('jdpg-manual-status','');alert('文件解析出错：'+((err&&err.message)||err));});
+  input.value='';
+}
+/* JD 截图 OCR（复用百度文字识别高精度版） */
+function jdpgManualImage(input){
+  var file=input.files&&input.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var dataUrl=e.target.result||'';
+    if(!dataUrl){alert('图片读取失败，请重试。');return;}
+    if(!window.electronAPI||!window.electronAPI.baiduOcr){alert('当前环境未配置百度智能云，无法识别截图。请改用「粘贴 JD 文本」。');return;}
+    jdpgStatus('jdpg-manual-status','🖼️ 正在用百度文字识别（高精度版）识别 JD 截图…');
+    maybeDownscaleForOCR(dataUrl).then(function(url){
+      return window.electronAPI.baiduOcr({base64:url,accurate:true});
+    }).then(function(res){
+      jdpgStatus('jdpg-manual-status','');
+      if(!res||!res.ok||!res.text||res.text.trim().length<20){alert('未能从截图中识别出足够的文字，请确认图片清晰后重试。');return;}
+      document.getElementById('jdpg-manual-input').value=res.text.trim();
+      jdpgAnalyzeManual(res.text.trim());
+    }).catch(function(err){
+      jdpgStatus('jdpg-manual-status','');
+      alert('截图识别失败：'+((err&&err.message)||err)+'。请改用「粘贴 JD 文本」。');
+    });
+  };
+  r.readAsDataURL(file);
+  input.value='';
+}
+
+/* ---------- JD 历史记录 ---------- */
+function jdpgRenderHistory(){
+  var box=document.getElementById('jdpg-history-list');if(!box)return;
+  var list=JDCore.loadJDHistory();
+  if(!list.length){box.innerHTML='<div style="font-size:12.5px;color:var(--text2);">暂无 JD 记录。完成一次「JD 分析」或「生成标准 JD」后会自动保存在这里。</div>';return;}
+  box.innerHTML=list.map(function(r){
+    var isManual=r.source_type==='manual';
+    var title=isManual?((r.structured&&r.structured.title)||r.job_title||'未命名 JD'):(r.job_title||(r.content&&r.content.job_title)||'未命名 JD');
+    var meta=[JDCore.sourceLabel(r.source_type),r.industry||'',r.job_level||''].filter(Boolean).join(' · ');
+    return '<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;flex-wrap:wrap;">'
+      +'<span class="jdpg-badge '+(isManual?'jdpg-badge-manual':'jdpg-badge-ref')+'">'+JDCore.sourceLabel(r.source_type)+'</span>'
+      +'<div style="flex:1;min-width:180px;"><div style="font-size:13px;font-weight:700;color:var(--ink);">'+jdpgEsc(title)+'</div>'
+      +'<div style="font-size:11.5px;color:var(--text2);">'+jdpgEsc(meta)+' · '+fmtTime(r.createdAt)+'</div></div>'
+      +(r.match_score!=null?('<div style="font-size:13px;font-weight:700;color:var(--ink);">匹配 '+r.match_score+' 分</div>'):'')
+      +'<div style="display:flex;gap:6px;">'
+      +'<button class="btn btn-secondary btn-sm" onclick="jdpgViewHistory(\''+r.id+'\')">查看</button>'
+      +'<button class="btn btn-secondary btn-sm" onclick="jdpgCopyHistory(\''+r.id+'\')">复制</button>'
+      +'<button class="btn btn-secondary btn-sm" onclick="jdpgDeleteHistory(\''+r.id+'\')">删除</button>'
+      +'</div></div>';
+  }).join('');
+}
+function jdpgViewHistory(id){
+  var r=JDCore.getJDRecord(id);if(!r)return;
+  if(r.source_type==='manual'){showModal('JD 原文（'+(r.job_title||'未命名')+'）',r.raw_text||'（无原文）');}
+  else{showModal('完整行业标准 JD（'+(r.job_title||'')+'）',r.content?JDCore.jdToText(r.content):(r.raw_text||'（无内容）'));}
+}
+function jdpgCopyHistory(id){
+  var r=JDCore.getJDRecord(id);if(!r)return;
+  var text=r.source_type==='manual'?JDCore.manualJDToText(r.structured):JDCore.jdToText(r.content);
+  jdpgDoCopy(text||r.raw_text||'','jdpg-save-status','历史 JD 已复制到剪贴板 ✓');
+}
+function jdpgDeleteHistory(id){
+  if(!confirm('确定删除这条 JD 记录吗？'))return;
+  JDCore.deleteJDRecord(id);
+  jdpgRenderHistory();
+}
+
 // ========== UI v4：顶栏标题联动 + 图表字体统一（纯展示层，不改业务逻辑） ==========
 (function(){
   var PAGE_META={
     home:['求职工作台','总览'],
     resume:['简历与岗位','求职准备'],
+    jd:['JD 智能分析','求职准备'],
     interview:['模拟面试','面试中心'],
     report:['评估报告','面试中心'],
     agents:['Agent 架构','数据与架构'],

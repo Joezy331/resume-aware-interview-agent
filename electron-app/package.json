@@ -30,8 +30,11 @@
       "preload.js",
       "index.html",
       "job-matching.js",
+      "job-library.js",
+      "jd-core.js",
       "resume-extract.js",
       "baidu.js",
+      "models-sync.js",
       "chart.umd.min.js",
       "assets/**"
     ],

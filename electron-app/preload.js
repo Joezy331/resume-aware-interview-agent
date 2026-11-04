@@ -9,5 +9,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 百度智能云 OCR（图片 → 文字）
   baiduOcr: (payload) => ipcRenderer.invoke('baidu-ocr', payload),
   // 百度智能云 NLP（JD 文本 → 关键词）
-  baiduNlpKeyword: (payload) => ipcRenderer.invoke('baidu-nlp-keyword', payload)
+  baiduNlpKeyword: (payload) => ipcRenderer.invoke('baidu-nlp-keyword', payload),
+  // Cline 可用模型：读取本地持久化列表（启动时恢复）
+  getLocalConfig: () => ipcRenderer.invoke('get-local-config'),
+  // Cline 可用模型：实时同步 GET {baseUrl}/models（结果持久化到 local_api_config.json）
+  listModels: () => ipcRenderer.invoke('list-models')
 });

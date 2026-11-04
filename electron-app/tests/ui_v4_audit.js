@@ -10,9 +10,9 @@ app.disableHardwareAcceleration();
 app.commandLine.appendSwitch('disable-gpu');
 app.commandLine.appendSwitch('no-sandbox');
 
-const PAGES = ['home', 'resume', 'interview', 'report', 'agents', 'dashboard', 'history', 'settings'];
+const PAGES = ['home', 'resume', 'jd', 'interview', 'report', 'agents', 'dashboard', 'history', 'settings'];
 const FILES = {
-  home: '01_home.png', resume: '02_resume.png', interview: '03_interview.png',
+  home: '01_home.png', resume: '02_resume.png', jd: '02b_jd.png', interview: '03_interview.png',
   report: '04_report.png', agents: '05_agents.png', dashboard: '06_dashboard.png',
   history: '07_history.png', settings: '08_settings.png'
 };
@@ -113,7 +113,7 @@ app.whenReady().then(async () => {
   add('内容区左边距 = 236', g.pageMarginLeft === '236px', g.pageMarginLeft);
   add('内容区顶部留白 ≥ 96', parseFloat(g.pagePaddingTop) >= 96, g.pagePaddingTop);
   add('无横向溢出', !g.hasOverflowX, g.scrollW + '/' + g.vw);
-  add('导航项 = 8 且均带 data-page', g.navCount === 8 && g.navWithDataPage === 8, g.navCount + '/' + g.navWithDataPage);
+  add('导航项 = 9 且均带 data-page', g.navCount === 9 && g.navWithDataPage === 9, g.navCount + '/' + g.navWithDataPage);
   add('标题对比度 ≥ 4.5', g.titleContrast >= 4.5, g.titleContrast);
   add('选中项对比度 ≥ 4.5', g.activeNavContrast >= 4.5, g.activeNavContrast);
   add('选中项使用荧光绿强调', /200,\s*243,\s*106/.test(g.activeNavBg || ''), g.activeNavBg);

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>用户端 · 高保真原型（上）01–09</title>
+<style>/* ============================================================
+   AI Career Copilot · High-Fidelity Prototype Design System
+   Calm / professional / portfolio-grade. No AI-template feel.
+   ============================================================ */
+
+:root{
+  /* 与 EXE UI v4 完全对齐的浅灰白 SaaS 工作台令牌 */
+  --bg:#F5F6F7;
+  --bg-soft:#FAFAFA;
+  --panel:#FFFFFF;
+  --panel-2:#FCFDFB;
+
+  --ink:#202124;
+  --ink-2:#7B818A;
+  --ink-3:#9AA0A6;
+  --muted:#8A8F98;
+
+  --line:#E8EAED;
+  --line-2:#F0F2F4;
+  --line-strong:#DDE0E4;
+
+  /* 主强调色：荧光黄绿（与 EXE 一致） */
+  --pink:#C8F36A;
+  --pink-soft:#F1FBD4;
+  --pink-ink:#2E3B13;
+  --pink-line:#D9ECA0;
+
+  --green:#5B8C4A;
+  --green-soft:#EEF3EC;
+  --blue:#3E7CB1;
+  --blue-soft:#EAF1F8;
+  --amber:#C9A227;
+  --amber-soft:#FBF6E6;
+  --purple:#9A7BB5;
+
+  --shadow-sm:0 1px 2px rgba(32,33,36,.04),0 1px 3px rgba(32,33,36,.05);
+  --shadow-md:0 6px 18px rgba(32,33,36,.06),0 2px 6px rgba(32,33,36,.04);
+  --shadow-lg:0 16px 40px rgba(32,33,36,.10);
+
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:18px;
+
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --sidebar-w:236px;
+  --topbar-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--pink-soft);color:var(--pink-ink)}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  padding:20px 14px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#F1FBD4);
+  border:1px solid var(--line);
+  display:grid;place-items:center;font-size:18px;
+}
+.brand .name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand .sub{font-size:11px;color:var(--ink-3);margin-top:-2px}
+
+.nav-group{margin-top:6px}
+.nav-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;color:var(--ink-2);
+  font-size:13.5px;font-weight:500;transition:all .15s ease;
+  margin-bottom:2px;
+}
+.nav-link .ico{width:18px;text-align:center;opacity:.8}
+.nav-link:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-link.active{background:var(--pink);color:var(--pink-ink)}
+.nav-link.active .ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+.me{display:flex;align-items:center;gap:10px}
+.me .avatar{width:34px;height:34px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:16px}
+.me .nm{font-size:12.5px;font-weight:600}
+.me .rl{font-size:11px;color:var(--ink-3)}
+
+.workspace-switch{display:flex;gap:6px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:4px;margin-top:10px}
+.workspace-switch button{flex:1;padding:7px 0;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.workspace-switch button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  height:var(--topbar-h);flex:0 0 var(--topbar-h);
+  border-bottom:1px solid var(--line);background:rgba(247,247,245,.8);
+  backdrop-filter:saturate(1.2) blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{font-size:12px;color:var(--ink-3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right .pill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);padding:5px 10px;border-radius:999px;background:var(--panel)}
+.proto-flag{font-size:10.5px;letter-spacing:.06em;color:var(--pink-ink);background:var(--pink-soft);border:1px solid var(--pink-line);padding:5px 10px;border-radius:999px;font-weight:600}
+
+.view{padding:30px 32px 60px;max-width:1280px;width:100%;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:22px}
+.page-head .eyebrow{font-size:12px;color:var(--pink-ink);font-weight:600;letter-spacing:.04em}
+.page-head h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.page-head p{color:var(--ink-2);margin-top:6px;max-width:680px;font-size:13.5px}
+
+/* ---------- Layout grid ---------- */
+.grid{display:grid;gap:18px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-5{grid-template-columns:repeat(5,1fr)}
+.span-2{grid-column:span 2}
+.split{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.split-r{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card.hov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-title{font-size:13px;font-weight:650;color:var(--ink);display:flex;align-items:center;line-height:1.3;gap:8px}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);transform:translateY(0.5px)}
+.card-sub{font-size:12px;color:var(--ink-2);margin-top:3px}
+.card-pad-sm{padding:16px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:11px;font-size:13.5px;font-weight:600;
+  transition:all .16s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--pink);color:var(--pink-ink)}
+.btn-primary:hover{background:#B7E84F;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:var(--bg-soft);border-color:var(--ink-3)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-soft);color:var(--ink)}
+.btn-pink{background:var(--pink-soft);color:var(--pink-ink);border:1px solid var(--pink-line)}
+.btn-pink:hover{background:#ECF7D6}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.tag-pink{background:var(--pink-soft);color:var(--pink-ink);border-color:var(--pink-line)}
+.tag-green{background:var(--green-soft);color:#4d6b48;border-color:#DCE7D8}
+.tag-blue{background:var(--blue-soft);color:#46627e;border-color:#DCE6EE}
+.tag-amber{background:var(--amber-soft);color:#8a6d10;border-color:#EFE4BD}
+.tag-gray{background:var(--bg-soft);color:var(--ink-3);border-color:var(--line)}
+.tag-soft{background:var(--bg-soft);color:var(--ink-2)}
+
+/* ---------- Inputs ---------- */
+.input{
+  width:100%;padding:11px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;font-size:13.5px;background:var(--panel);color:var(--ink);
+  transition:border-color .15s, box-shadow .15s;font-family:inherit;
+}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.06)}
+.input::placeholder{color:var(--ink-3)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+label.field{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+
+/* ---------- Progress / bars ---------- */
+.progress{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.progress>.bar{height:100%;background:var(--ink);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.progress.pink>.bar{background:var(--pink)}
+.progress.green>.bar{background:var(--green)}
+.meter{display:flex;align-items:center;gap:10px}
+.meter .lab{font-size:12.5px;color:var(--ink-2);width:96px;flex:0 0 96px}
+.meter .val{font-size:12.5px;font-weight:650;width:38px;text-align:right;flex:0 0 38px}
+.meter .track{flex:1;height:7px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter .track>i{display:block;height:100%;background:var(--ink);border-radius:999px}
+
+/* ---------- Avatar ---------- */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:0 0 38px}
+.avatar.sm{width:30px;height:30px;font-size:14px;flex-basis:30px}
+.avatar.lg{width:52px;height:52px;font-size:24px;flex-basis:52px}
+.avatar.blue{background:var(--blue-soft);border-color:#DCE6EE}
+.avatar.green{background:var(--green-soft);border-color:#DCE7D8}
+.avatar.amber{background:var(--amber-soft);border-color:#EFE4BD}
+.avatar.purple{background:#F3EEF7;border-color:#E6DCF0}
+
+/* ---------- Stat ---------- */
+.stat .k{font-size:12px;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;color:var(--ink-3);font-weight:600}
+.stat .d{font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.stat .d.down{color:#D45D4D}
+
+/* ---------- List / rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.row:last-child{border-bottom:none}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:600}
+.row .meta{font-size:12px;color:var(--ink-3);margin-top:1px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-2)}
+.kv .v{font-weight:600}
+
+/* ---------- Dropdown / select ---------- */
+.select{
+  position:relative;display:inline-block;
+}
+.select>button{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);min-width:150px;justify-content:space-between;
+}
+.select .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;z-index:30;display:none}
+.select.open .menu{display:block}
+.select .menu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.select .menu button:hover{background:var(--bg-soft);color:var(--ink)}
+.select .menu button.on{color:var(--ink);font-weight:650}
+
+/* ---------- Tabs ---------- */
+.tabs{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.tabs button{padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Chat / interview ---------- */
+.chat{display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:86%;padding:13px 16px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.bubble.q{background:var(--ink);color:#fff;align-self:flex-start;border-bottom-left-radius:5px}
+.bubble.a{background:var(--panel);border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:5px}
+.bubble .who{font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+
+/* ---------- Agent status ---------- */
+.agent-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.agent-row:last-child{border-bottom:none}
+.status-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;position:relative}
+.status-dot.run{background:var(--green)}
+.status-dot.run::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.4;animation:ping 1.4s ease-out infinite}
+.status-dot.done{background:var(--blue)}
+.status-dot.wait{background:var(--ink-3)}
+.status-dot.warn{background:var(--amber)}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Empty / loading ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+.empty .ill{font-size:42px;opacity:.5;margin-bottom:10px}
+.empty p{font-size:13px}
+.skeleton{background:linear-gradient(90deg,var(--line-2) 25%,#EDEDE8 37%,var(--line-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;height:14px;margin:8px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:all .3s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-card{background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px}
+.toast-card .ic{color:var(--green)}
+
+/* ---------- Modal ---------- */
+.modal-mask{position:fixed;inset:0;background:rgba(24,24,27,.32);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;animation:fade .2s ease}
+.modal{background:var(--panel);border-radius:var(--r-lg);width:min(460px,92vw);padding:26px;box-shadow:var(--shadow-lg);animation:pop .25s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+
+/* ---------- Hero / upload ---------- */
+.upload-zone{
+  border:1.8px dashed var(--line-strong);border-radius:var(--r-lg);
+  background:var(--panel-2);padding:54px 30px;text-align:center;transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--pink);background:var(--pink-soft)}
+.upload-ill{font-size:46px;margin-bottom:12px}
+.upload-zone h3{font-size:18px;font-weight:700}
+.upload-zone p{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+/* ---------- Misc ---------- */
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.center{text-align:center}
+.right{text-align:right}
+.flex{display:flex}
+.between{display:flex;justify-content:space-between;align-items:center}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}
+.wrap{flex-wrap:wrap}
+.items-center{align-items:center}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.section-note{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.badge-step{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;flex:0 0 22px;box-sizing:border-box}
+.flow-hint{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+.note-line{border-left:3px solid var(--pink);background:var(--pink-soft);padding:11px 14px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--pink-ink)}
+.mock-tag{display:inline-flex;align-items:center;line-height:1;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);border:1px solid #EFE4BD;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:8px}
+
+/* donut legend */
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .li{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+
+/* ---------- Charts (shared chart toolkit) ---------- */
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.chart-legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.chart-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:block;line-height:1.5}
+.chart-note .mock-tag{margin-left:0;margin-right:8px}
+.grid-line{stroke:var(--line-2);stroke-width:1}
+.axis-lab{fill:var(--ink-3);font-size:10px;font-family:var(--font)}
+.bar-lab{fill:var(--ink-2);font-size:10.5px;font-family:var(--font)}
+.bar-val{fill:var(--ink);font-size:10.5px;font-weight:650;font-family:var(--font)}
+.spark{display:block}
+.ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring-row .ring-meta{flex:1;min-width:120px}
+.chart-empty{display:grid;place-items:center;min-height:150px;color:var(--ink-3);font-size:12.5px;gap:6px}
+.chart-empty .ill{font-size:26px;opacity:.45}
+
+/* bar entrance animation (used by charts + meters) */
+@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growBarY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chart rect.anim-x{transform-origin:left center;animation:growBar .7s cubic-bezier(.2,.7,.3,1) both}
+.chart rect.anim-y{transform-origin:center bottom;animation:growBarY .7s cubic-bezier(.2,.7,.3,1) both}
+/* 环形图中心数字：HTML 覆盖层（不依赖 SVG text-anchor） */
+.ring-wrap{position:relative;display:inline-flex;vertical-align:middle}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.15}
+.ring-center b{font-weight:700;color:#18181B;letter-spacing:-.01em}
+.ring-center i{font-style:normal;font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.ring-row .ring-wrap{flex:0 0 auto}
+.meter .track>i{transition:width .8s cubic-bezier(.2,.7,.3,1)}
+
+/* ---------- nav: star + agents-active + 开始使用 ---------- */
+.nav-star{color:#E0B341;font-size:11px;margin-left:2px}
+.agents-active{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);padding:0 2px 12px}
+.agents-active .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+.agents-active .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.45;animation:ping 1.6s ease-out infinite}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+
+/* ---------- 简历解析 4 步向导 ---------- */
+.wizard{display:flex;align-items:flex-start;gap:0}
+.wz-step{flex:1;position:relative;text-align:center}
+.wz-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--ink-2);font-weight:700;font-size:13px;transition:all .2s}
+.wz-t{font-size:12.5px;font-weight:600;margin-top:7px;color:var(--ink-2)}
+.wz-s{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.wz-step.on .wz-n{background:var(--ink);border-color:var(--ink);color:#fff}
+.wz-step.on .wz-t{color:var(--ink)}
+.wz-step.done .wz-n{background:var(--green);border-color:var(--green);color:#fff}
+.wz-step.done .wz-t{color:var(--green)}
+.wz-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--line);z-index:-0}
+.wz-step.done .wz-line{background:var(--green)}
+.agent-row.sm{padding:9px 0}
+.agent-row.sm .ttl{font-weight:600}
+
+
+/* ===== 聚合画板专用覆盖（Ardot 静态渲染） ===== */
+*{animation:none!important;transition:none!important}
+html,body{height:auto}
+body{background:#EDEEF0}
+.board{width:1440px;margin:0 auto;padding:44px 0 90px;display:flex;flex-direction:column;gap:34px;align-items:center}
+.board-head{width:1360px;background:#FFFFFF;border:1px solid #E8EAED;border-radius:18px;padding:30px 34px;
+  display:flex;align-items:center;gap:18px;box-shadow:0 6px 22px rgba(32,33,36,.05)}
+.board-head .chip{font-size:13px;font-weight:800;letter-spacing:.08em;padding:7px 14px;border-radius:999px;
+  background:#C8F36A;color:#2E3B13;flex:0 0 auto}
+.board-head.admin .chip{background:#2E3B13;color:#C8F36A}
+.board-head .htxt h1{font-size:24px;font-weight:750;letter-spacing:-.02em;margin:0}
+.board-head .htxt .sub{font-size:13px;color:#7B818A;margin-top:5px}
+.board-head .hmeta{margin-left:auto;flex:0 0 auto;text-align:right;font-size:12px;color:#5A616B;line-height:20px;display:flex;flex-direction:column;gap:4px}
+.board-head .hmeta .hm-line{display:block;white-space:nowrap;line-height:20px;height:20px}
+.frame-wrap{width:1440px}
+.frame-label{width:1360px;margin:0 auto 12px;display:flex;align-items:center;gap:12px}
+.frame-label .no{width:30px;height:30px;border-radius:9px;background:#6B8CAE;color:#fff;display:grid;place-items:center;
+  font-size:13px;font-weight:800;flex:0 0 30px}
+.frame-wrap.admin .frame-label .no{background:#2E3B13;color:#C8F36A}
+.frame-label .fl{font-size:16px;font-weight:700;color:#202124}
+.frame-label code{margin-left:auto;font-size:11px;color:#9AA0A6;background:#FFFFFF;border:1px solid #E8EAED;
+  padding:3px 9px;border-radius:7px;font-family:ui-monospace,monospace}
+.frame-box{width:1440px;min-height:900px;background:#FFFFFF;border:1px solid #E8EAED;border-radius:14px;
+  overflow:hidden;display:flex}
+.frame-box .app{min-height:900px!important;width:1440px}
+.frame-box .sidebar{position:relative!important;top:auto!important;height:auto!important;align-self:stretch}
+.frame-box .topbar{position:relative!important}
+.frame-box .view{animation:none!important}
+/* br 换行转块级节点：每行独立，Ardot 不再重叠 */
+.brk-li{display:block;min-height:1em}
+.brk-sp{display:block;height:10px}
+</style></head>
+<body><div class="board">
+  <div class="board-head user">
+    <span class="chip">USER</span>
+    <div class="htxt"><h1>用户端 · 高保真原型（上）01–09</h1><div class="sub">与低保真用户端逐页对齐 · 首页 → 上传 → 解析 → 岗位 → JD → 能力 → 目标 → 权重 → 难度</div></div>
+    <div class="hmeta">
+      <div class="hm-line">简历感知 · AI 面试 · 多 Agent 评估</div>
+      <div class="hm-line">desktop 1440 · UI v4 · 2026.10.29</div>
+      <div class="hm-line">共 9 个功能页</div>
+    </div>
+  </div>
+  <div class="frame-wrap user">
+      <div class="frame-label"><span class="no">01</span><span class="fl">首页 Dashboard</span><code>u/dashboard</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link active" href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>我的求职空间</h1><div class="crumb">首页 · 工作台</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">MY CAREER SPACE</div><h2>准备好开始下一次面试了吗？</h2>
+    <p>你当前处于「求职 → 面试 → 成长」的循环中。先看看这一程的进度。</p></div>
+    <div class="flex gap-8 mt-16" style="flex-wrap:wrap">
+      <span class="tag tag-soft">📄 Resume Aware</span>
+      <span class="tag tag-soft">🧠 Multi Agent</span>
+      <span class="tag tag-soft">13 Agents 在线</span>
+    </div>
+    <div class="grid cols-4">
+      <div class="card"><div class="card-title"><span class="dot"></span>目标岗位</div><div class="mt-12"><div class="stat"><div class="k">正在准备</div><div class="v" style="font-size:20px">AI 产品经理</div><div class="d">简历已完成</div></div></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>最近一次面试</div><div class="mt-12"><div class="stat"><div class="v">78<small> / 100</small></div><div class="d">较上次 +6</div></div></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>能力成长</div><div class="mt-12"><div class="stat"><div class="v" style="color:var(--green)">+12%</div><div class="d">近 30 天</div></div></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>简历状态</div><div class="mt-12"><div class="stat"><div class="v" style="font-size:20px">✓ 已解析</div><div class="d">Jiang_Resume_2026.pdf</div></div></div></div>
+    </div>
+    <div class="grid cols-3 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>综合得分趋势</div><div class="card-sub">近 5 次面试 · 逐次提升</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">84.2</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">72.5</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">60.7</text><path d="M36.0 123.6 L163.5 102.4 L291.0 109.4 L418.5 74.2 L546.0 60.0 L 546.0 182.0 L 36.0 182.0 Z" fill="#C8F36A" opacity=".08"></path><path d="M36.0 123.6 L163.5 102.4 L291.0 109.4 L418.5 74.2 L546.0 60.0" fill="none" stroke="#C8F36A" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="123.6" r="3" fill="#C8F36A"></circle><circle cx="163.5" cy="102.4" r="3" fill="#C8F36A"></circle><circle cx="291.0" cy="109.4" r="3" fill="#C8F36A"></circle><circle cx="418.5" cy="74.2" r="3" fill="#C8F36A"></circle><circle cx="546.0" cy="60.0" r="3" fill="#C8F36A"></circle><text class="axis-lab" x="22.0" y="198.0" font-size="10.0">08-12</text><text class="axis-lab" x="149.5" y="198.0" font-size="10.0">08-20</text><text class="axis-lab" x="277.0" y="198.0" font-size="10.0">09-01</text><text class="axis-lab" x="404.5" y="198.0" font-size="10.0">09-12</text><text class="axis-lab" x="532.0" y="198.0" font-size="10.0">09-29</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>简历结构完整度</div><div class="card-sub">Resume Parser 对各模块的解析覆盖度</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="46" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="52" cy="52" r="46" fill="none" stroke="#7C9A78" stroke-width="12" stroke-linecap="round" stroke-dasharray="289.0" stroke-dashoffset="34.7" transform="rotate(-90 52 52)"></circle></svg><span class="ring-center"><b style="font-size:24px">88%</b><i>完整度</i></span></span><div class="ring-meta"><svg class="chart" viewBox="0 0 236 150" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">教育背景</text><rect x="70" y="12" width="116" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="70" y="12" width="116.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="208.5" y="23">100%</text><text class="bar-lab" x="6" y="51" font-size="10.5">项目经历</text><rect x="70" y="40" width="116" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="70" y="40" width="106.7" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="214.4" y="51">92%</text><text class="bar-lab" x="6" y="79" font-size="10.5">技能标签</text><rect x="70" y="68" width="116" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="70" y="68" width="102.1" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="214.4" y="79">88%</text><text class="bar-lab" x="6" y="107" font-size="10.5">实习经历</text><rect x="70" y="96" width="116" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="70" y="96" width="92.8" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="214.4" y="107">80%</text><text class="bar-lab" x="6" y="135" font-size="10.5">AI 能力</text><rect x="70" y="124" width="116" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="70" y="124" width="88.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="214.4" y="135">76%</text></svg></div></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>近 8 周活跃度</div><div class="card-sub">每周完成的面试 / 练习次数</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 168" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="138.0" x2="558" y2="138.0"></line><text class="axis-lab" x="4" y="141.5">0</text><line class="grid-line" x1="30" y1="80.0" x2="558" y2="80.0"></line><text class="axis-lab" x="4" y="83.5">5</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">10</text><rect class="anim-y" x="46.0" y="104.7" width="34.0" height="33.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="60.1" y="98.7" font-size="10.5">3</text><text class="bar-lab" x="57.1" y="154.0" font-size="10.5">W1</text><rect class="anim-y" x="112.0" y="82.4" width="34.0" height="55.6" rx="5" fill="#18181B"></rect><text class="bar-val" x="126.1" y="76.4" font-size="10.5">5</text><text class="bar-lab" x="123.1" y="154.0" font-size="10.5">W2</text><rect class="anim-y" x="178.0" y="93.6" width="34.0" height="44.4" rx="5" fill="#18181B"></rect><text class="bar-val" x="192.1" y="87.6" font-size="10.5">4</text><text class="bar-lab" x="189.1" y="154.0" font-size="10.5">W3</text><rect class="anim-y" x="244.0" y="60.2" width="34.0" height="77.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="258.1" y="54.2" font-size="10.5">7</text><text class="bar-lab" x="255.1" y="154.0" font-size="10.5">W4</text><rect class="anim-y" x="310.0" y="71.3" width="34.0" height="66.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="324.1" y="65.3" font-size="10.5">6</text><text class="bar-lab" x="321.1" y="154.0" font-size="10.5">W5</text><rect class="anim-y" x="376.0" y="49.1" width="34.0" height="88.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="390.1" y="43.1" font-size="10.5">8</text><text class="bar-lab" x="387.1" y="154.0" font-size="10.5">W6</text><rect class="anim-y" x="442.0" y="60.2" width="34.0" height="77.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="456.1" y="54.2" font-size="10.5">7</text><text class="bar-lab" x="453.1" y="154.0" font-size="10.5">W7</text><rect class="anim-y" x="508.0" y="38.0" width="34.0" height="100.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="522.1" y="32.0" font-size="10.5">9</text><text class="bar-lab" x="519.1" y="154.0" font-size="10.5">W8</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>最近面试</div>
+        <div class="mt-12"><div class="row"><div class="avatar sm">📝</div><div class="main"><div class="ttl">标准难度 · 78分</div><div class="meta">2026.09.29 · 薄弱项：数据指标</div></div><span class="tag tag-green">+6</span></div><div class="row"><div class="avatar sm">📝</div><div class="main"><div class="ttl">轻量难度 · 72分</div><div class="meta">2026.09.20 · 薄弱项：业务分析</div></div><span class="tag tag-green">+3</span></div><div class="row"><div class="avatar sm">📝</div><div class="main"><div class="ttl">标准难度 · 69分</div><div class="meta">2026.09.12 · 薄弱项：结构化</div></div><span class="tag tag-green">—</span></div></div>
+        <div class="mt-16 flex gap-12"><button class="btn btn-primary" onclick="go('#/u/difficulty')">继续面试</button><button class="btn btn-secondary" onclick="go('#/u/report')">查看报告</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>下一步建议</div>
+        <div class="mt-12">
+          <div class="note-line mb-12">你的数据指标表达偏弱，建议先补「数据分析」能力再进入挑战难度。</div>
+          <div class="meter"><span class="lab">简历解析</span><span class="track"><i style="width:100%;background:#18181B"></i></span><span class="val">100</span></div> <div class="meter"><span class="lab">岗位匹配</span><span class="track"><i style="width:92%;background:#18181B"></i></span><span class="val">92</span></div> <div class="meter"><span class="lab">能力模型</span><span class="track"><i style="width:80%;background:#18181B"></i></span><span class="val">80</span></div> <div class="meter"><span class="lab">面试完成</span><span class="track"><i style="width:68%;background:#18181B"></i></span><span class="val">68</span></div>
+          <div class="mt-16"><button class="btn btn-pink btn-sm" onclick="go('#/u/growth')">查看成长计划 →</button></div>
+        </div>
+      </div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">02</span><span class="fl">上传简历</span><code>u/upload</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link active" href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>上传你的简历</h1><div class="crumb">首页 · 上传简历</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 1 / 简历录入</div><h2>先让我们认识你</h2>
+    <p>上传你的简历，我们会从你的经历中提取能力与优势，并为你匹配岗位。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step on"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="split">
+      <div>
+        <div class="upload-zone" id="uz" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');uploadResume()">
+          <div class="upload-ill">📄</div>
+          <h3>拖拽简历到此处</h3>
+          <p>支持 PDF / DOC / DOCX / TXT · 单文件 ≤ 10MB</p>
+          <div class="mt-16 flex gap-12">
+            <button class="btn btn-primary" onclick="uploadResume()">上传简历</button>
+            <button class="btn btn-ghost btn-sm" onclick="uploadResume()">使用示例简历</button>
+          </div>
+          <div class="muted small mt-12">🐱 小提示：识别过程不会离开你的设备原型</div>
+        </div>
+        <div class="card mt-16" id="filecard" style="display:none">
+          <div class="row" style="border:none"><div class="avatar">📄</div><div class="main"><div class="ttl" id="fname">Jiang_Resume_2026.pdf</div><div class="meta" id="fmeta">2.4 MB · <span id="fstatus">解析中…</span></div></div><span class="tag tag-blue" id="ftag">处理中</span></div>
+          <div class="mt-16 ring-row">
+            <span class="ring-wrap"><svg viewBox="0 0 100 100" width="100" height="100"><circle cx="50" cy="50" r="44" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle id="upRing" cx="50" cy="50" r="44" fill="none" stroke="#C8F36A" stroke-width="12" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" transform="rotate(-90 50 50)"></circle></svg><span class="ring-center"><b style="font-size:23px">0%</b><i>解析进度</i></span></span>
+            <div class="ring-meta" id="upStages"><svg class="chart" viewBox="0 0 250 122" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">文本抽取</text><rect x="74" y="12" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="12" width="4.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="234.2" y="23">0%</text><text class="bar-lab" x="6" y="51" font-size="10.5">结构识别</text><rect x="74" y="40" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="40" width="4.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="234.2" y="51">0%</text><text class="bar-lab" x="6" y="79" font-size="10.5">能力抽取</text><rect x="74" y="68" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="68" width="4.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="234.2" y="79">0%</text><text class="bar-lab" x="6" y="107" font-size="10.5">画像生成</text><rect x="74" y="96" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="96" width="4.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="234.2" y="107">0%</text></svg></div>
+          </div>
+          <div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计 · 各阶段进度为动画演示</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>为什么从这里开始</div>
+        <div class="mt-12 muted" style="line-height:1.8"><div class="brk-li">简历是整个系统的起点：</div><div class="brk-li">• <b>Resume Parser Agent</b> 抽取教育与项目经历</div><div class="brk-li">• 自动生成能力画像，驱动岗位推荐</div><div class="brk-li">• 后续面试问题均来自你的真实经历</div><div class="brk-sp"></div><div class="brk-li">上传后无需手动填表，我们帮你理解。</div></div>
+        <div class="divider"></div>
+        <div class="section-note">🔒 原型演示 · 文件不会真实上传</div>
+      </div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">03</span><span class="fl">简历解析</span><code>u/resume</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>简历分析</h1><div class="crumb">上传 · 解析结果</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 2 / 简历理解</div><h2>正在了解你的经历</h2>
+    <p>系统从简历中识别到以下能力与经历标签。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="split">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>简历预览</div>
+        <div class="mt-12">
+          <div class="row" style="border:none"><div class="avatar lg">🐱</div><div class="main"><div class="ttl">江同学</div><div class="meta">硕士 · 计算机 · 3 年经验 · AI / 产品</div></div></div>
+          <div class="kv"><span class="k">教育背景</span><span class="v">某 985 高校</span></div>
+          <div class="kv"><span class="k">项目经历</span><span class="v">2 个</span></div>
+          <div class="kv"><span class="k">实习经历</span><span class="v">某大厂 AI Lab</span></div>
+          <div class="kv"><span class="k">技能</span><span class="v">8 项</span></div>
+          <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Python</span><span class="tag tag-soft">LLM/GPT API</span><span class="tag tag-soft">产品策略</span><span class="tag tag-soft">A/B 测试</span><span class="tag tag-soft">SQL</span><span class="tag tag-soft">Figma</span><span class="tag tag-soft">敏捷开发</span><span class="tag tag-soft">数据分析</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>能力画像</div>
+        <div class="mt-12"><div class="meter"><span class="lab">产品思维</span><span class="track"><i style="width:82%;background:var(--green)"></i></span><span class="val">82</span></div><div class="meter"><span class="lab">数据分析</span><span class="track"><i style="width:74%;background:var(--ink)"></i></span><span class="val">74</span></div><div class="meter"><span class="lab">AI 理解</span><span class="track"><i style="width:79%;background:var(--ink)"></i></span><span class="val">79</span></div><div class="meter"><span class="lab">沟通表达</span><span class="track"><i style="width:86%;background:var(--green)"></i></span><span class="val">86</span></div><div class="meter"><span class="lab">项目深度</span><span class="track"><i style="width:80%;background:var(--green)"></i></span><span class="val">80</span></div><div class="meter"><span class="lab">业务洞察</span><span class="track"><i style="width:71%;background:var(--pink)"></i></span><span class="val">71</span></div></div>
+        <div class="divider"></div>
+        <div class="section-note">🤖 AI 识别自简历原文（原型示意）</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/jobs')">查看岗位推荐 →</button></div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>简历模块完整度</div><div class="card-sub">Resume Parser 对各模块的识别置信度</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">教育背景</text><rect x="116" y="12" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="12" width="314.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="452.5" y="23">100%</text><text class="bar-lab" x="6" y="51" font-size="10.5">项目经历</text><rect x="116" y="40" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="40" width="288.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="51">92%</text><text class="bar-lab" x="6" y="79" font-size="10.5">技能标签</text><rect x="116" y="68" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="68" width="276.3" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="79">88%</text><text class="bar-lab" x="6" y="107" font-size="10.5">实习经历</text><rect x="116" y="96" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="96" width="251.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="107">80%</text><text class="bar-lab" x="6" y="135" font-size="10.5">AI 能力</text><rect x="116" y="124" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="124" width="238.6" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="135">76%</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>能力结构分布</div><div class="card-sub">按简历技能标签聚类后的能力占比</div><div class="mt-12"><svg class="chart" viewBox="0 0 320 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="298" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="298" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">20</text><line class="grid-line" x1="30" y1="22.0" x2="298" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">39</text><rect class="anim-y" x="46.5" y="40.2" width="34.0" height="113.8" rx="5" fill="#C8F36A"></rect><text class="bar-val" x="54.7" y="34.2" font-size="10.5">34%</text><text class="bar-lab" x="42.5" y="170.0" font-size="10.5">产品能力</text><rect class="anim-y" x="113.5" y="73.7" width="34.0" height="80.3" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="121.7" y="67.7" font-size="10.5">24%</text><text class="bar-lab" x="109.5" y="170.0" font-size="10.5">数据能力</text><rect class="anim-y" x="180.5" y="80.4" width="34.0" height="73.6" rx="5" fill="#6B8CAE"></rect><text class="bar-val" x="188.7" y="74.4" font-size="10.5">22%</text><text class="bar-lab" x="178.2" y="170.0" font-size="10.5">AI 能力</text><rect class="anim-y" x="247.5" y="87.1" width="34.0" height="66.9" rx="5" fill="#9A7BB5"></rect><text class="bar-val" x="255.7" y="81.1" font-size="10.5">20%</text><text class="bar-lab" x="243.5" y="170.0" font-size="10.5">沟通协作</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">04</span><span class="fl">岗位推荐</span><code>u/jobs</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>岗位推荐</h1><div class="crumb">解析 · 岗位匹配</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 3 / 岗位匹配</div><h2>这些方向与你比较匹配</h2>
+    <p>Job Match Agent 基于「简历能力 + 岗位要求」向量匹配，推荐 11 个适配职位。选择目标岗位以继续。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="grid cols-2">
+      <div class="card"><div class="card-title"><span class="dot"></span>Top 8 岗位匹配度</div><div class="card-sub">Job Match Agent 输出的匹配得分（11 个岗位取前 8）</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="558" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="558" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">53</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">107</text><rect class="anim-y" x="46.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="54.2" y="34.2" font-size="10.5">92%</text><text class="bar-lab" x="48.3" y="170.0" font-size="10.5">AI PM</text><rect class="anim-y" x="112.0" y="45.2" width="34.0" height="108.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="120.2" y="39.2" font-size="10.5">88%</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">PM</text><rect class="anim-y" x="178.0" y="48.9" width="34.0" height="105.1" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="186.2" y="42.9" font-size="10.5">85%</text><text class="bar-lab" x="178.6" y="170.0" font-size="10.5">数据PM</text><rect class="anim-y" x="244.0" y="51.3" width="34.0" height="102.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="45.3" font-size="10.5">83%</text><text class="bar-lab" x="243.4" y="170.0" font-size="10.5">AIGC P</text><rect class="anim-y" x="310.0" y="55.0" width="34.0" height="99.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="49.0" font-size="10.5">80%</text><text class="bar-lab" x="307.7" y="170.0" font-size="10.5">AI 运营</text><rect class="anim-y" x="376.0" y="56.3" width="34.0" height="97.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="384.2" y="50.3" font-size="10.5">79%</text><text class="bar-lab" x="372.0" y="170.0" font-size="10.5">数据分析</text><rect class="anim-y" x="442.0" y="58.8" width="34.0" height="95.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="450.2" y="52.8" font-size="10.5">77%</text><text class="bar-lab" x="443.3" y="170.0" font-size="10.5">提示词</text><rect class="anim-y" x="508.0" y="60.0" width="34.0" height="94.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="516.2" y="54.0" font-size="10.5">76%</text><text class="bar-lab" x="504.0" y="170.0" font-size="10.5">商业分析</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>匹配度区间分布</div><div class="card-sub">全部 11 个推荐岗位落在各分数段的个数</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 168" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="138.0" x2="360" y2="138.0"></line><text class="axis-lab" x="4" y="141.5">0</text><line class="grid-line" x1="30" y1="80.0" x2="360" y2="80.0"></line><text class="axis-lab" x="4" y="83.5">2</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">3</text><rect class="anim-y" x="46.0" y="104.7" width="34.0" height="33.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="51.9" y="98.7" font-size="10.5">1 个</text><text class="bar-lab" x="54.2" y="154.0" font-size="10.5">≥90</text><rect class="anim-y" x="112.0" y="71.3" width="34.0" height="66.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="117.9" y="65.3" font-size="10.5">2 个</text><text class="bar-lab" x="114.3" y="154.0" font-size="10.5">85-89</text><rect class="anim-y" x="178.0" y="71.3" width="34.0" height="66.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="183.9" y="65.3" font-size="10.5">2 个</text><text class="bar-lab" x="180.3" y="154.0" font-size="10.5">80-84</text><rect class="anim-y" x="244.0" y="38.0" width="34.0" height="100.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="249.9" y="32.0" font-size="10.5">3 个</text><text class="bar-lab" x="246.3" y="154.0" font-size="10.5">75-79</text><rect class="anim-y" x="310.0" y="38.0" width="34.0" height="100.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="315.9" y="32.0" font-size="10.5">3 个</text><text class="bar-lab" x="318.2" y="154.0" font-size="10.5">&lt;75</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-3 mt-20"><div class="card hov" style="cursor:pointer" onclick="selectJob('AI 产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AI 产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">92<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">丰富的 AI/LLM 产品经验 + 策略能力</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Prompt设计</span><span class="tag tag-soft">LLM应用</span><span class="tag tag-soft">产品策略</span><span class="tag tag-soft">数据驱动</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：需更多模型评估经验</div>
+      <div class="mt-8 small muted">路径：AI PM → 高级 AI PM → AI 产品总监</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">88<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">扎实的产品管理基础 + 数据决策</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">需求分析</span><span class="tag tag-soft">PRD</span><span class="tag tag-soft">敏捷开发</span><span class="tag tag-soft">A/B测试</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：B2C 产品经验不足</div>
+      <div class="mt-8 small muted">路径：PM → 高级PM → 产品总监</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('数据产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">数据产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">85<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">强大数据技能 + 看板设计 + 指标驱动</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">SQL</span><span class="tag tag-soft">数据看板</span><span class="tag tag-soft">指标体系</span><span class="tag tag-soft">实验设计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：数仓架构知识待加深</div>
+      <div class="mt-8 small muted">路径：数据分析师→数据PM→高级数据PM</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('AIGC 产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AIGC 产品经理</div><div style="font-size:22px;font-weight:700;color:var(--ink)">83<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">AI/LLM理解 + 产品思维 + AIGC认知</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Agent设计</span><span class="tag tag-soft">Prompt工程</span><span class="tag tag-soft">AI伦理</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：AIGC工具链经验不足</div>
+      <div class="mt-8 small muted">路径：AIGC PM → 高级 PM → 创新负责人</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('AI 运营')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AI 运营</div><div style="font-size:22px;font-weight:700;color:var(--ink)">80<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">AI工具熟练 + 数据分析 + 流程优化</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">自动化</span><span class="tag tag-soft">数据分析</span><span class="tag tag-soft">内容策略</span><span class="tag tag-soft">增长实验</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：MLOps 基础待学习</div>
+      <div class="mt-8 small muted">路径：AI运营→高级运营→运营经理</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('数据分析师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">数据分析师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">79<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">SQL/数据能力强 + 可视化 + 统计基础</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Python</span><span class="tag tag-soft">SQL</span><span class="tag tag-soft">Tableau</span><span class="tag tag-soft">统计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：统计学待深入</div>
+      <div class="mt-8 small muted">路径：初级→分析师→高级→分析经理</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('提示词工程师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">提示词工程师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">77<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">LLM API经验 + AI能力理解</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Prompt工程</span><span class="tag tag-soft">CoT</span><span class="tag tag-soft">API调用</span><span class="tag tag-soft">模型评估</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：系统化训练待加强</div>
+      <div class="mt-8 small muted">路径：PE → 高级PE → AI架构师</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('商业分析师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">商业分析师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">76<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">业务理解 + 数据 + 干系人管理</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">商业模式</span><span class="tag tag-soft">财务建模</span><span class="tag tag-soft">流程优化</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：行业知识待深入</div>
+      <div class="mt-8 small muted">路径：BA→高级BA→主管BA</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('用户增长')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">用户增长</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">74<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">数据驱动 + A/B测试 + 用户行为</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">增长漏斗</span><span class="tag tag-soft">留存</span><span class="tag tag-soft">实验设计</span><span class="tag tag-soft">病毒传播</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：增长黑客实战不足</div>
+      <div class="mt-8 small muted">路径：增长分析师→经理→负责人</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('前端开发')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">前端开发</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">71<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">技术背景 + 产品理解 + UX意识</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">HTML/CSS/JS</span><span class="tag tag-soft">React/Vue</span><span class="tag tag-soft">UI组件</span><span class="tag tag-soft">响应式</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：框架深入经验待补充</div>
+      <div class="mt-8 small muted">路径：初级前端→工程师→高级→架构师</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('后端开发')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">后端开发</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">69<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">Python能力 + 系统设计 + API</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Python</span><span class="tag tag-soft">REST API</span><span class="tag tag-soft">数据库</span><span class="tag tag-soft">系统设计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：分布式系统待学习</div>
+      <div class="mt-8 small muted">路径：初级后端→工程师→高级→架构师</div>
+    </div></div>
+    <div class="mt-20 center"><button class="btn btn-primary" id="toJd" disabled="" onclick="go('#/u/jd')">选择目标岗位以继续 →</button></div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">05</span><span class="fl">JD 分析</span><code>u/jd</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>JD 分析</h1><div class="crumb">岗位 · JD 解析</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 4 / JD 理解</div><h2>把你真正想申请的岗位告诉我</h2>
+    <p>可粘贴目标 JD，或使用推荐岗位「AI 产品经理」的示例 JD。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="split">
+      <div class="card">
+        <label class="field">粘贴岗位 JD</label>
+        <textarea class="input" placeholder="在此粘贴招聘信息文本…">AI 产品经理 · 定义 AI 产品路线图；要求 LLM 应用、Prompt 工程、产品设计、数据分析。"&gt;&lt;span class="tag tag-pink"&gt;用户研究&lt;/span&gt;&lt;span class="tag tag-pink"&gt;需求分析&lt;/span&gt;&lt;span class="tag tag-pink"&gt;AI产品&lt;/span&gt;&lt;span class="tag tag-pink"&gt;数据分析&lt;/span&gt;&lt;span class="tag tag-pink"&gt;Prompt&lt;/span&gt;&lt;span class="tag tag-pink"&gt;Agent&lt;/span&gt;</textarea>
+        <div class="mt-12"><button class="btn btn-secondary btn-sm" onclick="toast('已分析 JD（原型）')">分析 JD</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>JD 解析结果 · AI 产品经理</div>
+        <div class="mt-12 grid cols-2" style="gap:14px">
+          <div><div class="small muted mb-8">岗位职责</div><div class="row" style="padding:6px 0;border:none">• 定义 AI 产品路线图</div><div class="row" style="padding:6px 0;border:none">• 设计 LLM/Agent 功能</div><div class="row" style="padding:6px 0;border:none">• 推动跨团队落地</div><div class="row" style="padding:6px 0;border:none">• 建立评测体系</div></div>
+          <div><div class="brk-li"><div class="small muted mb-8">硬技能 / 软技能</div><span class="tag tag-blue">LLM 应用</span> <span class="tag tag-blue">Prompt 工程</span> <span class="tag tag-blue">产品设计</span> <span class="tag tag-blue">数据分析</span></div><div class="brk-sp"></div><div class="brk-li"><span class="tag tag-soft">跨团队沟通</span> <span class="tag tag-soft">结构化思考</span> <span class="tag tag-soft">Owner 意识</span></div></div>
+        </div>
+        <div class="kv mt-8"><span class="k">工具要求</span><span class="v">GPT/Claude API、Figma、SQL、Mixpanel</span></div>
+        <div class="kv"><span class="k">经验要求</span><span class="v">本科及以上，AI/计算机/相关优先</span></div>
+        <div class="kv"><span class="k">面试重点</span><span class="v">LLM 应用、产品落地、评测体系</span></div>
+        <div class="divider"></div>
+        <div class="section-note">🔑 关键词将连接到「能力模型」</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/competency')">确认 JD →</button></div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>JD 关键词权重</div><div class="card-sub">权重 = JD 文本频次 × 岗位类型系数</div><div class="mt-12"><svg class="chart" viewBox="0 0 448 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="426" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="426" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">22</text><line class="grid-line" x1="30" y1="22.0" x2="426" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">44</text><rect class="anim-y" x="46.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="57.1" y="34.2" font-size="10.5">38</text><text class="bar-lab" x="42.0" y="170.0" font-size="10.5">用户研究</text><rect class="anim-y" x="112.0" y="58.2" width="34.0" height="95.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="123.1" y="52.2" font-size="10.5">32</text><text class="bar-lab" x="108.0" y="170.0" font-size="10.5">需求分析</text><rect class="anim-y" x="178.0" y="70.2" width="34.0" height="83.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="189.1" y="64.2" font-size="10.5">28</text><text class="bar-lab" x="178.6" y="170.0" font-size="10.5">AI产品</text><rect class="anim-y" x="244.0" y="82.1" width="34.0" height="71.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="255.1" y="76.1" font-size="10.5">24</text><text class="bar-lab" x="240.0" y="170.0" font-size="10.5">数据分析</text><rect class="anim-y" x="310.0" y="94.1" width="34.0" height="59.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="321.1" y="88.1" font-size="10.5">20</text><text class="bar-lab" x="309.4" y="170.0" font-size="10.5">Prompt</text><rect class="anim-y" x="376.0" y="106.1" width="34.0" height="47.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="387.1" y="100.1" font-size="10.5">16</text><text class="bar-lab" x="378.3" y="170.0" font-size="10.5">Agent</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>简历关键词命中率</div><div class="card-sub">你的简历对各关键词的覆盖程度</div><div class="mt-12"><svg class="chart" viewBox="0 0 480 178" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">用户研究</text><rect x="116" y="12" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="12" width="288.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="23">92%</text><text class="bar-lab" x="6" y="51" font-size="10.5">需求分析</text><rect x="116" y="40" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="40" width="270.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="51">86%</text><text class="bar-lab" x="6" y="79" font-size="10.5">AI产品</text><rect x="116" y="68" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="68" width="244.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="79">78%</text><text class="bar-lab" x="6" y="107" font-size="10.5">数据分析</text><rect x="116" y="96" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="96" width="222.9" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="107">71%</text><text class="bar-lab" x="6" y="135" font-size="10.5">Prompt</text><rect x="116" y="124" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="124" width="201.0" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="135">64%</text><text class="bar-lab" x="6" y="163" font-size="10.5">Agent</text><rect x="116" y="152" width="314" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="116" y="152" width="182.1" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="458.4" y="163">58%</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">06</span><span class="fl">能力模型</span><code>u/competency</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>能力模型</h1><div class="crumb">JD · 能力模型</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 5 / 能力模型</div><h2>这场面试，会从哪些能力判断你？</h2>
+    <p>根据简历 + JD 建立岗位能力模型。「AI 产品经理」的重点能力已用权重标出。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="split">
+      <div><div class="card card-pad-sm hov" style="cursor:pointer;margin-bottom:10px" onclick="showComp('核心能力')"><div class="between"><b>核心能力</b><span class="muted">4 项 ▾</span></div></div><div class="card card-pad-sm hov" style="cursor:pointer;margin-bottom:10px" onclick="showComp('专业深度')"><div class="between"><b>专业深度</b><span class="muted">4 项 ▾</span></div></div><div class="card card-pad-sm hov" style="cursor:pointer;margin-bottom:10px" onclick="showComp('业务理解')"><div class="between"><b>业务理解</b><span class="muted">4 项 ▾</span></div></div><div class="mt-12"><div id="comp-____" style="display:block"><div class="small muted mb-8">核心能力 · 二级能力</div><span class="tag tag-soft" style="margin:0 6px 6px 0">需求理解</span><span class="tag tag-soft" style="margin:0 6px 6px 0">执行落地</span><span class="tag tag-soft" style="margin:0 6px 6px 0">沟通协作</span><span class="tag tag-soft" style="margin:0 6px 6px 0">结果导向</span></div><div id="comp-____" style="display:none"><div class="small muted mb-8">专业深度 · 二级能力</div><span class="tag tag-soft" style="margin:0 6px 6px 0">方法论</span><span class="tag tag-soft" style="margin:0 6px 6px 0">工具使用</span><span class="tag tag-soft" style="margin:0 6px 6px 0">案例积累</span><span class="tag tag-soft" style="margin:0 6px 6px 0">数据验证</span></div><div id="comp-____" style="display:none"><div class="small muted mb-8">业务理解 · 二级能力</div><span class="tag tag-soft" style="margin:0 6px 6px 0">用户价值</span><span class="tag tag-soft" style="margin:0 6px 6px 0">指标意识</span><span class="tag tag-soft" style="margin:0 6px 6px 0">商业逻辑</span><span class="tag tag-soft" style="margin:0 6px 6px 0">复盘迭代</span></div></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>本岗位重点能力（权重）</div><div class="mt-12"><div class="meter"><span class="lab">沟通表达</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">商业洞察</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">技术深度</span><span class="track"><i style="width:30%;background:var(--pink)"></i></span><span class="val">30</span></div><div class="meter"><span class="lab">领导力</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">战略思维</span><span class="track"><i style="width:20%;background:var(--pink)"></i></span><span class="val">20</span></div><div class="meter"><span class="lab">文化匹配</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div></div><div class="divider"></div><div class="section-note">权重随岗位类型动态变化</div><div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/target')">下一步 →</button></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>你的水平 vs 岗位要求</div><div class="card-sub">差值即为本次面试的重点考察方向</div><div class="mt-12"><svg class="chart" viewBox="0 0 380 200" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="32" y1="170.0" x2="370" y2="170.0"></line><text class="axis-lab" x="4" y="173.0">0</text><line class="grid-line" x1="32" y1="99.0" x2="370" y2="99.0"></line><text class="axis-lab" x="4" y="102.0">53</text><line class="grid-line" x1="32" y1="28.0" x2="370" y2="28.0"></line><text class="axis-lab" x="4" y="31.0">106</text><rect class="anim-y" x="48.6" y="59.7" width="15" height="110.3" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="67.6" y="51.7" width="15" height="118.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="44.6" y="186.0" font-size="10.5">产品思维</text><rect class="anim-y" x="115.8" y="70.5" width="15" height="99.5" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="134.8" y="62.4" width="15" height="107.6" rx="4" fill="#18181B"></rect><text class="bar-lab" x="111.8" y="186.0" font-size="10.5">数据分析</text><rect class="anim-y" x="183.0" y="63.8" width="15" height="106.2" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="202.0" y="55.7" width="15" height="114.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="180.7" y="186.0" font-size="10.5">AI 理解</text><rect class="anim-y" x="250.2" y="54.4" width="15" height="115.6" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="269.2" y="59.7" width="15" height="110.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="246.2" y="186.0" font-size="10.5">沟通表达</text><rect class="anim-y" x="317.4" y="74.5" width="15" height="95.5" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="336.4" y="65.1" width="15" height="104.9" rx="4" fill="#18181B"></rect><text class="bar-lab" x="313.4" y="186.0" font-size="10.5">业务洞察</text><rect x="32" y="9" width="9" height="9" rx="2" fill="#C8F36A"></rect><text class="axis-lab" x="46" y="17">你的水平</text><rect x="104" y="9" width="9" height="9" rx="2" fill="#18181B"></rect><text class="axis-lab" x="118" y="17">岗位要求</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>当前能力雷达</div><div class="card-sub">来自 Resume Parser 的能力画像</div><div class="mt-12"><svg class="chart" viewBox="0 0 300 285" preserveAspectRatio="xMidYMid meet"><polygon points="150.0,117.0 171.7,129.5 171.7,154.5 150.0,167.0 128.3,154.5 128.3,129.5" fill="none" stroke="#ECECE8"></polygon><polygon points="150.0,92.0 193.3,117.0 193.3,167.0 150.0,192.0 106.7,167.0 106.7,117.0" fill="none" stroke="#ECECE8"></polygon><polygon points="150.0,67.0 215.0,104.5 215.0,179.5 150.0,217.0 85.0,179.5 85.0,104.5" fill="none" stroke="#ECECE8"></polygon><polygon points="150.0,42.0 236.6,92.0 236.6,192.0 150.0,242.0 63.4,192.0 63.4,92.0" fill="none" stroke="#ECECE8"></polygon><line x1="150" y1="142" x2="150.0" y2="42.0" stroke="#ECECE8"></line><line x1="150" y1="142" x2="236.6" y2="92.0" stroke="#ECECE8"></line><line x1="150" y1="142" x2="236.6" y2="192.0" stroke="#ECECE8"></line><line x1="150" y1="142" x2="150.0" y2="242.0" stroke="#ECECE8"></line><line x1="150" y1="142" x2="63.4" y2="192.0" stroke="#ECECE8"></line><line x1="150" y1="142" x2="63.4" y2="92.0" stroke="#ECECE8"></line><polygon points="150.0,60.0 214.1,105.0 218.4,181.5 150.0,228.0 80.7,182.0 88.5,106.5" fill="rgba(200,243,106,.18)" stroke="#C8F36A" stroke-width="2"></polygon><circle cx="150.0" cy="60.0" r="3" fill="#C8F36A"></circle><circle cx="214.1" cy="105.0" r="3" fill="#C8F36A"></circle><circle cx="218.4" cy="181.5" r="3" fill="#C8F36A"></circle><circle cx="150.0" cy="228.0" r="3" fill="#C8F36A"></circle><circle cx="80.7" cy="182.0" r="3" fill="#C8F36A"></circle><circle cx="88.5" cy="106.5" r="3" fill="#C8F36A"></circle><text class="axis-lab" x="130.0" y="21.5" font-size="10.0">产品思维</text><text class="axis-lab" x="237.4" y="83.5" font-size="10.0">数据分析</text><text class="axis-lab" x="239.0" y="207.5" font-size="10.0">AI 理解</text><text class="axis-lab" x="130.0" y="269.5" font-size="10.0">沟通表达</text><text class="axis-lab" x="22.6" y="207.5" font-size="10.0">项目深度</text><text class="axis-lab" x="22.6" y="83.5" font-size="10.0">业务洞察</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">07</span><span class="fl">目标岗位</span><code>u/target</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>目标岗位确认</h1><div class="crumb">能力模型 · 确认</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 6 / 目标确认</div><h2>你准备挑战哪个岗位？</h2></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="between"><div class="ttl" style="font-size:18px;font-weight:700">AI 产品经理</div><span class="tag tag-green">已选择</span></div>
+        <div class="kv mt-8"><span class="k">JD 摘要</span><span class="v">LLM 应用、产品落地、评测体系</span></div>
+        <div class="kv"><span class="k">核心能力</span><span class="v">LLM 应用、Prompt 工程、产品设计</span></div>
+        <div class="kv"><span class="k">当前匹配度</span><span class="v" style="color:var(--green)">92%</span></div>
+      </div>
+      <div class="card"><div class="card-title"><span class="dot"></span>为什么需要确认</div><div class="muted mt-8" style="line-height:1.9"><div class="brk-li">进入面试前，系统需要明确：</div><div class="brk-li">• 本次面试针对<b>哪个岗位</b></div><div class="brk-li">• 使用<b>哪套能力模型</b></div><div class="brk-li">• 采用<b>哪组评分权重</b></div><div class="brk-sp"></div><div class="brk-li">确认后不可在面试中切换。</div></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>岗位契合度拆解</div><div class="card-sub">整体契合度 92%</div><div class="mt-12"><svg class="chart" viewBox="0 0 380 200" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="32" y1="170.0" x2="370" y2="170.0"></line><text class="axis-lab" x="4" y="173.0">0</text><line class="grid-line" x1="32" y1="99.0" x2="370" y2="99.0"></line><text class="axis-lab" x="4" y="102.0">53</text><line class="grid-line" x1="32" y1="28.0" x2="370" y2="28.0"></line><text class="axis-lab" x="4" y="31.0">106</text><rect class="anim-y" x="48.6" y="59.7" width="15" height="110.3" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="67.6" y="51.7" width="15" height="118.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="44.6" y="186.0" font-size="10.5">产品思维</text><rect class="anim-y" x="115.8" y="70.5" width="15" height="99.5" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="134.8" y="62.4" width="15" height="107.6" rx="4" fill="#18181B"></rect><text class="bar-lab" x="111.8" y="186.0" font-size="10.5">数据分析</text><rect class="anim-y" x="183.0" y="63.8" width="15" height="106.2" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="202.0" y="55.7" width="15" height="114.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="180.7" y="186.0" font-size="10.5">AI 理解</text><rect class="anim-y" x="250.2" y="54.4" width="15" height="115.6" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="269.2" y="59.7" width="15" height="110.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="246.2" y="186.0" font-size="10.5">沟通表达</text><rect class="anim-y" x="317.4" y="74.5" width="15" height="95.5" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="336.4" y="65.1" width="15" height="104.9" rx="4" fill="#18181B"></rect><text class="bar-lab" x="313.4" y="186.0" font-size="10.5">业务洞察</text><rect x="32" y="9" width="9" height="9" rx="2" fill="#C8F36A"></rect><text class="axis-lab" x="46" y="17">你的水平</text><rect x="104" y="9" width="9" height="9" rx="2" fill="#18181B"></rect><text class="axis-lab" x="118" y="17">岗位要求</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>匹配度总览</div><div class="card-sub">各能力项当前得分</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="54" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="60" cy="60" r="54" fill="none" stroke="#7C9A78" stroke-width="12" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="27.1" transform="rotate(-90 60 60)"></circle></svg><span class="ring-center"><b style="font-size:28px">92%</b><i>匹配度</i></span></span><div class="ring-meta"><svg class="chart" viewBox="0 0 250 150" preserveAspectRatio="xMidYMid meet"><text class="bar-lab" x="6" y="23" font-size="10.5">产品思维</text><rect x="74" y="12" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="12" width="103.3" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="228.4" y="23">82%</text><text class="bar-lab" x="6" y="51" font-size="10.5">数据分析</text><rect x="74" y="40" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="40" width="93.2" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="228.4" y="51">74%</text><text class="bar-lab" x="6" y="79" font-size="10.5">AI 理解</text><rect x="74" y="68" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="68" width="99.5" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="228.4" y="79">79%</text><text class="bar-lab" x="6" y="107" font-size="10.5">沟通表达</text><rect x="74" y="96" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="96" width="108.4" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="228.4" y="107">86%</text><text class="bar-lab" x="6" y="135" font-size="10.5">业务洞察</text><rect x="74" y="124" width="126" height="12" rx="6" fill="#EEEEEA"></rect><rect class="anim-x" x="74" y="124" width="89.5" height="12" rx="6" fill="#18181B"></rect><text class="bar-val" x="228.4" y="135">71%</text></svg></div></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="mt-20 flex gap-12"><button class="btn btn-primary" onclick="go('#/u/weight')">确认目标岗位 →</button><button class="btn btn-ghost" onclick="go('#/u/jobs')">重新选择</button></div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">08</span><span class="fl">动态权重</span><code>u/weight</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>动态评分权重</h1><div class="crumb">目标岗位 · 评分权重</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 7 / 动态权重</div><h2>本次面试评分将根据岗位类型动态调整</h2>
+    <p>评分标准不是固定的——它会随目标岗位的类型与 JD 要求自动变化。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step done"><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>岗位类型</div>
+        <div class="mt-12"><div class="tabs" id="wtabs"><button class="" onclick="switchWeight('product')">📦 产品经理</button><button class="" onclick="switchWeight('tech')">💻 软件工程师</button><button class="on" onclick="switchWeight('ai')">🤖 AI 工程师</button><button class="" onclick="switchWeight('data')">📊 数据分析师</button><button class="" onclick="switchWeight('ops')">🚀 运营</button></div></div>
+        <div class="mt-16" id="wbars"><div class="meter"><span class="lab">沟通表达</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">商业洞察</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">技术深度</span><span class="track"><i style="width:30%;background:var(--pink)"></i></span><span class="val">30</span></div><div class="meter"><span class="lab">领导力</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div><div class="meter"><span class="lab">战略思维</span><span class="track"><i style="width:20%;background:var(--pink)"></i></span><span class="val">20</span></div><div class="meter"><span class="lab">文化匹配</span><span class="track"><i style="width:10%;background:var(--pink)"></i></span><span class="val">10</span></div></div>
+        <div class="mt-16" id="wchart"><svg class="chart" viewBox="0 0 448 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="426" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="426" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">17</text><line class="grid-line" x1="30" y1="22.0" x2="426" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">35</text><rect class="anim-y" x="46.0" y="116.1" width="34.0" height="37.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="54.2" y="110.1" font-size="10.5">10%</text><text class="bar-lab" x="42.0" y="170.0" font-size="10.5">沟通表达</text><rect class="anim-y" x="112.0" y="116.1" width="34.0" height="37.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="110.1" font-size="10.5">10%</text><text class="bar-lab" x="108.0" y="170.0" font-size="10.5">商业洞察</text><rect class="anim-y" x="178.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="34.2" font-size="10.5">30%</text><text class="bar-lab" x="174.0" y="170.0" font-size="10.5">技术深度</text><rect class="anim-y" x="244.0" y="116.1" width="34.0" height="37.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="110.1" font-size="10.5">10%</text><text class="bar-lab" x="245.3" y="170.0" font-size="10.5">领导力</text><rect class="anim-y" x="310.0" y="78.1" width="34.0" height="75.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="72.1" font-size="10.5">20%</text><text class="bar-lab" x="306.0" y="170.0" font-size="10.5">战略思维</text><rect class="anim-y" x="376.0" y="116.1" width="34.0" height="37.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="384.2" y="110.1" font-size="10.5">10%</text><text class="bar-lab" x="372.0" y="170.0" font-size="10.5">文化匹配</text></svg></div>
+        <div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计 · 切换岗位类型可看到权重重排</div>
+        <div class="divider"></div>
+        <div class="note-line">评分权重会根据岗位类型与 JD 要求自动调整。当前岗位：<b>AI 产品经理</b></div>
+      </div>
+      <div class="card"><div class="card-title"><span class="dot"></span>产品逻辑</div>
+        <div class="muted mt-8" style="line-height:1.9"><div class="brk-li">传统面试对所有候选人用同一把尺子。</div><div class="brk-li">这里：</div><div class="brk-li">• AI PM → 重「商业洞察 / 战略思维」</div><div class="brk-li">• 数据岗 → 重「技术深度 / 策略思维」</div><div class="brk-li">• 技术岗 → 重「技术深度」至 35%</div><div class="brk-sp"></div><div class="brk-li">让评分更贴合岗位真实要求。</div></div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/difficulty')">继续：选择难度 →</button></div>
+      </div>
+    </div></main></div></div></div>
+    </div>
+<div class="frame-wrap user">
+      <div class="frame-label"><span class="no">09</span><span class="fl">面试难度</span><code>u/difficulty</code></div>
+      <div class="frame-box"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link active" href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>面试难度</h1><div class="crumb">权重 · 难度</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 8 / 面试难度</div><h2>选择适合你的面试难度</h2>
+    <p>对齐真实考核梯度：从校招到字节 / 腾讯 / 阿里 / 美团专项，再到 Leader 管理岗。</p></div>
+    <div class="grid cols-5"><div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="校招" onclick="pickDiff(this)">
+    <div style="font-size:30px">🌱</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">校招</div>
+    <div class="muted small mt-4">基础能力</div>
+    <div class="small mt-8" style="color:var(--ink-2)">适合应届生</div></div><div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="普通社招" onclick="pickDiff(this)">
+    <div style="font-size:30px">💼</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">普通社招</div>
+    <div class="muted small mt-4">完整面试</div>
+    <div class="small mt-8" style="color:var(--ink-2)">覆盖核心能力</div></div><div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="大厂" onclick="pickDiff(this)">
+    <div style="font-size:30px">🏢</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">大厂</div>
+    <div class="muted small mt-4">高标准</div>
+    <div class="small mt-8" style="color:var(--ink-2)">深度业务考察</div></div><div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="BAT" onclick="pickDiff(this)">
+    <div style="font-size:30px">🔥</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">字节腾讯阿里美团</div>
+    <div class="muted small mt-4">顶级考核</div>
+    <div class="small mt-8" style="color:var(--ink-2)">极限追问</div></div><div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="Leader" onclick="pickDiff(this)">
+    <div style="font-size:30px">👑</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">Leader</div>
+    <div class="muted small mt-4">管理岗</div>
+    <div class="small mt-8" style="color:var(--ink-2)">潜力 / Owner 意识</div></div></div>
+    <div class="grid cols-3 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>题目数量</div><div class="card-sub">本场面试的问题总数</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 170" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="140.0" x2="360" y2="140.0"></line><text class="axis-lab" x="4" y="143.5">0</text><line class="grid-line" x1="30" y1="81.0" x2="360" y2="81.0"></line><text class="axis-lab" x="4" y="84.5">7</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">14</text><rect class="anim-y" x="46.0" y="89.1" width="34.0" height="50.9" rx="5" fill="#18181B"></rect><text class="bar-val" x="51.9" y="83.1" font-size="10.5">6 题</text><text class="bar-lab" x="52.5" y="156.0" font-size="10.5">校招</text><rect class="anim-y" x="112.0" y="72.2" width="34.0" height="67.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="117.9" y="66.2" font-size="10.5">8 题</text><text class="bar-lab" x="108.0" y="156.0" font-size="10.5">普通社招</text><rect class="anim-y" x="178.0" y="55.2" width="34.0" height="84.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="180.9" y="49.2" font-size="10.5">10 题</text><text class="bar-lab" x="184.5" y="156.0" font-size="10.5">大厂</text><rect class="anim-y" x="244.0" y="38.3" width="34.0" height="101.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="246.9" y="32.3" font-size="10.5">12 题</text><text class="bar-lab" x="252.2" y="156.0" font-size="10.5">BAT</text><rect class="anim-y" x="310.0" y="63.7" width="34.0" height="76.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="315.9" y="57.7" font-size="10.5">9 题</text><text class="bar-lab" x="309.4" y="156.0" font-size="10.5">Leader</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>追问触发率</div><div class="card-sub">Follow-up Agent 触发追问的比例</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 170" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="140.0" x2="360" y2="140.0"></line><text class="axis-lab" x="4" y="143.5">0</text><line class="grid-line" x1="30" y1="81.0" x2="360" y2="81.0"></line><text class="axis-lab" x="4" y="84.5">45</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">90</text><rect class="anim-y" x="46.0" y="100.9" width="34.0" height="39.1" rx="5" fill="#18181B"></rect><text class="bar-val" x="54.2" y="94.9" font-size="10.5">30%</text><text class="bar-lab" x="52.5" y="156.0" font-size="10.5">校招</text><rect class="anim-y" x="112.0" y="81.3" width="34.0" height="58.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="75.3" font-size="10.5">45%</text><text class="bar-lab" x="108.0" y="156.0" font-size="10.5">普通社招</text><rect class="anim-y" x="178.0" y="61.8" width="34.0" height="78.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="55.8" font-size="10.5">60%</text><text class="bar-lab" x="184.5" y="156.0" font-size="10.5">大厂</text><rect class="anim-y" x="244.0" y="38.3" width="34.0" height="101.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="32.3" font-size="10.5">78%</text><text class="bar-lab" x="252.2" y="156.0" font-size="10.5">BAT</text><rect class="anim-y" x="310.0" y="55.2" width="34.0" height="84.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="49.2" font-size="10.5">65%</text><text class="bar-lab" x="309.4" y="156.0" font-size="10.5">Leader</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>项目挖掘深度</div><div class="card-sub">对简历项目的追问层数（指数化）</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 170" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="140.0" x2="360" y2="140.0"></line><text class="axis-lab" x="4" y="143.5">0</text><line class="grid-line" x1="30" y1="81.0" x2="360" y2="81.0"></line><text class="axis-lab" x="4" y="84.5">55</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">110</text><rect class="anim-y" x="46.0" y="86.5" width="34.0" height="53.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="57.1" y="80.5" font-size="10.5">50</text><text class="bar-lab" x="52.5" y="156.0" font-size="10.5">校招</text><rect class="anim-y" x="112.0" y="65.0" width="34.0" height="75.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="123.1" y="59.0" font-size="10.5">70</text><text class="bar-lab" x="108.0" y="156.0" font-size="10.5">普通社招</text><rect class="anim-y" x="178.0" y="49.0" width="34.0" height="91.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="189.1" y="43.0" font-size="10.5">85</text><text class="bar-lab" x="184.5" y="156.0" font-size="10.5">大厂</text><rect class="anim-y" x="244.0" y="38.3" width="34.0" height="101.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="255.1" y="32.3" font-size="10.5">95</text><text class="bar-lab" x="252.2" y="156.0" font-size="10.5">BAT</text><rect class="anim-y" x="310.0" y="43.6" width="34.0" height="96.4" rx="5" fill="#18181B"></rect><text class="bar-val" x="321.1" y="37.6" font-size="10.5">90</text><text class="bar-lab" x="309.4" y="156.0" font-size="10.5">Leader</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="mt-20 center"><button class="btn btn-primary" id="startIv" disabled="" onclick="go('#/u/interview')">开始面试 →</button></div></main></div></div></div>
+    </div>
+</div></body></html>

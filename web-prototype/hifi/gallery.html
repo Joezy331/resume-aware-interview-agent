@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Career Copilot · 高保真原型 · 功能全览（26 屏）</title>
+<style>
+  :root{
+    --bg:#F5F6F7; --panel:#FFFFFF; --line:#E8EAED; --ink:#202124; --ink-2:#7B818A; --ink-3:#9AA0A6;
+    --lime:#C8F36A; --lime-ink:#2E3B13; --line-lime:#D9ECA0;
+    --accent:#6B8CAE; --green:#5B8C4A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,"Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1320px;margin:0 auto;padding:40px 28px 80px;}
+  .topbar{display:flex;align-items:flex-end;justify-content:space-between;
+    padding:28px 32px;background:var(--panel);border:1px solid var(--line);
+    border-radius:22px;margin-bottom:28px;}
+  .topbar .brand{font-size:23px;font-weight:700;letter-spacing:.2px;}
+  .topbar .topic{font-size:12px;color:var(--ink-2);margin-top:6px;letter-spacing:1px;}
+  .topbar .meta{text-align:right;font-size:12px;color:var(--ink-2);line-height:1.9;}
+  .topbar .meta b{color:var(--ink);font-weight:600;}
+  .group{margin:40px 0 4px;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--ink);
+    display:flex;align-items:center;gap:12px;}
+  .group .chip{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:999px;
+    background:var(--lime);color:var(--lime-ink);}
+  .group .hint{font-size:11.5px;font-weight:400;letter-spacing:0;color:var(--ink-2);}
+  .group::after{content:"";flex:1;height:1px;background:var(--line);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px;}
+  .cell{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(32,33,36,.04);}
+  .cell .head{display:flex;align-items:center;gap:10px;padding:11px 14px;
+    border-bottom:1px solid var(--line);}
+  .cell .no{width:26px;height:26px;border-radius:8px;color:#fff;
+    display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 26px;}
+  .cell .no.u{background:var(--accent);}
+  .cell .no.a{background:var(--lime-ink);}
+  .cell .label{font-size:13.5px;font-weight:650;color:var(--ink);white-space:nowrap;}
+  .cell .route{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--ink-3);
+    font-family:ui-monospace,monospace;border:1px solid var(--line);padding:2px 7px;border-radius:6px;}
+  .thumb{position:relative;width:100%;height:340px;background:#fff;overflow:hidden;border-bottom:1px solid var(--line);}
+  .thumb iframe{position:absolute;top:0;left:0;width:1920px;height:1080px;
+    border:0;transform:scale(0.312);transform-origin:top left;}
+  .desc{font-size:12px;color:var(--ink-2);line-height:1.6;padding:11px 14px 14px;min-height:56px;}
+  .note{margin-top:34px;font-size:12px;color:var(--ink-2);line-height:1.9;
+    border-top:1px solid var(--line);padding-top:18px;}
+  .note b{color:var(--ink);}
+  code{background:var(--line);padding:1px 6px;border-radius:5px;font-size:11px;}
+  .align-note{margin-top:14px;font-size:12px;color:var(--lime-ink);background:#F1FBD4;
+    border:1px solid var(--line-lime);border-radius:12px;padding:12px 16px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="brand">AI Career Copilot</div>
+      <div class="topic">高保真原型 · 功能全览 · 与低保真逐页对齐</div>
+    </div>
+    <div class="meta">
+      <div>简历感知 · AI 面试 · 多 Agent 评估</div>
+      <div><b>desktop 1440×900</b> · 用户端 17 + 管理员端 9</div>
+      <div>2026.10.29 · UI v4 · 共 26 屏</div>
+    </div>
+  </div>
+
+  <div class="align-note">
+    ✅ 本高保真原型严格参照低保真原型「一页一页」绘制：用户端 17 屏、管理员端 9 屏，逐帧对应低保真的每个功能页；
+    每屏在低保真线框基础上做了更仔细的高保真表达（真实图表、Mock 数据、状态与交互）。26 屏已用 jsdom 验证画面互不相同。
+  </div>
+
+  <div class="group"><span class="chip">USER</span> 用户端 · 17 个功能页 <span class="hint">从「首页 Dashboard」到「能力成长」，逐页对应低保真用户端</span></div>
+  <div class="grid">
+    <div class="cell">
+    <div class="head">
+      <span class="no u">01</span>
+      <span class="label">首页 Dashboard</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_dashboard.html" loading="lazy" title="首页 Dashboard"></iframe></div>
+    <div class="desc">登录总览，进度 / 最近面试 / 下一站建议 / 能力雷达</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">02</span>
+      <span class="label">上传简历</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_upload.html" loading="lazy" title="上传简历"></iframe></div>
+    <div class="desc">拖拽或选择简历文件，分阶段实时解析进度动画</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">03</span>
+      <span class="label">简历解析</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_resume.html" loading="lazy" title="简历解析"></iframe></div>
+    <div class="desc">Resume Parser 抽取教育 / 项目 / 技能，生成能力画像</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">04</span>
+      <span class="label">岗位推荐</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_jobs.html" loading="lazy" title="岗位推荐"></iframe></div>
+    <div class="desc">Job Match Agent 依据简历向量匹配 11 类岗位并给出匹配分</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">05</span>
+      <span class="label">JD 分析</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_jd.html" loading="lazy" title="JD 分析"></iframe></div>
+    <div class="desc">粘贴 / 截图目标公司 JD，解析关键词与简历命中率</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">06</span>
+      <span class="label">能力模型</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_competency.html" loading="lazy" title="能力模型"></iframe></div>
+    <div class="desc">由简历 + JD 生成岗位能力树与考察重点</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">07</span>
+      <span class="label">目标岗位</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_target.html" loading="lazy" title="目标岗位"></iframe></div>
+    <div class="desc">确认本次面试针对哪个岗位与哪套能力模型</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">08</span>
+      <span class="label">动态权重</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_weight.html" loading="lazy" title="动态权重"></iframe></div>
+    <div class="desc">评分权重随岗位类型动态调整（5 套模板可切换重排）</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">09</span>
+      <span class="label">面试难度</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_difficulty.html" loading="lazy" title="面试难度"></iframe></div>
+    <div class="desc">轻量 / 标准 / 挑战 等档位可选，影响题量与追问深度</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">10</span>
+      <span class="label">AI 面试</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_interview.html" loading="lazy" title="AI 面试"></iframe></div>
+    <div class="desc">基于简历 + JD 动态生成问题，实时观察与录音态</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">11</span>
+      <span class="label">动态追问</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_followup.html" loading="lazy" title="动态追问"></iframe></div>
+    <div class="desc">Follow-up Agent 基于项目经历 + 岗位要求 + 当前回答触发追问</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">12</span>
+      <span class="label">多 Agent 评价</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_multiagent.html" loading="lazy" title="多 Agent 评价"></iframe></div>
+    <div class="desc">HR / 业务 / 专业 / Leader / Chief 五方独立评分并仲裁冲突</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">13</span>
+      <span class="label">面试结束</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_finish.html" loading="lazy" title="面试结束"></iframe></div>
+    <div class="desc">问题数 / 时长 / 维度统计，引导查看报告与成长计划</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">14</span>
+      <span class="label">评分报告</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_report.html" loading="lazy" title="评分报告"></iframe></div>
+    <div class="desc">六维评分 + 录用概率预测 + Top3 优势 / 待提升</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">15</span>
+      <span class="label">面试记录</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_history.html" loading="lazy" title="面试记录"></iframe></div>
+    <div class="desc">本机持久化历史面试，时间轴 / 得分趋势 / 空态与删除态</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">16</span>
+      <span class="label">API / OCR 状态</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_api.html" loading="lazy" title="API / OCR 状态"></iframe></div>
+    <div class="desc">外接大模型与百度 OCR 的调用态、失败兜底与配置来源</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no u">17</span>
+      <span class="label">能力成长</span>
+      <span class="route">USER</span>
+    </div>
+    <div class="thumb"><iframe src="screens/u_growth.html" loading="lazy" title="能力成长"></iframe></div>
+    <div class="desc">短板分析 → 30/60/90 天成长计划 → 再次练习闭环</div>
+  </div>
+  </div>
+
+  <div class="group"><span class="chip">ADMIN</span> 管理员端 · 9 个功能页 <span class="hint">运营概览 / 用户 / 面试 / 评分 / 岗位 / Agent / 日志 / 系统</span></div>
+  <div class="grid">
+    <div class="cell">
+    <div class="head">
+      <span class="no a">01</span>
+      <span class="label">Overview 数据看板</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_dashboard.html" loading="lazy" title="Overview 数据看板"></iframe></div>
+    <div class="desc">登录态 + 运营 KPI、转化漏斗与评分 / 岗位分布</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">02</span>
+      <span class="label">Users 用户数据</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_users.html" loading="lazy" title="Users 用户数据"></iframe></div>
+    <div class="desc">用户画像、目标岗位与面试完成情况分布</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">03</span>
+      <span class="label">Interviews 面试数据</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_interviews.html" loading="lazy" title="Interviews 面试数据"></iframe></div>
+    <div class="desc">每一次面试的过程、评分与完成率记录</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">04</span>
+      <span class="label">Scores 评分数据</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_scores.html" loading="lazy" title="Scores 评分数据"></iframe></div>
+    <div class="desc">六维均值与评分区间分布，用于校准动态权重</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">05</span>
+      <span class="label">Jobs 岗位数据</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_jobs.html" loading="lazy" title="Jobs 岗位数据"></iframe></div>
+    <div class="desc">11 类岗位的匹配聚合、平均匹配与发展路径</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">06</span>
+      <span class="label">Agents 运行监控</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_agents.html" loading="lazy" title="Agents 运行监控"></iframe></div>
+    <div class="desc">13 个 Agent 的运行状态、调用量与成功率</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">07</span>
+      <span class="label">Agent Detail 详情</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_agent_detail.html" loading="lazy" title="Agent Detail 详情"></iframe></div>
+    <div class="desc">单个 Agent 的 Input → Process → Output 与延迟 / 异常</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">08</span>
+      <span class="label">Logs 运行日志</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_logs.html" loading="lazy" title="Logs 运行日志"></iframe></div>
+    <div class="desc">运行日志 / 系统情况，错误兜底与恢复状态</div>
+  </div><div class="cell">
+    <div class="head">
+      <span class="no a">09</span>
+      <span class="label">System 系统状态</span>
+      <span class="route">ADMIN</span>
+    </div>
+    <div class="thumb"><iframe src="screens/a_system.html" loading="lazy" title="System 系统状态"></iframe></div>
+    <div class="desc">13-Agent 架构图、API 可用率 / 队列 / 存储</div>
+  </div>
+  </div>
+
+  <div class="note">
+    本页为离线展示页，<b>26 个模块均为独立渲染的 screen</b>（已用 jsdom 逐屏验证：0 运行时错误、画面互不相同、图表均存在）。
+    对应源文件：<code>web-prototype/hifi/screens/*.html</code>，生成脚本 <code>gen_screens.js</code>，逻辑源 <code>app.js</code> + <code>data.js</code> + <code>styles.css</code>。
+    低保真参照：<code>career-lowfi-user.html</code>（17 帧）/ <code>career-lowfi-admin.html</code>（9 帧）。
+  </div>
+</div>
+</body>
+</html>

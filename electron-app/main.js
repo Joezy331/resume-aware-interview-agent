@@ -206,6 +206,26 @@ ipcMain.handle('ai-chat', async (event, payload) => {
   }
 });
 
+// 本地配置文件的实际落点（第一个存在的候选；全都不存在时用最高优先级候选）
+// 用于「同步可用模型」后把结果持久化回 local_api_config.json
+function localConfigPath() {
+  const cands = candidateConfigPaths();
+  for (const fp of cands) {
+    try { if (fs.existsSync(fp)) return fp; } catch (e) {}
+  }
+  return cands[0] || path.join(__dirname, LOCAL_CFG_NAME);
+}
+
+// ========== Cline 可用模型同步 ==========
+// Cline 本地模型池会不定时更新（实测已从 mimo/step-5 更换为 nemotron/beam 等），
+// 「设置」页通过 GET {baseUrl}/models 拉取真实列表；结果写入 local_api_config.json
+// 的 available_models / models_updated_at，下次启动无需联网即可恢复。
+// handler 实现共享自 models-sync.js（createModelService），E2E 测试注册同一实现。
+const { createModelService } = require('./models-sync.js');
+const modelSvc = createModelService({ loadConfig: loadLocalApiConfig, configPath: localConfigPath });
+ipcMain.handle('get-local-config', () => modelSvc.getLocalConfig());
+ipcMain.handle('list-models', (event, payload) => modelSvc.listModels(payload));
+
 // ========== 百度智能云 OCR / NLP ==========
 // 简历图片文字识别（比多模态更快更准）+ JD 关键词提取。
 // 密钥只从 local_api_config.json 的 baidu 段读取，绝不硬编码。
