@@ -1,0 +1,464 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>core_jobs</title><style>/* ============================================================
+   AI Career Copilot · High-Fidelity Prototype Design System
+   Calm / professional / portfolio-grade. No AI-template feel.
+   ============================================================ */
+
+:root{
+  /* 与 EXE UI v4 完全对齐的浅灰白 SaaS 工作台令牌 */
+  --bg:#F5F6F7;
+  --bg-soft:#FAFAFA;
+  --panel:#FFFFFF;
+  --panel-2:#FCFDFB;
+
+  --ink:#202124;
+  --ink-2:#7B818A;
+  --ink-3:#9AA0A6;
+  --muted:#8A8F98;
+
+  --line:#E8EAED;
+  --line-2:#F0F2F4;
+  --line-strong:#DDE0E4;
+
+  /* 主强调色：荧光黄绿（与 EXE 一致） */
+  --pink:#C8F36A;
+  --pink-soft:#F1FBD4;
+  --pink-ink:#2E3B13;
+  --pink-line:#D9ECA0;
+
+  --green:#5B8C4A;
+  --green-soft:#EEF3EC;
+  --blue:#3E7CB1;
+  --blue-soft:#EAF1F8;
+  --amber:#C9A227;
+  --amber-soft:#FBF6E6;
+  --purple:#9A7BB5;
+
+  --shadow-sm:0 1px 2px rgba(32,33,36,.04),0 1px 3px rgba(32,33,36,.05);
+  --shadow-md:0 6px 18px rgba(32,33,36,.06),0 2px 6px rgba(32,33,36,.04);
+  --shadow-lg:0 16px 40px rgba(32,33,36,.10);
+
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:18px;
+
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --sidebar-w:236px;
+  --topbar-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--pink-soft);color:var(--pink-ink)}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  padding:20px 14px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#F1FBD4);
+  border:1px solid var(--line);
+  display:grid;place-items:center;font-size:18px;
+}
+.brand .name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand .sub{font-size:11px;color:var(--ink-3);margin-top:-2px}
+
+.nav-group{margin-top:6px}
+.nav-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;color:var(--ink-2);
+  font-size:13.5px;font-weight:500;transition:all .15s ease;
+  margin-bottom:2px;
+}
+.nav-link .ico{width:18px;text-align:center;opacity:.8}
+.nav-link:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-link.active{background:var(--pink);color:var(--pink-ink)}
+.nav-link.active .ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+.me{display:flex;align-items:center;gap:10px}
+.me .avatar{width:34px;height:34px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:16px}
+.me .nm{font-size:12.5px;font-weight:600}
+.me .rl{font-size:11px;color:var(--ink-3)}
+
+.workspace-switch{display:flex;gap:6px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:4px;margin-top:10px}
+.workspace-switch button{flex:1;padding:7px 0;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.workspace-switch button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  height:var(--topbar-h);flex:0 0 var(--topbar-h);
+  border-bottom:1px solid var(--line);background:rgba(247,247,245,.8);
+  backdrop-filter:saturate(1.2) blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{font-size:12px;color:var(--ink-3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right .pill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);padding:5px 10px;border-radius:999px;background:var(--panel)}
+.proto-flag{font-size:10.5px;letter-spacing:.06em;color:var(--pink-ink);background:var(--pink-soft);border:1px solid var(--pink-line);padding:5px 10px;border-radius:999px;font-weight:600}
+
+.view{padding:30px 32px 60px;max-width:1280px;width:100%;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:22px}
+.page-head .eyebrow{font-size:12px;color:var(--pink-ink);font-weight:600;letter-spacing:.04em}
+.page-head h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.page-head p{color:var(--ink-2);margin-top:6px;max-width:680px;font-size:13.5px}
+
+/* ---------- Layout grid ---------- */
+.grid{display:grid;gap:18px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-5{grid-template-columns:repeat(5,1fr)}
+.span-2{grid-column:span 2}
+.split{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.split-r{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card.hov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-title{font-size:13px;font-weight:650;color:var(--ink);display:flex;align-items:center;line-height:1.3;gap:8px}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);transform:translateY(0.5px)}
+.card-sub{font-size:12px;color:var(--ink-2);margin-top:3px}
+.card-pad-sm{padding:16px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:11px;font-size:13.5px;font-weight:600;
+  transition:all .16s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--pink);color:var(--pink-ink)}
+.btn-primary:hover{background:#B7E84F;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:var(--bg-soft);border-color:var(--ink-3)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-soft);color:var(--ink)}
+.btn-pink{background:var(--pink-soft);color:var(--pink-ink);border:1px solid var(--pink-line)}
+.btn-pink:hover{background:#ECF7D6}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.tag-pink{background:var(--pink-soft);color:var(--pink-ink);border-color:var(--pink-line)}
+.tag-green{background:var(--green-soft);color:#4d6b48;border-color:#DCE7D8}
+.tag-blue{background:var(--blue-soft);color:#46627e;border-color:#DCE6EE}
+.tag-amber{background:var(--amber-soft);color:#8a6d10;border-color:#EFE4BD}
+.tag-gray{background:var(--bg-soft);color:var(--ink-3);border-color:var(--line)}
+.tag-soft{background:var(--bg-soft);color:var(--ink-2)}
+
+/* ---------- Inputs ---------- */
+.input{
+  width:100%;padding:11px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;font-size:13.5px;background:var(--panel);color:var(--ink);
+  transition:border-color .15s, box-shadow .15s;font-family:inherit;
+}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.06)}
+.input::placeholder{color:var(--ink-3)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+label.field{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+
+/* ---------- Progress / bars ---------- */
+.progress{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.progress>.bar{height:100%;background:var(--ink);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.progress.pink>.bar{background:var(--pink)}
+.progress.green>.bar{background:var(--green)}
+.meter{display:flex;align-items:center;gap:10px}
+.meter .lab{font-size:12.5px;color:var(--ink-2);width:96px;flex:0 0 96px}
+.meter .val{font-size:12.5px;font-weight:650;width:38px;text-align:right;flex:0 0 38px}
+.meter .track{flex:1;height:7px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter .track>i{display:block;height:100%;background:var(--ink);border-radius:999px}
+
+/* ---------- Avatar ---------- */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:0 0 38px}
+.avatar.sm{width:30px;height:30px;font-size:14px;flex-basis:30px}
+.avatar.lg{width:52px;height:52px;font-size:24px;flex-basis:52px}
+.avatar.blue{background:var(--blue-soft);border-color:#DCE6EE}
+.avatar.green{background:var(--green-soft);border-color:#DCE7D8}
+.avatar.amber{background:var(--amber-soft);border-color:#EFE4BD}
+.avatar.purple{background:#F3EEF7;border-color:#E6DCF0}
+
+/* ---------- Stat ---------- */
+.stat .k{font-size:12px;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;color:var(--ink-3);font-weight:600}
+.stat .d{font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.stat .d.down{color:#D45D4D}
+
+/* ---------- List / rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.row:last-child{border-bottom:none}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:600}
+.row .meta{font-size:12px;color:var(--ink-3);margin-top:1px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-2)}
+.kv .v{font-weight:600}
+
+/* ---------- Dropdown / select ---------- */
+.select{
+  position:relative;display:inline-block;
+}
+.select>button{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);min-width:150px;justify-content:space-between;
+}
+.select .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;z-index:30;display:none}
+.select.open .menu{display:block}
+.select .menu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.select .menu button:hover{background:var(--bg-soft);color:var(--ink)}
+.select .menu button.on{color:var(--ink);font-weight:650}
+
+/* ---------- Tabs ---------- */
+.tabs{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.tabs button{padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Chat / interview ---------- */
+.chat{display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:86%;padding:13px 16px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.bubble.q{background:var(--ink);color:#fff;align-self:flex-start;border-bottom-left-radius:5px}
+.bubble.a{background:var(--panel);border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:5px}
+.bubble .who{font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+
+/* ---------- Agent status ---------- */
+.agent-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.agent-row:last-child{border-bottom:none}
+.status-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;position:relative}
+.status-dot.run{background:var(--green)}
+.status-dot.run::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.4;animation:ping 1.4s ease-out infinite}
+.status-dot.done{background:var(--blue)}
+.status-dot.wait{background:var(--ink-3)}
+.status-dot.warn{background:var(--amber)}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Empty / loading ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+.empty .ill{font-size:42px;opacity:.5;margin-bottom:10px}
+.empty p{font-size:13px}
+.skeleton{background:linear-gradient(90deg,var(--line-2) 25%,#EDEDE8 37%,var(--line-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;height:14px;margin:8px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:all .3s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-card{background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px}
+.toast-card .ic{color:var(--green)}
+
+/* ---------- Modal ---------- */
+.modal-mask{position:fixed;inset:0;background:rgba(24,24,27,.32);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;animation:fade .2s ease}
+.modal{background:var(--panel);border-radius:var(--r-lg);width:min(460px,92vw);padding:26px;box-shadow:var(--shadow-lg);animation:pop .25s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+
+/* ---------- Hero / upload ---------- */
+.upload-zone{
+  border:1.8px dashed var(--line-strong);border-radius:var(--r-lg);
+  background:var(--panel-2);padding:54px 30px;text-align:center;transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--pink);background:var(--pink-soft)}
+.upload-ill{font-size:46px;margin-bottom:12px}
+.upload-zone h3{font-size:18px;font-weight:700}
+.upload-zone p{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+/* ---------- Misc ---------- */
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.center{text-align:center}
+.right{text-align:right}
+.flex{display:flex}
+.between{display:flex;justify-content:space-between;align-items:center}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}
+.wrap{flex-wrap:wrap}
+.items-center{align-items:center}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.section-note{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.badge-step{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;flex:0 0 22px;box-sizing:border-box}
+.flow-hint{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+.note-line{border-left:3px solid var(--pink);background:var(--pink-soft);padding:11px 14px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--pink-ink)}
+.mock-tag{display:inline-flex;align-items:center;line-height:1;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);border:1px solid #EFE4BD;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:8px}
+
+/* donut legend */
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .li{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+
+/* ---------- Charts (shared chart toolkit) ---------- */
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.chart-legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.chart-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:block;line-height:1.5}
+.chart-note .mock-tag{margin-left:0;margin-right:8px}
+.grid-line{stroke:var(--line-2);stroke-width:1}
+.axis-lab{fill:var(--ink-3);font-size:10px;font-family:var(--font)}
+.bar-lab{fill:var(--ink-2);font-size:10.5px;font-family:var(--font)}
+.bar-val{fill:var(--ink);font-size:10.5px;font-weight:650;font-family:var(--font)}
+.spark{display:block}
+.ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring-row .ring-meta{flex:1;min-width:120px}
+.chart-empty{display:grid;place-items:center;min-height:150px;color:var(--ink-3);font-size:12.5px;gap:6px}
+.chart-empty .ill{font-size:26px;opacity:.45}
+
+/* bar entrance animation (used by charts + meters) */
+@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growBarY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chart rect.anim-x{transform-origin:left center;animation:growBar .7s cubic-bezier(.2,.7,.3,1) both}
+.chart rect.anim-y{transform-origin:center bottom;animation:growBarY .7s cubic-bezier(.2,.7,.3,1) both}
+/* 环形图中心数字：HTML 覆盖层（不依赖 SVG text-anchor） */
+.ring-wrap{position:relative;display:inline-flex;vertical-align:middle}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.15}
+.ring-center b{font-weight:700;color:#18181B;letter-spacing:-.01em}
+.ring-center i{font-style:normal;font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.ring-row .ring-wrap{flex:0 0 auto}
+.meter .track>i{transition:width .8s cubic-bezier(.2,.7,.3,1)}
+
+/* ---------- nav: star + agents-active + 开始使用 ---------- */
+.nav-star{color:#E0B341;font-size:11px;margin-left:2px}
+.agents-active{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);padding:0 2px 12px}
+.agents-active .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+.agents-active .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.45;animation:ping 1.6s ease-out infinite}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+
+/* ---------- 简历解析 4 步向导 ---------- */
+.wizard{display:flex;align-items:flex-start;gap:0}
+.wz-step{flex:1;position:relative;text-align:center}
+.wz-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--ink-2);font-weight:700;font-size:13px;transition:all .2s}
+.wz-t{font-size:12.5px;font-weight:600;margin-top:7px;color:var(--ink-2)}
+.wz-s{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.wz-step.on .wz-n{background:var(--ink);border-color:var(--ink);color:#fff}
+.wz-step.on .wz-t{color:var(--ink)}
+.wz-step.done .wz-n{background:var(--green);border-color:var(--green);color:#fff}
+.wz-step.done .wz-t{color:var(--green)}
+.wz-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--line);z-index:-0}
+.wz-step.done .wz-line{background:var(--green)}
+.agent-row.sm{padding:9px 0}
+.agent-row.sm .ttl{font-weight:600}
+
+
+*{animation:none!important;transition:none!important}
+html,body{height:auto;margin:0;padding:0}
+body{background:#FFFFFF}
+.core-wrap{width:1440px;background:#FFFFFF;display:flex}
+.core-wrap .app{min-height:900px!important;width:1440px;display:flex}
+.core-wrap .sidebar{position:relative!important;top:auto!important;left:auto!important;height:auto!important;align-self:stretch}
+.core-wrap .topbar{position:relative!important}
+.core-wrap .view{animation:none!important}
+/* br 换行转块级节点：每行独立，Ardot 不再重叠 */
+.brk-li{display:block;min-height:1em}
+.brk-sp{display:block;height:10px}
+</style></head><body><div class="core-wrap"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link " href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>岗位推荐</h1><div class="crumb">解析 · 岗位匹配</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 3 / 岗位匹配</div><h2>这些方向与你比较匹配</h2>
+    <p>Job Match Agent 基于「简历能力 + 岗位要求」向量匹配，推荐 11 个适配职位。选择目标岗位以继续。</p></div>
+    <div class="mt-8"><div class="wizard"><div class="wz-step done"><span class="wz-n">①</span><div class="wz-t">上传简历</div><div class="wz-s">PDF / 粘贴 / 示例</div></div><span class="wz-line"></span><div class="wz-step on"><span class="wz-n">②</span><div class="wz-t">解析 · 匹配</div><div class="wz-s">Resume Parser + Job Match</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">③</span><div class="wz-t">JD · 建模</div><div class="wz-s">JD Agent + 能力树</div></div><span class="wz-line"></span><div class="wz-step "><span class="wz-n">④</span><div class="wz-t">确认 · 权重</div><div class="wz-s">目标岗位 / 动态权重</div></div></div></div>
+    <div class="grid cols-2">
+      <div class="card"><div class="card-title"><span class="dot"></span>Top 8 岗位匹配度</div><div class="card-sub">Job Match Agent 输出的匹配得分（11 个岗位取前 8）</div><div class="mt-12"><svg class="chart" viewBox="0 0 580 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="558" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="558" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">53</text><line class="grid-line" x1="30" y1="22.0" x2="558" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">107</text><rect class="anim-y" x="46.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="54.2" y="34.2" font-size="10.5">92%</text><text class="bar-lab" x="48.3" y="170.0" font-size="10.5">AI PM</text><rect class="anim-y" x="112.0" y="45.2" width="34.0" height="108.8" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="120.2" y="39.2" font-size="10.5">88%</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">PM</text><rect class="anim-y" x="178.0" y="48.9" width="34.0" height="105.1" rx="5" fill="#7C9A78"></rect><text class="bar-val" x="186.2" y="42.9" font-size="10.5">85%</text><text class="bar-lab" x="178.6" y="170.0" font-size="10.5">数据PM</text><rect class="anim-y" x="244.0" y="51.3" width="34.0" height="102.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="45.3" font-size="10.5">83%</text><text class="bar-lab" x="243.4" y="170.0" font-size="10.5">AIGC P</text><rect class="anim-y" x="310.0" y="55.0" width="34.0" height="99.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="49.0" font-size="10.5">80%</text><text class="bar-lab" x="307.7" y="170.0" font-size="10.5">AI 运营</text><rect class="anim-y" x="376.0" y="56.3" width="34.0" height="97.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="384.2" y="50.3" font-size="10.5">79%</text><text class="bar-lab" x="372.0" y="170.0" font-size="10.5">数据分析</text><rect class="anim-y" x="442.0" y="58.8" width="34.0" height="95.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="450.2" y="52.8" font-size="10.5">77%</text><text class="bar-lab" x="443.3" y="170.0" font-size="10.5">提示词</text><rect class="anim-y" x="508.0" y="60.0" width="34.0" height="94.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="516.2" y="54.0" font-size="10.5">76%</text><text class="bar-lab" x="504.0" y="170.0" font-size="10.5">商业分析</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>匹配度区间分布</div><div class="card-sub">全部 11 个推荐岗位落在各分数段的个数</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 168" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="138.0" x2="360" y2="138.0"></line><text class="axis-lab" x="4" y="141.5">0</text><line class="grid-line" x1="30" y1="80.0" x2="360" y2="80.0"></line><text class="axis-lab" x="4" y="83.5">2</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">3</text><rect class="anim-y" x="46.0" y="104.7" width="34.0" height="33.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="51.9" y="98.7" font-size="10.5">1 个</text><text class="bar-lab" x="54.2" y="154.0" font-size="10.5">≥90</text><rect class="anim-y" x="112.0" y="71.3" width="34.0" height="66.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="117.9" y="65.3" font-size="10.5">2 个</text><text class="bar-lab" x="114.3" y="154.0" font-size="10.5">85-89</text><rect class="anim-y" x="178.0" y="71.3" width="34.0" height="66.7" rx="5" fill="#18181B"></rect><text class="bar-val" x="183.9" y="65.3" font-size="10.5">2 个</text><text class="bar-lab" x="180.3" y="154.0" font-size="10.5">80-84</text><rect class="anim-y" x="244.0" y="38.0" width="34.0" height="100.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="249.9" y="32.0" font-size="10.5">3 个</text><text class="bar-lab" x="246.3" y="154.0" font-size="10.5">75-79</text><rect class="anim-y" x="310.0" y="38.0" width="34.0" height="100.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="315.9" y="32.0" font-size="10.5">3 个</text><text class="bar-lab" x="318.2" y="154.0" font-size="10.5">&lt;75</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-3 mt-20"><div class="card hov" style="cursor:pointer" onclick="selectJob('AI 产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AI 产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">92<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">丰富的 AI/LLM 产品经验 + 策略能力</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Prompt设计</span><span class="tag tag-soft">LLM应用</span><span class="tag tag-soft">产品策略</span><span class="tag tag-soft">数据驱动</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：需更多模型评估经验</div>
+      <div class="mt-8 small muted">路径：AI PM → 高级 AI PM → AI 产品总监</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">88<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">扎实的产品管理基础 + 数据决策</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">需求分析</span><span class="tag tag-soft">PRD</span><span class="tag tag-soft">敏捷开发</span><span class="tag tag-soft">A/B测试</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：B2C 产品经验不足</div>
+      <div class="mt-8 small muted">路径：PM → 高级PM → 产品总监</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('数据产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">数据产品经理</div><div style="font-size:22px;font-weight:700;color:var(--green)">85<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">强大数据技能 + 看板设计 + 指标驱动</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">SQL</span><span class="tag tag-soft">数据看板</span><span class="tag tag-soft">指标体系</span><span class="tag tag-soft">实验设计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：数仓架构知识待加深</div>
+      <div class="mt-8 small muted">路径：数据分析师→数据PM→高级数据PM</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('AIGC 产品经理')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AIGC 产品经理</div><div style="font-size:22px;font-weight:700;color:var(--ink)">83<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">AI/LLM理解 + 产品思维 + AIGC认知</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Agent设计</span><span class="tag tag-soft">Prompt工程</span><span class="tag tag-soft">AI伦理</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：AIGC工具链经验不足</div>
+      <div class="mt-8 small muted">路径：AIGC PM → 高级 PM → 创新负责人</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('AI 运营')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">AI 运营</div><div style="font-size:22px;font-weight:700;color:var(--ink)">80<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">AI工具熟练 + 数据分析 + 流程优化</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">自动化</span><span class="tag tag-soft">数据分析</span><span class="tag tag-soft">内容策略</span><span class="tag tag-soft">增长实验</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：MLOps 基础待学习</div>
+      <div class="mt-8 small muted">路径：AI运营→高级运营→运营经理</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('数据分析师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">数据分析师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">79<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">SQL/数据能力强 + 可视化 + 统计基础</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Python</span><span class="tag tag-soft">SQL</span><span class="tag tag-soft">Tableau</span><span class="tag tag-soft">统计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：统计学待深入</div>
+      <div class="mt-8 small muted">路径：初级→分析师→高级→分析经理</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('提示词工程师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">提示词工程师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">77<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">LLM API经验 + AI能力理解</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Prompt工程</span><span class="tag tag-soft">CoT</span><span class="tag tag-soft">API调用</span><span class="tag tag-soft">模型评估</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：系统化训练待加强</div>
+      <div class="mt-8 small muted">路径：PE → 高级PE → AI架构师</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('商业分析师')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">商业分析师</div><div style="font-size:22px;font-weight:700;color:var(--ink)">76<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">业务理解 + 数据 + 干系人管理</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">商业模式</span><span class="tag tag-soft">财务建模</span><span class="tag tag-soft">流程优化</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：行业知识待深入</div>
+      <div class="mt-8 small muted">路径：BA→高级BA→主管BA</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('用户增长')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">用户增长</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">74<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">数据驱动 + A/B测试 + 用户行为</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">增长漏斗</span><span class="tag tag-soft">留存</span><span class="tag tag-soft">实验设计</span><span class="tag tag-soft">病毒传播</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：增长黑客实战不足</div>
+      <div class="mt-8 small muted">路径：增长分析师→经理→负责人</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('前端开发')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">前端开发</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">71<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">技术背景 + 产品理解 + UX意识</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">HTML/CSS/JS</span><span class="tag tag-soft">React/Vue</span><span class="tag tag-soft">UI组件</span><span class="tag tag-soft">响应式</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：框架深入经验待补充</div>
+      <div class="mt-8 small muted">路径：初级前端→工程师→高级→架构师</div>
+    </div><div class="card hov" style="cursor:pointer" onclick="selectJob('后端开发')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">后端开发</div><div style="font-size:22px;font-weight:700;color:var(--ink-3)">69<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">Python能力 + 系统设计 + API</div>
+      <div class="mt-12 flex wrap gap-8"><span class="tag tag-soft">Python</span><span class="tag tag-soft">REST API</span><span class="tag tag-soft">数据库</span><span class="tag tag-soft">系统设计</span></div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：分布式系统待学习</div>
+      <div class="mt-8 small muted">路径：初级后端→工程师→高级→架构师</div>
+    </div></div>
+    <div class="mt-20 center"><button class="btn btn-primary" id="toJd" disabled="" onclick="go('#/u/jd')">选择目标岗位以继续 →</button></div></main></div></div></div></body></html>

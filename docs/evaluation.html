@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量化评测报告 · AI Career Copilot</title>
+<meta name="description" content="AI Career Copilot 系统量化评测：方法论、25 项指标、可信度分级、原始数据与复现命令" />
+<style>
+  :root{
+    --bg:#F5F6F7; --panel:#FFFFFF; --line:#E8EAED; --ink:#202124; --ink-2:#6B7280; --ink-3:#9AA0A6;
+    --lime:#C8F36A; --lime-ink:#2E3B13; --lime-soft:#F1FBD4; --line-lime:#D9ECA0;
+    --dark:#1B1D21; --warn:#FFFDF3; --warn-line:#F0E4B8; --warn-ink:#5A5233;
+    --radius:18px; --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box;} html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.7;}
+  a{color:inherit;text-decoration:none;} .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+  .nav{position:sticky;top:0;z-index:20;background:rgba(245,246,247,.88);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);}
+  .nav-in{max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:20px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+  .mark{width:26px;height:26px;border-radius:8px;background:var(--lime);display:grid;place-items:center;
+    color:var(--lime-ink);font-size:13px;font-weight:800;}
+  .nav-links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+  .nav-links a{padding:7px 13px;border-radius:999px;font-size:13px;color:var(--ink-2);font-weight:500;}
+  .nav-links a:hover{background:#fff;color:var(--ink);} .nav-links a.on{background:var(--ink);color:#fff;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 17px;border-radius:999px;font-size:13px;
+    font-weight:650;transition:transform .15s,box-shadow .15s;}
+  .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+  .btn-ghost{background:#fff;border:1px solid var(--line);} .btn-lime{background:var(--lime);color:var(--lime-ink);}
+
+  .hero{padding:58px 0 30px;}
+  .eyebrow{display:inline-flex;padding:6px 13px;border-radius:999px;background:var(--lime-soft);
+    border:1px solid var(--line-lime);color:var(--lime-ink);font-size:12px;font-weight:600;}
+  h1{font-size:clamp(30px,4.4vw,46px);line-height:1.2;letter-spacing:-1.2px;margin:20px 0 0;font-weight:800;}
+  .lede{max-width:800px;margin:16px 0 0;color:var(--ink-2);font-size:14.5px;}
+  .meta-line{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+    font-size:11.5px;color:var(--ink-2);}
+  .chip b{color:var(--ink);}
+
+  section{padding:52px 0 0;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .sec-no{font-size:12px;font-weight:700;color:var(--lime-ink);background:var(--lime);
+    padding:4px 10px;border-radius:999px;} h2{font-size:24px;letter-spacing:-.5px;margin:0;font-weight:750;}
+  .sec-desc{color:var(--ink-2);font-size:13px;margin-left:auto;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;box-shadow:var(--shadow);}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .testcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;box-shadow:var(--shadow);}
+  .testcard .tid{font-size:11px;font-weight:800;color:var(--lime-ink);background:var(--lime-soft);
+    border:1px solid var(--line-lime);border-radius:7px;padding:3px 9px;display:inline-block;}
+  .testcard h3{margin:12px 0 8px;font-size:15px;font-weight:700;}
+  .testcard .sample{font-size:12.5px;color:var(--ink-2);line-height:1.8;}
+  .testcard .trust{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);
+    font-size:11.5px;color:var(--ink-2);} .testcard .trust b{color:var(--ink);}
+
+  /* metric bars */
+  .group{margin-bottom:26px;}
+  .group:last-child{margin-bottom:0;}
+  .group h3{font-size:14px;margin:0 0 4px;font-weight:700;display:flex;align-items:center;gap:9px;}
+  .group .gdesc{font-size:12px;color:var(--ink-2);margin:0 0 14px;}
+  .bar-row{display:grid;grid-template-columns:minmax(180px,1.25fr) minmax(120px,2fr) 76px 100px;
+    gap:14px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.6px;}
+  .bar-row:last-child{border-bottom:0;}
+  .bar-name{font-weight:600;} .bar-name small{display:block;color:var(--ink-3);font-weight:400;font-size:11px;}
+  .track{height:9px;background:#F0F1F3;border-radius:999px;overflow:hidden;}
+  .fill{height:100%;border-radius:999px;background:var(--lime);border-right:1px solid #B4DC57;}
+  .fill.low{background:#F2C86B;} .fill.mid{background:#A8C96A;}
+  .bar-val{text-align:right;font-weight:750;font-variant-numeric:tabular-nums;}
+  .tag{font-size:10.5px;text-align:center;border-radius:999px;padding:4px 7px;font-weight:650;white-space:nowrap;}
+  .tag.hi{background:var(--lime-soft);color:var(--lime-ink);border:1px solid var(--line-lime);}
+  .tag.real{background:#EEF4FB;color:#315A85;border:1px solid #D8E6F4;}
+  .tag.proxy{background:#F6F1FB;color:#6B4E8A;border:1px solid #E8DCF4;}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:11.8px;color:var(--ink-2);}
+  .legend span{display:flex;align-items:center;gap:7px;} .lg-dot{width:9px;height:9px;border-radius:50%;}
+
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;font-size:12.8px;}
+  .tbl th{text-align:left;background:#FAFBFB;color:var(--ink-2);font-size:11.5px;letter-spacing:.3px;
+    padding:11px 14px;border-bottom:1px solid var(--line);font-weight:700;}
+  .tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .tbl tr:last-child td{border-bottom:0;} .tbl td b{font-weight:700;}
+  .tbl code{font-size:11.3px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px 6px;}
+  .tbl-scroll{overflow-x:auto;}
+
+  /* downloads */
+  .files{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .file{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px 18px;
+    display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow);transition:transform .15s;}
+  .file:hover{transform:translateY(-2px);}
+  .file .fi{width:34px;height:34px;border-radius:9px;background:var(--bg);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--ink-2);flex:none;}
+  .file .fn{font-size:12.8px;font-weight:700;word-break:break-all;} .file .fd{font-size:11.5px;color:var(--ink-2);margin-top:3px;}
+  .file .fa{font-size:11.5px;color:var(--lime-ink);font-weight:650;margin-top:7px;display:block;}
+
+  pre{background:var(--dark);color:#E7E9EC;border-radius:14px;padding:20px 22px;overflow-x:auto;
+    font-size:12px;line-height:1.9;margin:0;font-family:"SFMono-Regular",Consolas,monospace;}
+  pre .c{color:#8D96A0;} pre .k{color:var(--lime);}
+
+  .note{background:var(--warn);border:1px solid var(--warn-line);border-radius:var(--radius);padding:22px 24px;
+    font-size:13px;color:var(--warn-ink);line-height:1.85;}
+  .note b{color:#3D381F;} .note ul{margin:10px 0 0;padding-left:20px;} .note li{margin:5px 0;}
+  .callout{background:var(--dark);color:#fff;border-radius:var(--radius);padding:24px 26px;margin-top:14px;}
+  .callout h3{margin:0 0 10px;font-size:15px;} .callout p{margin:0;font-size:13px;color:#C9CDD3;line-height:1.85;}
+  .callout b{color:var(--lime);}
+
+  footer{margin:64px 0 0;border-top:1px solid var(--line);padding:26px 0 44px;display:flex;
+    justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--ink-2);font-size:12.5px;}
+  footer a{border-bottom:1px solid var(--line-lime);padding-bottom:1px;}
+
+  @media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr);}.files{grid-template-columns:repeat(2,1fr);}
+    .sec-desc{margin-left:0;width:100%;}}
+  @media(max-width:600px){.wrap{padding:0 18px;}.nav-in{padding:12px 18px;}
+    .grid4,.files{grid-template-columns:1fr;}.bar-row{grid-template-columns:1fr 60px;gap:6px;}
+    .bar-row .track,.bar-row .tag{display:none;}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <div class="brand"><span class="mark">C</span> AI Career Copilot</div>
+  <div class="nav-links">
+    <a href="index.html">项目简介</a><a class="on" href="evaluation.html">量化评测</a>
+    <a href="prototype/gallery.html">在线原型</a>
+    <a href="https://github.com/Joezy331/resume-aware-interview-agent">GitHub</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">系统量化评测报告 / 2026-10-19</span>
+    <h1>数据从哪里来，就摆在哪里</h1>
+    <p class="lede">本报告所有指标均由实际运行计算，未为获得漂亮数据修改评分逻辑或硬编码答案。下方公开评测设计、逐项指标的可信度分级、原始数据文件与复现命令——面试官可自行核验每一个数字。</p>
+    <div class="meta-line">
+      <span class="chip">评测环境 <b>Electron + 本地 OpenAI 兼容接口</b></span>
+      <span class="chip">测试输入 <b>32 简历 / 56 场景 / 32 报告</b></span>
+      <span class="chip">接口压测 <b>40 次真实调用</b></span>
+      <span class="chip">生成时间 <b>2026-10-19T02:13Z</b></span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><h2>评测设计矩阵</h2>
+      <span class="sec-desc">先说清楚测了什么、怎么测、能不能复现</span></div>
+    <div class="grid4">
+      <div class="testcard"><span class="tid">TEST 1</span><h3>简历岗位匹配</h3>
+        <div class="sample">样本：32 份跨行业合成简历（30 完整 + 2 信息不足）<br>方法：离线确定性引擎，不调用模型</div>
+        <div class="trust">可信度 <b>高 · 可复现</b></div></div>
+      <div class="testcard"><span class="tid">TEST 2</span><h3>动态追问</h3>
+        <div class="sample">样本：56 场景（7 类 × 8）<br>方法：真实模型接口调用，温度 0.2</div>
+        <div class="trust">可信度 <b>高 · 真实但非确定性</b></div></div>
+      <div class="testcard"><span class="tid">TEST 3</span><h3>多角色评价与报告</h3>
+        <div class="sample">样本：32 单轮场景（5 面试官 × 质量档）+ 3 完整画像<br>方法：真实接口 + 确定性聚合</div>
+        <div class="trust">可信度 <b>高 · 混合</b></div></div>
+      <div class="testcard"><span class="tid">TEST 4</span><h3>系统稳定性与回归</h3>
+        <div class="sample">负载：40 次真实接口调用<br>回归：产品自带 7 个测试套件 / 113 断言</div>
+        <div class="trust">可信度 <b>高 · 确定性</b></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><h2>指标看板</h2>
+      <span class="sec-desc">逐项标注样本、数值与可信度，条宽按百分比映射</span></div>
+    <div class="panel">
+
+      <div class="group"><h3><span class="lg-dot" style="background:var(--lime);"></span>Test 1 · 岗位匹配（离线确定性引擎，32 份合成简历）</h3>
+        <p class="gdesc">核心改进：解决「前端简历也被推 AI 产品经理」的千篇一律问题</p>
+        <div class="bar-row"><div class="bar-name">Top1 推荐合理率<small>29 / 30 有效样本</small></div><div class="track"><div class="fill" style="width:96.7%"></div></div><div class="bar-val">96.7%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">Top3 推荐合理率</div><div class="track"><div class="fill" style="width:96.7%"></div></div><div class="bar-val">96.7%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">硬资格缺失识别率<small>医师 / 药师 / 法务</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">AI 产品经理无依据推荐率（Top1）<small>越低越好</small></div><div class="track"><div class="fill" style="width:0%"></div></div><div class="bar-val">0%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">平均证据覆盖率（Top1）</div><div class="track"><div class="fill mid" style="width:61.1%"></div></div><div class="bar-val">61.1%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">信息不足识别率<small>局限：误报率 13.3%</small></div><div class="track"><div class="fill low" style="width:50%"></div></div><div class="bar-val">50%</div><div class="tag proxy">中·仅预期样本</div></div>
+      </div>
+
+      <div class="group"><h3><span class="lg-dot" style="background:#A8C96A;"></span>Test 2 · 动态追问（真实模型接口，56 场景）</h3>
+        <p class="gdesc">核心改进：追问需随回答质量变化，不重复、不凭空推断</p>
+        <div class="bar-row"><div class="bar-name">API 成功率<small>56 / 56 真实请求</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">决策合理率<small>温度 0.2，两次全量跑 66%–71%</small></div><div class="track"><div class="fill mid" style="width:71.4%"></div></div><div class="bar-val">71.4%</div><div class="tag real">真实·有方差</div></div>
+        <div class="bar-row"><div class="bar-name">重复问题率 / 无依据推断率<small>越低越好</small></div><div class="track"><div class="fill" style="width:0%"></div></div><div class="bar-val">0%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">新信息 / 矛盾场景追问率<small>5 / 8</small></div><div class="track"><div class="fill mid" style="width:62.5%"></div></div><div class="bar-val">62.5%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">上下文利用均值<small>5 分制，启发式代理指标</small></div><div class="track"><div class="fill mid" style="width:79%"></div></div><div class="bar-val">3.95/5</div><div class="tag proxy">代理指标</div></div>
+        <div class="bar-row"><div class="bar-name">追问相关性均值<small>保守下界，非人工标注</small></div><div class="track"><div class="fill low" style="width:53.6%"></div></div><div class="bar-val">2.68/5</div><div class="tag proxy">代理指标</div></div>
+      </div>
+
+      <div class="group"><h3><span class="lg-dot" style="background:#A8C96A;"></span>Test 3 · 多角色评价与报告（5 面试官 × 32 场景）</h3>
+        <p class="gdesc">核心验证：评分体系是否具备真实区分度，而非随机打分</p>
+        <div class="bar-row"><div class="bar-name">评分依据完整率<small>评分 + 评价 + 追问三字段</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">短板识别率<small>弱 / 矛盾 / 偏题均 ≤62 分</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">报告生成成功率<small>3 个完整候选人画像</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag hi">高·可复现</div></div>
+        <div class="bar-row"><div class="bar-name">评分-证据一致性<small>情感词典对照，代理指标</small></div><div class="track"><div class="fill mid" style="width:92%"></div></div><div class="bar-val">92%</div><div class="tag proxy">代理指标</div></div>
+        <div class="bar-row"><div class="bar-name">方向性单调（强 &gt; 中 &gt; 弱）<small>强均分 76 vs 弱均分 32</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">成立</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">追问必要性一致率<small>明显低于其他项，如实披露</small></div><div class="track"><div class="fill low" style="width:56%"></div></div><div class="bar-val">56%</div><div class="tag real">真实调用</div></div>
+      </div>
+
+      <div class="group"><h3><span class="lg-dot" style="background:#A8C96A;"></span>Test 4 · 系统稳定性与产品回归</h3>
+        <p class="gdesc">40 次真实接口负载 + 7 个测试套件</p>
+        <div class="bar-row"><div class="bar-name">接口调用成功率<small>40 / 40，超时 0</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">多轮对话召回率<small>6 / 6，端点级上下文保留</small></div><div class="track"><div class="fill" style="width:100%"></div></div><div class="bar-val">100%</div><div class="tag real">真实调用</div></div>
+        <div class="bar-row"><div class="bar-name">回归套件通过率<small>6 / 7，断言通过 113 / 失败 1</small></div><div class="track"><div class="fill mid" style="width:86%"></div></div><div class="bar-val">86%</div><div class="tag hi">高·确定性</div></div>
+        <div class="bar-row"><div class="bar-name">稳定性压测 P95 延迟<small>越低越好 / 均值 13.4s</small></div><div class="track"><div class="fill low" style="width:23.3%"></div></div><div class="bar-val">23.3s</div><div class="tag real">真实调用</div></div>
+      </div>
+
+    </div>
+    <div class="legend">
+      <span><i class="lg-dot" style="background:var(--lime);"></i>高 · 确定性可复现</span>
+      <span><i class="lg-dot" style="background:#A8C96A;"></i>真实模型接口调用（存在温度方差）</span>
+      <span><i class="lg-dot" style="background:#F2C86B;"></i>启发式代理指标 / 保守下界 / 局限项</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><h2>方差、局限与未通过项</h2>
+      <span class="sec-desc">这一节是整份报告最有价值的部分</span></div>
+    <div class="note">
+      <b>主动披露（面试官最先问的就是这些）：</b>
+      <ul>
+        <li><b>合成输入 ≠ 真实用户效果。</b>32 份简历、56 个场景、32 个报告场景均为构造测试集，覆盖 11 个职业族与硬资格边界用例，不代表线上真实用户表现。</li>
+        <li><b>非确定性方差真实存在。</b>追问决策合理率在温度 0.2 下两次全量跑为 66%–71%，报告采用 71.4% 并同时标注区间，未挑选更好看的一次。</li>
+        <li><b>代理指标不是黄金集。</b>追问相关性 2.68/5、评分-证据一致性 92%、上下文利用 3.95/5 均为启发式计算（bigram + 数字引用 / 情感词典对照），是保守下界而非人工标注结论。</li>
+        <li><b>存在明确未通过项。</b>回归套件 6/7，唯一失败为 round4_check 的 <code>pasteHasHard</code>（粘贴 JD 未抽出硬技能），属真实产品缺陷，未修复、未掩盖；后续已在新版解析逻辑中处理。</li>
+        <li><b>延迟偏高。</b>追问 P95 169.9s（最大 180.9s）源于免费本地模型服务偶发限流；稳定性压测 P95 23.3s。产品侧以异步流式 + 阶段进度提示缓解。</li>
+        <li><b>产品结论克制。</b>因此建议生产环境采用「评分 + 人工复核」双轨呈现，不对候选人做单点自动化否决——这是评测结论，不是免责声明。</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>如果只能记住一句话</h3>
+      <p>强候选人画像（CAND_STRONG）被 5 位面试官打出 <b>23 分差距</b>，真实触发了应用的 <b>&gt;15 分冲突检测</b>——这证明多角色分歧检测不是写在 PRD 里的功能，而是在真实模型输出下会生效的机制；同时也说明<b>「AI 评分不可单点采信」是这套系统从评测阶段就内置的假设</b>。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">04</span><h2>原始数据下载</h2>
+      <span class="sec-desc">不经过任何加工，直接看跑出来的文件</span></div>
+    <div class="files">
+      <a class="file" href="data/evaluation_results.json"><div class="fi">JSON</div><div>
+        <div class="fn">evaluation_results.json</div><div class="fd">4 组测试全部明细指标、样本级结果</div><span class="fa">下载 / 查看 →</span></div></a>
+      <a class="file" href="data/evaluation_results.csv"><div class="fi">CSV</div><div>
+        <div class="fn">evaluation_results.csv</div><div class="fd">逐条样本记录（含成功标记与延迟）</div><span class="fa">下载 / 查看 →</span></div></a>
+      <a class="file" href="data/metrics_summary.csv"><div class="fi">CSV</div><div>
+        <div class="fn">metrics_summary.csv</div><div class="fd">25 项指标 + 来源 + 可信度 + caveat</div><span class="fa">下载 / 查看 →</span></div></a>
+      <a class="file" href="data/evaluation_report.md"><div class="fi">MD</div><div>
+        <div class="fn">evaluation_report.md</div><div class="fd">完整评测报告（含结论与建议）</div><span class="fa">下载 / 查看 →</span></div></a>
+      <a class="file" href="data/resume_metrics.md"><div class="fi">MD</div><div>
+        <div class="fn">resume_metrics.md</div><div class="fd">可写进简历的量化成果与证据分级</div><span class="fa">下载 / 查看 →</span></div></a>
+      <a class="file" href="https://github.com/Joezy331/resume-aware-interview-agent/tree/main/evaluation"><div class="fi">JS</div><div>
+        <div class="fn">evaluation/ 评测源码</div><div class="fd">10 个脚本：场景构造、运行器、汇总器</div><span class="fa">打开仓库目录 →</span></div></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>一键复现</h2>
+      <span class="sec-desc">clone 仓库后，6 条命令重跑全部指标</span></div>
+    <pre><span class="c"># 前置：Electron 应用依赖已安装；本地 OpenAI 兼容接口在 localhost:8787</span>
+<span class="k">cd</span> electron-app
+node ../evaluation/run_match.js        <span class="c"># Test 1 离线确定性引擎（无需模型）</span>
+node ../evaluation/run_followup.js     <span class="c"># Test 2 真实接口 · 56 场景</span>
+node ../evaluation/run_report.js       <span class="c"># Test 3 真实接口 · 多角色评价</span>
+node ../evaluation/run_stability.js    <span class="c"># Test 4a 接口负载 40 次</span>
+node ../evaluation/run_regression.js   <span class="c"># Test 4b 产品回归套件</span>
+node ../evaluation/build_deliverables.js <span class="c"># 汇总生成 JSON / CSV / 报告</span></pre>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">06</span><h2>数据溯源卡</h2>
+      <span class="sec-desc">被追问时 30 秒内答完：数字 → 脚本 → 原始文件</span></div>
+    <div class="panel tbl-scroll">
+      <table class="tbl">
+        <thead><tr><th style="width:22%">数字</th><th style="width:38%">一句话溯源</th><th style="width:40%">当场可查的证据</th></tr></thead>
+        <tbody>
+          <tr><td><b>96.7%</b> Top1 合理率</td><td>32 份跨行业合成简历跑离线确定性引擎，29/30 合理，判定规则在评测脚本里</td><td><code>run_match.js</code> <code>synthetic_resumes.js</code> <code>results.json</code></td></tr>
+          <tr><td><b>71.4%</b> 决策合理率</td><td>真实模型温度 0.2 下的非确定性结果，两次全量跑 66–71% 方差已如实记录</td><td><code>run_followup.js</code> <code>scenarios_followup.js</code> <code>report.md</code></td></tr>
+          <tr><td><b>0%</b> 无依据推荐率</td><td>修复前「前端简历也推 AI 产品经理」，通过硬资格扣分 + 12 职业族规则消除</td><td><code>run_match.js</code> <code>job-matching.js</code></td></tr>
+          <tr><td><b>76 vs 32</b> 区分度</td><td>方向性单调测试成立；强候选人 23 分差触发 &gt;15 冲突检测，证明机制真实生效</td><td><code>run_report.js</code> <code>results.csv</code></td></tr>
+          <tr><td><b>100%</b> 短板识别率</td><td>弱 / 矛盾 / 偏题场景评分均 ≤62，真实接口实测</td><td><code>scenarios_report.js</code> <code>results.json</code></td></tr>
+          <tr><td><b>86%</b> 回归通过率</td><td>6/7 套件通过，失败项为真实产品缺陷 pasteHasHard，未粉饰、已在新版修复</td><td><code>run_regression.js</code> <code>report.md §4b</code></td></tr>
+          <tr><td><b>76/76</b> JD 生成验收</td><td>12 岗位真实模型生成 + 职级差异化对照，JD 模块独立验收脚本</td><td><code>electron-app/tools/jd_gen_acceptance.js</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div>数据的价值不在于好看，而在于可复现 · 未输出 / 记录任何 API Key</div>
+    <div><a href="index.html">← 项目简介</a> &nbsp;·&nbsp; <a href="prototype/gallery.html">在线原型</a> &nbsp;·&nbsp; <a href="https://github.com/Joezy331/resume-aware-interview-agent">GitHub</a></div>
+  </footer>
+</div>
+</body>
+</html>

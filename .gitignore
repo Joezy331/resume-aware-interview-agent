@@ -73,3 +73,10 @@ electron-app/*.log
 
 # 测试输出产物（非源码，含测试用简历）
 electron-app/tests/_*_out.json
+
+# ===== 公开评测站例外：docs/data/ 是刻意公开的原始数据，不受上面 data/ 隐私规则约束 =====
+!docs/data/
+!docs/data/**
+# 公开原型与评测脚本（避免被通用规则误伤）
+!docs/prototype/
+!evaluation/

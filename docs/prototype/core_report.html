@@ -1,0 +1,413 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>core_report</title><style>/* ============================================================
+   AI Career Copilot · High-Fidelity Prototype Design System
+   Calm / professional / portfolio-grade. No AI-template feel.
+   ============================================================ */
+
+:root{
+  /* 与 EXE UI v4 完全对齐的浅灰白 SaaS 工作台令牌 */
+  --bg:#F5F6F7;
+  --bg-soft:#FAFAFA;
+  --panel:#FFFFFF;
+  --panel-2:#FCFDFB;
+
+  --ink:#202124;
+  --ink-2:#7B818A;
+  --ink-3:#9AA0A6;
+  --muted:#8A8F98;
+
+  --line:#E8EAED;
+  --line-2:#F0F2F4;
+  --line-strong:#DDE0E4;
+
+  /* 主强调色：荧光黄绿（与 EXE 一致） */
+  --pink:#C8F36A;
+  --pink-soft:#F1FBD4;
+  --pink-ink:#2E3B13;
+  --pink-line:#D9ECA0;
+
+  --green:#5B8C4A;
+  --green-soft:#EEF3EC;
+  --blue:#3E7CB1;
+  --blue-soft:#EAF1F8;
+  --amber:#C9A227;
+  --amber-soft:#FBF6E6;
+  --purple:#9A7BB5;
+
+  --shadow-sm:0 1px 2px rgba(32,33,36,.04),0 1px 3px rgba(32,33,36,.05);
+  --shadow-md:0 6px 18px rgba(32,33,36,.06),0 2px 6px rgba(32,33,36,.04);
+  --shadow-lg:0 16px 40px rgba(32,33,36,.10);
+
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:18px;
+
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --sidebar-w:236px;
+  --topbar-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--pink-soft);color:var(--pink-ink)}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  padding:20px 14px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#F1FBD4);
+  border:1px solid var(--line);
+  display:grid;place-items:center;font-size:18px;
+}
+.brand .name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand .sub{font-size:11px;color:var(--ink-3);margin-top:-2px}
+
+.nav-group{margin-top:6px}
+.nav-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;color:var(--ink-2);
+  font-size:13.5px;font-weight:500;transition:all .15s ease;
+  margin-bottom:2px;
+}
+.nav-link .ico{width:18px;text-align:center;opacity:.8}
+.nav-link:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-link.active{background:var(--pink);color:var(--pink-ink)}
+.nav-link.active .ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+.me{display:flex;align-items:center;gap:10px}
+.me .avatar{width:34px;height:34px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:16px}
+.me .nm{font-size:12.5px;font-weight:600}
+.me .rl{font-size:11px;color:var(--ink-3)}
+
+.workspace-switch{display:flex;gap:6px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:4px;margin-top:10px}
+.workspace-switch button{flex:1;padding:7px 0;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.workspace-switch button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  height:var(--topbar-h);flex:0 0 var(--topbar-h);
+  border-bottom:1px solid var(--line);background:rgba(247,247,245,.8);
+  backdrop-filter:saturate(1.2) blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{font-size:12px;color:var(--ink-3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right .pill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);padding:5px 10px;border-radius:999px;background:var(--panel)}
+.proto-flag{font-size:10.5px;letter-spacing:.06em;color:var(--pink-ink);background:var(--pink-soft);border:1px solid var(--pink-line);padding:5px 10px;border-radius:999px;font-weight:600}
+
+.view{padding:30px 32px 60px;max-width:1280px;width:100%;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:22px}
+.page-head .eyebrow{font-size:12px;color:var(--pink-ink);font-weight:600;letter-spacing:.04em}
+.page-head h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.page-head p{color:var(--ink-2);margin-top:6px;max-width:680px;font-size:13.5px}
+
+/* ---------- Layout grid ---------- */
+.grid{display:grid;gap:18px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-5{grid-template-columns:repeat(5,1fr)}
+.span-2{grid-column:span 2}
+.split{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.split-r{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card.hov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-title{font-size:13px;font-weight:650;color:var(--ink);display:flex;align-items:center;line-height:1.3;gap:8px}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);transform:translateY(0.5px)}
+.card-sub{font-size:12px;color:var(--ink-2);margin-top:3px}
+.card-pad-sm{padding:16px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:11px;font-size:13.5px;font-weight:600;
+  transition:all .16s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--pink);color:var(--pink-ink)}
+.btn-primary:hover{background:#B7E84F;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:var(--bg-soft);border-color:var(--ink-3)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-soft);color:var(--ink)}
+.btn-pink{background:var(--pink-soft);color:var(--pink-ink);border:1px solid var(--pink-line)}
+.btn-pink:hover{background:#ECF7D6}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.tag-pink{background:var(--pink-soft);color:var(--pink-ink);border-color:var(--pink-line)}
+.tag-green{background:var(--green-soft);color:#4d6b48;border-color:#DCE7D8}
+.tag-blue{background:var(--blue-soft);color:#46627e;border-color:#DCE6EE}
+.tag-amber{background:var(--amber-soft);color:#8a6d10;border-color:#EFE4BD}
+.tag-gray{background:var(--bg-soft);color:var(--ink-3);border-color:var(--line)}
+.tag-soft{background:var(--bg-soft);color:var(--ink-2)}
+
+/* ---------- Inputs ---------- */
+.input{
+  width:100%;padding:11px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;font-size:13.5px;background:var(--panel);color:var(--ink);
+  transition:border-color .15s, box-shadow .15s;font-family:inherit;
+}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.06)}
+.input::placeholder{color:var(--ink-3)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+label.field{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+
+/* ---------- Progress / bars ---------- */
+.progress{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.progress>.bar{height:100%;background:var(--ink);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.progress.pink>.bar{background:var(--pink)}
+.progress.green>.bar{background:var(--green)}
+.meter{display:flex;align-items:center;gap:10px}
+.meter .lab{font-size:12.5px;color:var(--ink-2);width:96px;flex:0 0 96px}
+.meter .val{font-size:12.5px;font-weight:650;width:38px;text-align:right;flex:0 0 38px}
+.meter .track{flex:1;height:7px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter .track>i{display:block;height:100%;background:var(--ink);border-radius:999px}
+
+/* ---------- Avatar ---------- */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:0 0 38px}
+.avatar.sm{width:30px;height:30px;font-size:14px;flex-basis:30px}
+.avatar.lg{width:52px;height:52px;font-size:24px;flex-basis:52px}
+.avatar.blue{background:var(--blue-soft);border-color:#DCE6EE}
+.avatar.green{background:var(--green-soft);border-color:#DCE7D8}
+.avatar.amber{background:var(--amber-soft);border-color:#EFE4BD}
+.avatar.purple{background:#F3EEF7;border-color:#E6DCF0}
+
+/* ---------- Stat ---------- */
+.stat .k{font-size:12px;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;color:var(--ink-3);font-weight:600}
+.stat .d{font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.stat .d.down{color:#D45D4D}
+
+/* ---------- List / rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.row:last-child{border-bottom:none}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:600}
+.row .meta{font-size:12px;color:var(--ink-3);margin-top:1px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-2)}
+.kv .v{font-weight:600}
+
+/* ---------- Dropdown / select ---------- */
+.select{
+  position:relative;display:inline-block;
+}
+.select>button{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);min-width:150px;justify-content:space-between;
+}
+.select .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;z-index:30;display:none}
+.select.open .menu{display:block}
+.select .menu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.select .menu button:hover{background:var(--bg-soft);color:var(--ink)}
+.select .menu button.on{color:var(--ink);font-weight:650}
+
+/* ---------- Tabs ---------- */
+.tabs{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.tabs button{padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Chat / interview ---------- */
+.chat{display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:86%;padding:13px 16px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.bubble.q{background:var(--ink);color:#fff;align-self:flex-start;border-bottom-left-radius:5px}
+.bubble.a{background:var(--panel);border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:5px}
+.bubble .who{font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+
+/* ---------- Agent status ---------- */
+.agent-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.agent-row:last-child{border-bottom:none}
+.status-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;position:relative}
+.status-dot.run{background:var(--green)}
+.status-dot.run::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.4;animation:ping 1.4s ease-out infinite}
+.status-dot.done{background:var(--blue)}
+.status-dot.wait{background:var(--ink-3)}
+.status-dot.warn{background:var(--amber)}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Empty / loading ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+.empty .ill{font-size:42px;opacity:.5;margin-bottom:10px}
+.empty p{font-size:13px}
+.skeleton{background:linear-gradient(90deg,var(--line-2) 25%,#EDEDE8 37%,var(--line-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;height:14px;margin:8px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:all .3s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-card{background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px}
+.toast-card .ic{color:var(--green)}
+
+/* ---------- Modal ---------- */
+.modal-mask{position:fixed;inset:0;background:rgba(24,24,27,.32);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;animation:fade .2s ease}
+.modal{background:var(--panel);border-radius:var(--r-lg);width:min(460px,92vw);padding:26px;box-shadow:var(--shadow-lg);animation:pop .25s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+
+/* ---------- Hero / upload ---------- */
+.upload-zone{
+  border:1.8px dashed var(--line-strong);border-radius:var(--r-lg);
+  background:var(--panel-2);padding:54px 30px;text-align:center;transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--pink);background:var(--pink-soft)}
+.upload-ill{font-size:46px;margin-bottom:12px}
+.upload-zone h3{font-size:18px;font-weight:700}
+.upload-zone p{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+/* ---------- Misc ---------- */
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.center{text-align:center}
+.right{text-align:right}
+.flex{display:flex}
+.between{display:flex;justify-content:space-between;align-items:center}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}
+.wrap{flex-wrap:wrap}
+.items-center{align-items:center}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.section-note{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.badge-step{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;flex:0 0 22px;box-sizing:border-box}
+.flow-hint{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+.note-line{border-left:3px solid var(--pink);background:var(--pink-soft);padding:11px 14px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--pink-ink)}
+.mock-tag{display:inline-flex;align-items:center;line-height:1;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);border:1px solid #EFE4BD;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:8px}
+
+/* donut legend */
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .li{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+
+/* ---------- Charts (shared chart toolkit) ---------- */
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.chart-legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.chart-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:block;line-height:1.5}
+.chart-note .mock-tag{margin-left:0;margin-right:8px}
+.grid-line{stroke:var(--line-2);stroke-width:1}
+.axis-lab{fill:var(--ink-3);font-size:10px;font-family:var(--font)}
+.bar-lab{fill:var(--ink-2);font-size:10.5px;font-family:var(--font)}
+.bar-val{fill:var(--ink);font-size:10.5px;font-weight:650;font-family:var(--font)}
+.spark{display:block}
+.ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring-row .ring-meta{flex:1;min-width:120px}
+.chart-empty{display:grid;place-items:center;min-height:150px;color:var(--ink-3);font-size:12.5px;gap:6px}
+.chart-empty .ill{font-size:26px;opacity:.45}
+
+/* bar entrance animation (used by charts + meters) */
+@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growBarY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chart rect.anim-x{transform-origin:left center;animation:growBar .7s cubic-bezier(.2,.7,.3,1) both}
+.chart rect.anim-y{transform-origin:center bottom;animation:growBarY .7s cubic-bezier(.2,.7,.3,1) both}
+/* 环形图中心数字：HTML 覆盖层（不依赖 SVG text-anchor） */
+.ring-wrap{position:relative;display:inline-flex;vertical-align:middle}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.15}
+.ring-center b{font-weight:700;color:#18181B;letter-spacing:-.01em}
+.ring-center i{font-style:normal;font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.ring-row .ring-wrap{flex:0 0 auto}
+.meter .track>i{transition:width .8s cubic-bezier(.2,.7,.3,1)}
+
+/* ---------- nav: star + agents-active + 开始使用 ---------- */
+.nav-star{color:#E0B341;font-size:11px;margin-left:2px}
+.agents-active{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);padding:0 2px 12px}
+.agents-active .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+.agents-active .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.45;animation:ping 1.6s ease-out infinite}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+
+/* ---------- 简历解析 4 步向导 ---------- */
+.wizard{display:flex;align-items:flex-start;gap:0}
+.wz-step{flex:1;position:relative;text-align:center}
+.wz-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--ink-2);font-weight:700;font-size:13px;transition:all .2s}
+.wz-t{font-size:12.5px;font-weight:600;margin-top:7px;color:var(--ink-2)}
+.wz-s{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.wz-step.on .wz-n{background:var(--ink);border-color:var(--ink);color:#fff}
+.wz-step.on .wz-t{color:var(--ink)}
+.wz-step.done .wz-n{background:var(--green);border-color:var(--green);color:#fff}
+.wz-step.done .wz-t{color:var(--green)}
+.wz-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--line);z-index:-0}
+.wz-step.done .wz-line{background:var(--green)}
+.agent-row.sm{padding:9px 0}
+.agent-row.sm .ttl{font-weight:600}
+
+
+*{animation:none!important;transition:none!important}
+html,body{height:auto;margin:0;padding:0}
+body{background:#FFFFFF}
+.core-wrap{width:1440px;background:#FFFFFF;display:flex}
+.core-wrap .app{min-height:900px!important;width:1440px;display:flex}
+.core-wrap .sidebar{position:relative!important;top:auto!important;left:auto!important;height:auto!important;align-self:stretch}
+.core-wrap .topbar{position:relative!important}
+.core-wrap .view{animation:none!important}
+/* br 换行转块级节点：每行独立，Ardot 不再重叠 */
+.brk-li{display:block;min-height:1em}
+.brk-sp{display:block;height:10px}
+</style></head><body><div class="core-wrap"><div class="app"><div id="sidebar"><aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">用户 · 求职视角</div></div></div>
+    <div class="nav-group"><a class="nav-link " href="#/u/dashboard"><span class="ico">🏠</span>首页</a><a class="nav-link " href="#/u/upload"><span class="ico">📄</span>简历解析</a><a class="nav-link " href="#/u/difficulty"><span class="ico">💬</span>AI 面试</a><a class="nav-link active" href="#/u/report"><span class="ico">📊</span>评分报告 <span class="nav-star">★</span></a><a class="nav-link " href="#/a/agents"><span class="ico">🧩</span>Agent 架构</a><a class="nav-link " href="#/a/dashboard"><span class="ico">📈</span>数据看板</a></div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside></div><div class="main"><header class="topbar" id="topbar"><div><h1>面试评分报告</h1><div class="crumb">评估 · 报告</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div></header><main class="view" id="view"><div class="page-head"><div class="eyebrow">STEP 11 / 评分报告</div><h2>面试评分报告</h2></div>
+    <div class="split">
+      <div class="card" style="text-align:center">
+        <div class="muted small">本次面试</div><div style="font-size:60px;font-weight:800;letter-spacing:-.03em;line-height:1">78<span style="font-size:22px;color:var(--ink-3)">/100</span></div>
+        <div class="tag tag-green mt-8">整体表现良好</div>
+        <div class="mt-12"><svg viewBox="0 0 280 256" width="100%"><polygon points="140.0,105.0 159.9,116.5 159.9,139.5 140.0,151.0 120.1,139.5 120.1,116.5" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,82.0 179.8,105.0 179.8,151.0 140.0,174.0 100.2,151.0 100.2,105.0" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,59.0 199.8,93.5 199.8,162.5 140.0,197.0 80.2,162.5 80.2,93.5" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><polygon points="140.0,36.0 219.7,82.0 219.7,174.0 140.0,220.0 60.3,174.0 60.3,82.0" fill="none" stroke="#ECECE8" stroke-width="1"></polygon><line x1="140" y1="128" x2="140.0" y2="36.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="219.7" y2="82.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="219.7" y2="174.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="140.0" y2="220.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="60.3" y2="174.0" stroke="#ECECE8"></line><line x1="140" y1="128" x2="60.3" y2="82.0" stroke="#ECECE8"></line><polygon points="140.0,52.6 199.0,94.0 202.1,163.9 140.0,193.3 76.3,164.8 73.1,89.4" fill="rgba(200,243,106,.18)" stroke="#C8F36A" stroke-width="2"></polygon><circle cx="140.0" cy="52.6" r="3" fill="#C8F36A"></circle><circle cx="199.0" cy="94.0" r="3" fill="#C8F36A"></circle><circle cx="202.1" cy="163.9" r="3" fill="#C8F36A"></circle><circle cx="140.0" cy="193.3" r="3" fill="#C8F36A"></circle><circle cx="76.3" cy="164.8" r="3" fill="#C8F36A"></circle><circle cx="73.1" cy="89.4" r="3" fill="#C8F36A"></circle><text x="119.0" y="17.5" font-size="10.5" fill="#777">沟通表达</text><text x="217.7" y="74.5" font-size="10.5" fill="#777">商业洞察</text><text x="217.7" y="188.5" font-size="10.5" fill="#777">技术深度</text><text x="124.3" y="245.5" font-size="10.5" fill="#777">领导力</text><text x="20.3" y="188.5" font-size="10.5" fill="#777">战略思维</text><text x="20.3" y="74.5" font-size="10.5" fill="#777">文化匹配</text></svg></div>
+      </div>
+      <div>
+        <div class="card mb-16"><div class="card-title"><span class="dot"></span>能力维度</div><div class="mt-12"><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">沟通表达</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:82%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">82</b></div><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">商业洞察</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:74%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">74</b></div><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">技术深度</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:78%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">78</b></div><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">领导力</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:71%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">71</b></div><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">战略思维</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:80%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">80</b></div><div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">文化匹配</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:84%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">84</b></div></div></div>
+        <div class="grid cols-2">
+          <div class="card"><div class="card-title" style="color:var(--green)">优势</div><div class="mt-8"><div class="row" style="border:none;padding:5px 0">✓ 项目表达较完整，有具体案例支撑</div><div class="row" style="border:none;padding:5px 0">✓ 沟通逻辑清晰，结构分明</div><div class="row" style="border:none;padding:5px 0">✓ 岗位理解较好，动机明确</div></div></div>
+          <div class="card"><div class="card-title" style="color:var(--pink-ink)">待提升</div><div class="mt-8"><div class="row" style="border:none;padding:5px 0">○ 数据指标表达偏少，缺少量化结果</div><div class="row" style="border:none;padding:5px 0">○ 业务分析停留在执行层，缺商业拆解</div><div class="row" style="border:none;padding:5px 0">○ 部分回答缺少清晰框架</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-16">
+      <div class="card"><div class="card-title"><span class="dot"></span>与上次面试对比</div><div class="card-sub">六维度逐项对比</div><div class="mt-12"><svg class="chart" viewBox="0 0 456 200" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="32" y1="170.0" x2="446" y2="170.0"></line><text class="axis-lab" x="4" y="173.0">0</text><line class="grid-line" x1="32" y1="99.0" x2="446" y2="99.0"></line><text class="axis-lab" x="4" y="102.0">50</text><line class="grid-line" x1="32" y1="28.0" x2="446" y2="28.0"></line><text class="axis-lab" x="4" y="31.0">101</text><rect class="anim-y" x="49.3" y="62.9" width="15" height="107.1" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="68.3" y="54.5" width="15" height="115.5" rx="4" fill="#18181B"></rect><text class="bar-lab" x="45.3" y="186.0" font-size="10.5">沟通表达</text><rect class="anim-y" x="118.0" y="71.4" width="15" height="98.6" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="137.0" y="65.8" width="15" height="104.2" rx="4" fill="#18181B"></rect><text class="bar-lab" x="114.0" y="186.0" font-size="10.5">商业洞察</text><rect class="anim-y" x="186.7" y="68.6" width="15" height="101.4" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="205.7" y="60.1" width="15" height="109.9" rx="4" fill="#18181B"></rect><text class="bar-lab" x="182.7" y="186.0" font-size="10.5">技术深度</text><rect class="anim-y" x="255.3" y="74.2" width="15" height="95.8" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="274.3" y="70.0" width="15" height="100.0" rx="4" fill="#18181B"></rect><text class="bar-lab" x="256.6" y="186.0" font-size="10.5">领导力</text><rect class="anim-y" x="324.0" y="65.8" width="15" height="104.2" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="343.0" y="57.3" width="15" height="112.7" rx="4" fill="#18181B"></rect><text class="bar-lab" x="320.0" y="186.0" font-size="10.5">战略思维</text><rect class="anim-y" x="392.7" y="57.3" width="15" height="112.7" rx="4" fill="#C8F36A"></rect><rect class="anim-y" x="411.7" y="51.7" width="15" height="118.3" rx="4" fill="#18181B"></rect><text class="bar-lab" x="388.7" y="186.0" font-size="10.5">文化匹配</text><rect x="32" y="9" width="9" height="9" rx="2" fill="#C8F36A"></rect><text class="axis-lab" x="46" y="17">上次</text><rect x="104" y="9" width="9" height="9" rx="2" fill="#18181B"></rect><text class="axis-lab" x="118" y="17">本次</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>历史得分趋势</div><div class="card-sub">近 5 次面试综合得分</div><div class="mt-12"><svg class="chart" viewBox="0 0 560 210" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="36" y1="16.0" x2="546" y2="16.0"></line><text class="axis-lab" x="2" y="19.0">84.2</text><line class="grid-line" x1="36" y1="99.0" x2="546" y2="99.0"></line><text class="axis-lab" x="2" y="102.0">72.5</text><line class="grid-line" x1="36" y1="182.0" x2="546" y2="182.0"></line><text class="axis-lab" x="2" y="185.0">60.7</text><path d="M36.0 123.6 L163.5 102.4 L291.0 109.4 L418.5 74.2 L546.0 60.0 L 546.0 182.0 L 36.0 182.0 Z" fill="#18181B" opacity=".08"></path><path d="M36.0 123.6 L163.5 102.4 L291.0 109.4 L418.5 74.2 L546.0 60.0" fill="none" stroke="#18181B" stroke-width="2.2" stroke-linejoin="round"></path><circle cx="36.0" cy="123.6" r="3" fill="#18181B"></circle><circle cx="163.5" cy="102.4" r="3" fill="#18181B"></circle><circle cx="291.0" cy="109.4" r="3" fill="#18181B"></circle><circle cx="418.5" cy="74.2" r="3" fill="#18181B"></circle><circle cx="546.0" cy="60.0" r="3" fill="#18181B"></circle><text class="axis-lab" x="22.0" y="198.0" font-size="10.0">08-12</text><text class="axis-lab" x="149.5" y="198.0" font-size="10.0">08-20</text><text class="axis-lab" x="277.0" y="198.0" font-size="10.0">09-01</text><text class="axis-lab" x="404.5" y="198.0" font-size="10.0">09-12</text><text class="axis-lab" x="532.0" y="198.0" font-size="10.0">09-29</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="grid cols-2 mt-16">
+      <div class="card"><div class="card-title"><span class="dot"></span>录用概率预测</div><div class="card-sub">由 Chief Evaluation Agent 汇总推算</div><div class="mt-12"><div class="ring-row"><span class="ring-wrap"><svg viewBox="0 0 118 118" width="118" height="118"><circle cx="59" cy="59" r="53" fill="none" stroke="#F0F0EC" stroke-width="12"></circle><circle cx="59" cy="59" r="53" fill="none" stroke="#6B8CAE" stroke-width="12" stroke-linecap="round" stroke-dasharray="333.0" stroke-dashoffset="56.6" transform="rotate(-90 59 59)"></circle></svg><span class="ring-center"><b style="font-size:27px">83%</b><i>综合预测</i></span></span><div class="ring-meta"><div class="kv"><span class="k">岗位匹配</span><span class="v">92%</span></div><div class="kv"><span class="k">面试表现</span><span class="v">78 / 100</span></div><div class="kv"><span class="k">表达稳定度</span><span class="v">高</span></div></div></div></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>录用概率随轮次变化</div><div class="card-sub">每完成一轮后的概率更新</div><div class="mt-12"><svg class="chart" viewBox="0 0 382 184" preserveAspectRatio="xMidYMid meet"><line class="grid-line" x1="30" y1="154.0" x2="360" y2="154.0"></line><text class="axis-lab" x="4" y="157.5">0</text><line class="grid-line" x1="30" y1="88.0" x2="360" y2="88.0"></line><text class="axis-lab" x="4" y="91.5">48</text><line class="grid-line" x1="30" y1="22.0" x2="360" y2="22.0"></line><text class="axis-lab" x="4" y="25.5">96</text><rect class="anim-y" x="46.0" y="69.0" width="34.0" height="85.0" rx="5" fill="#18181B"></rect><text class="bar-val" x="54.2" y="63.0" font-size="10.5">62%</text><text class="bar-lab" x="57.1" y="170.0" font-size="10.5">R1</text><rect class="anim-y" x="112.0" y="60.8" width="34.0" height="93.2" rx="5" fill="#18181B"></rect><text class="bar-val" x="120.2" y="54.8" font-size="10.5">68%</text><text class="bar-lab" x="123.1" y="170.0" font-size="10.5">R2</text><rect class="anim-y" x="178.0" y="52.5" width="34.0" height="101.5" rx="5" fill="#18181B"></rect><text class="bar-val" x="186.2" y="46.5" font-size="10.5">74%</text><text class="bar-lab" x="189.1" y="170.0" font-size="10.5">R3</text><rect class="anim-y" x="244.0" y="45.7" width="34.0" height="108.3" rx="5" fill="#18181B"></rect><text class="bar-val" x="252.2" y="39.7" font-size="10.5">79%</text><text class="bar-lab" x="255.1" y="170.0" font-size="10.5">R4</text><rect class="anim-y" x="310.0" y="40.2" width="34.0" height="113.8" rx="5" fill="#18181B"></rect><text class="bar-val" x="318.2" y="34.2" font-size="10.5">83%</text><text class="bar-lab" x="321.1" y="170.0" font-size="10.5">R5</text></svg></div><div class="chart-note"><span class="mock-tag">MOCK</span> 原型演示数据，非真实统计</div></div>
+    </div>
+    <div class="mt-16 flex gap-12"><button class="btn btn-pink" onclick="go('#/u/growth')">查看能力短板 →</button><button class="btn btn-ghost" onclick="go('#/u/multiagent')">回看评估</button></div></main></div></div></div></body></html>

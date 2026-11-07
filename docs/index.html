@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Career Copilot · 项目简介与可信度</title>
+<meta name="description" content="基于 LLM 的简历感知式求职训练系统 · 项目简介、量化评测与数据溯源" />
+<style>
+  :root{
+    --bg:#F5F6F7; --panel:#FFFFFF; --line:#E8EAED; --ink:#202124; --ink-2:#6B7280; --ink-3:#9AA0A6;
+    --lime:#C8F36A; --lime-ink:#2E3B13; --lime-soft:#F1FBD4; --line-lime:#D9ECA0;
+    --dark:#1B1D21; --radius:18px; --radius-sm:12px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.7;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:20;background:rgba(245,246,247,.88);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);}
+  .nav-in{max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:20px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.2px;}
+  .mark{width:26px;height:26px;border-radius:8px;background:var(--lime);display:grid;place-items:center;
+    color:var(--lime-ink);font-size:13px;font-weight:800;}
+  .nav-links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+  .nav-links a{padding:7px 13px;border-radius:999px;font-size:13px;color:var(--ink-2);font-weight:500;
+    transition:background .15s,color .15s;}
+  .nav-links a:hover{background:#fff;color:var(--ink);}
+  .nav-links a.on{background:var(--ink);color:#fff;}
+
+  /* hero */
+  .hero{padding:76px 0 44px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;
+    background:var(--lime-soft);border:1px solid var(--line-lime);color:var(--lime-ink);
+    font-size:12px;font-weight:600;letter-spacing:.4px;}
+  h1{font-size:clamp(34px,5.2vw,58px);line-height:1.15;letter-spacing:-1.6px;margin:22px 0 0;font-weight:800;}
+  h1 .sub{display:block;font-size:clamp(17px,2.2vw,23px);font-weight:500;color:var(--ink-2);
+    letter-spacing:0;margin-top:14px;line-height:1.55;}
+  .lede{max-width:760px;margin:22px 0 0;color:var(--ink-2);font-size:15.5px;}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px;}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:999px;
+    font-size:14px;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s;}
+  .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+  .btn-primary{background:var(--dark);color:#fff;}
+  .btn-lime{background:var(--lime);color:var(--lime-ink);}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink);}
+  .btn .arr{font-size:15px;}
+
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:48px 0 0;}
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 18px;box-shadow:var(--shadow);}
+  .metric .v{font-size:27px;font-weight:800;letter-spacing:-1px;line-height:1.2;}
+  .metric .v small{font-size:14px;font-weight:700;margin-left:2px;}
+  .metric .k{font-size:12px;color:var(--ink-2);margin-top:7px;line-height:1.5;}
+  .metric.hl{background:var(--dark);color:#fff;border-color:var(--dark);}
+  .metric.hl .k{color:#B7BBC2;}
+
+  /* section */
+  section{padding:64px 0 0;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:24px;flex-wrap:wrap;}
+  .sec-no{font-size:12px;font-weight:700;color:var(--lime-ink);background:var(--lime);
+    padding:4px 10px;border-radius:999px;letter-spacing:.6px;}
+  h2{font-size:26px;letter-spacing:-.6px;margin:0;font-weight:750;}
+  .sec-desc{color:var(--ink-2);font-size:13.5px;margin-left:auto;}
+
+  /* five pillars */
+  .pillars{display:grid;gap:12px;}
+  .pillar{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;display:grid;grid-template-columns:190px 1fr;gap:20px;box-shadow:var(--shadow);}
+  .pillar h3{margin:0;font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:9px;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);border:1px solid #A9CE52;flex:none;}
+  .pillar p{margin:0;color:#4B5058;font-size:13.8px;line-height:1.85;}
+  .pillar b{color:var(--ink);font-weight:650;}
+
+  /* pyramid */
+  .pyramid{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;box-shadow:var(--shadow);}
+  .pyr-row{display:grid;grid-template-columns:56px 1fr 92px;gap:16px;align-items:center;
+    padding:14px 0;border-bottom:1px dashed var(--line);}
+  .pyr-row:last-child{border-bottom:0;}
+  .pyr-lv{font-size:11px;font-weight:800;color:var(--lime-ink);background:var(--lime-soft);
+    border:1px solid var(--line-lime);border-radius:8px;padding:6px 0;text-align:center;}
+  .pyr-row .t{font-size:14px;font-weight:650;}
+  .pyr-row .d{font-size:12.5px;color:var(--ink-2);margin-top:3px;}
+  .pyr-tag{font-size:11px;text-align:right;color:var(--ink-2);font-weight:600;}
+  .pyr-tag.must{color:var(--lime-ink);}
+
+  /* cards */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:206px;
+    transition:transform .18s,box-shadow .18s;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(16,24,40,.05),0 16px 36px rgba(16,24,40,.07);}
+  .card .ico{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:17px;margin-bottom:16px;}
+  .card h3{margin:0 0 8px;font-size:16px;font-weight:700;}
+  .card p{margin:0;color:var(--ink-2);font-size:13px;line-height:1.8;flex:1;}
+  .card .go{margin-top:16px;font-size:13px;font-weight:650;color:var(--lime-ink);display:flex;gap:6px;align-items:center;}
+
+  /* provenance */
+  .table{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;box-shadow:var(--shadow);}
+  .tr{display:grid;grid-template-columns:1.15fr 1.1fr 1fr;gap:14px;padding:13px 20px;
+    border-bottom:1px solid var(--line);font-size:12.8px;align-items:center;}
+  .tr:last-child{border-bottom:0;}
+  .tr.head{background:#FAFBFB;font-weight:700;color:var(--ink-2);font-size:11.5px;letter-spacing:.4px;}
+  .tr .num{font-weight:700;}
+  .tr .src{color:var(--ink-2);}
+  .tr code{font-size:11.5px;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+    padding:3px 7px;color:#4B5058;}
+
+  /* note */
+  .note{background:#FFFDF3;border:1px solid #F0E4B8;border-radius:var(--radius);padding:22px 24px;
+    font-size:13px;color:#5A5233;line-height:1.85;}
+  .note b{color:#3D381F;}
+  .note ul{margin:10px 0 0;padding-left:20px;}
+  .note li{margin:4px 0;}
+
+  footer{margin:72px 0 0;border-top:1px solid var(--line);padding:28px 0 44px;
+    display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;color:var(--ink-2);font-size:12.5px;}
+  footer a{border-bottom:1px solid var(--line-lime);padding-bottom:1px;}
+
+  @media(max-width:900px){
+    .metrics{grid-template-columns:repeat(2,1fr);} .cards{grid-template-columns:1fr;}
+    .pillar{grid-template-columns:1fr;gap:8px;} .sec-desc{margin-left:0;width:100%;}
+  }
+  @media(max-width:600px){
+    .wrap{padding:0 18px;} .nav-in{padding:12px 18px;} .hero{padding:52px 0 30px;}
+    .metrics{grid-template-columns:repeat(2,1fr);} .tr{grid-template-columns:1fr;gap:4px;}
+    .tr.head{display:none;} .pyr-row{grid-template-columns:44px 1fr;}.pyr-tag{display:none;}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <div class="brand"><span class="mark">C</span> AI Career Copilot</div>
+  <div class="nav-links">
+    <a class="on" href="#top">项目简介</a>
+    <a href="evaluation.html">量化评测</a>
+    <a href="prototype/gallery.html">在线原型</a>
+    <a href="https://github.com/Joezy331/resume-aware-interview-agent">GitHub</a>
+  </div>
+</div></nav>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <span class="eyebrow">AI 产品经理 · 作品集项目 / 2026</span>
+    <h1>AI Career Copilot
+      <span class="sub">基于 LLM 的简历感知式求职训练与决策系统 · Electron 桌面端</span>
+    </h1>
+    <p class="lede">产品负责人 & 全栈实现。以简历为全局上下文，贯通「简历解析 → JD 双模式分析 → 多面试官模拟 → 多维评分 → 差距诊断」全链路；所有结论均可通过仓库中的评测脚本与原始数据复现。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="evaluation.html">查看量化评测报告 <span class="arr">→</span></a>
+      <a class="btn btn-lime" href="prototype/gallery.html">在线体验 26 屏原型 <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href="https://github.com/Joezy331/resume-aware-interview-agent">源码与下载</a>
+    </div>
+
+    <div class="metrics">
+      <div class="metric hl"><div class="v">96.7<small>%</small></div><div class="k">岗位匹配 Top1 合理率<br>32 份跨行业合成简历</div></div>
+      <div class="metric"><div class="v">76<small>/76</small></div><div class="k">12 岗位真实模型<br>生成验收通过</div></div>
+      <div class="metric"><div class="v">300<small>+</small></div><div class="k">多层测试体系断言<br>全绿（单测/E2E/审计）</div></div>
+      <div class="metric"><div class="v">11</div><div class="k">评测覆盖职业族<br>Top1 行业多样性</div></div>
+      <div class="metric"><div class="v">71.7<small>MB</small></div><div class="k">Electron 便携版<br>零依赖双击运行</div></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><h2>项目简介</h2>
+      <span class="sec-desc">五个维度 · 需求 / 机制 / 稳定性 / AI 接入 / 验证</span></div>
+    <div class="pillars">
+      <div class="pillar"><h3><span class="dot"></span>需求洞察与产品定位</h3>
+        <p>识别求职训练「<b>上下文断裂、评估无标准</b>」痛点，将产品从单次模拟工具重定位为<b>简历全局上下文的持续训练系统</b>，全链路贯通解析 · JD · 面试 · 诊断。</p></div>
+      <div class="pillar"><h3><span class="dot"></span>任务流与机制设定</h3>
+        <p>构建「解析 → JD 双模式分析 → 多面试官模拟 → 多维诊断」<b>Pipeline</b>，设计 5 面试官矩阵、<b>六维自适应评分权重</b>（25/25/20/15/10/5，技术岗动态调权）与 <b>12 行业 51 岗位能力标签库</b>，收敛开放式生成为可控任务流。</p></div>
+      <div class="pillar"><h3><span class="dot"></span>稳定性与性能优化</h3>
+        <p><b>结构化 JSON 范式 + 归一化容错层</b>抑制生成波动，多模型降级池自动换模重试叠加本地规则兜底，模型下线 / 限流场景下功能降级而非中断。</p></div>
+      <div class="pillar"><h3><span class="dot"></span>AI 能力接入</h3>
+        <p>OpenAI 兼容协议<b>模型池动态同步</b>（发现 → 排序 → 持久化 → 离线恢复，零硬编码清单），<b>OCR 双链路竞速</b>解析简历 / JD 截图，主进程代理实现 CORS 规避与密钥服务端隔离。</p></div>
+      <div class="pillar"><h3><span class="dot"></span>项目成果与数据验证</h3>
+        <p>Electron 便携版零依赖交付；产出<b>系统性量化评测报告</b>（32 简历 × 56 场景 × 5 面试官 × 40 次压测），指标按<b>可信度分级</b>标注、支持一键复现，形成数据闭环。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><h2>可信度基建</h2>
+      <span class="sec-desc">数据不是我说的，是脚本跑出来、原始文件在链接里</span></div>
+    <div class="pyramid">
+      <div class="pyr-row"><div class="pyr-lv">04</div><div><div class="t">在线交互原型 · 26 屏可点击走查</div>
+        <div class="d">静态部署，无需后端，直接体验完整产品流程</div></div><div class="pyr-tag">加分项</div></div>
+      <div class="pyr-row"><div class="pyr-lv">03</div><div><div class="t">量化评测公开页 · 方法论 + 原始数据 + 复现命令</div>
+        <div class="d">直接回答「数据从哪来」：来源脚本、原始 JSON/CSV、可信度分级</div></div><div class="pyr-tag must">含金量核心</div></div>
+      <div class="pyr-row"><div class="pyr-lv">02</div><div><div class="t">开源仓库 · 评测源码与产品源码同源公开</div>
+        <div class="d">被追问时「show me the code」，评测逻辑完全可查</div></div><div class="pyr-tag must">必备</div></div>
+      <div class="pyr-row"><div class="pyr-lv">01</div><div><div class="t">便携版桌面应用 · 安装即可运行</div>
+        <div class="d">71.7MB 零依赖，产品真实存在而非演示稿</div></div><div class="pyr-tag must">必备</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><h2>三个入口</h2>
+      <span class="sec-desc">简历里挂这一页，面试官自己会点</span></div>
+    <div class="cards">
+      <a class="card" href="prototype/gallery.html"><div class="ico">◫</div>
+        <h3>在线交互原型</h3>
+        <p>26 屏高保真原型：用户端 16 屏 + 管理端 9 屏 + 3 个聚合画板，覆盖求职全流程与流程演示。</p>
+        <div class="go">进入功能全览 →</div></a>
+      <a class="card" href="evaluation.html"><div class="ico">◈</div>
+        <h3>量化评测报告</h3>
+        <p>4 组测试矩阵、25 项指标、可信度分级、方差与局限主动披露、原始数据下载与 6 条复现命令。</p>
+        <div class="go">查看评测与数据 →</div></a>
+      <a class="card" href="https://github.com/Joezy331/resume-aware-interview-agent"><div class="ico">◇</div>
+        <h3>GitHub 源码</h3>
+        <p>桌面应用源码、评测脚本、岗位库与 JD 核心模块、测试套件、PRD 与架构文档完整公开。</p>
+        <div class="go">打开仓库 →</div></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">04</span><h2>数据溯源速查</h2>
+      <span class="sec-desc">每个数字都有「来源脚本 → 原始文件 → 局限声明」三件套</span></div>
+    <div class="table">
+      <div class="tr head"><div>被问到的数字</div><div>一句话溯源</div><div>当场可查的证据</div></div>
+      <div class="tr"><div class="num">Top1 合理率 96.7%</div><div class="src">32 份跨行业合成简历跑离线确定性引擎，29/30 合理</div><div><code>run_match.js</code> <code>results.json</code></div></div>
+      <div class="tr"><div class="num">追问决策合理率 71.4%</div><div class="src">真实模型温度 0.2，两次全量跑 66–71% 方差已如实记录</div><div><code>run_followup.js</code> <code>report.md</code></div></div>
+      <div class="tr"><div class="num">强 76 vs 弱 32 分</div><div class="src">方向性单调测试成立；强候选人 23 分差触发 &gt;15 冲突检测</div><div><code>run_report.js</code> <code>results.csv</code></div></div>
+      <div class="tr"><div class="num">短板识别率 100%</div><div class="src">弱 / 矛盾 / 偏题场景评分均 ≤62，真实接口实测</div><div><code>scenarios_report.js</code></div></div>
+      <div class="tr"><div class="num">回归通过率 86%（6/7）</div><div class="src">唯一失败项 round4_check 是真实产品缺陷，未粉饰</div><div><code>run_regression.js</code></div></div>
+      <div class="tr"><div class="num">12 岗位验收 76/76</div><div class="src">真实模型生成 + 职级差异化对照，JD 模块独立验收</div><div><code>electron-app/tools/</code></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>数据可信度声明</h2>
+      <span class="sec-desc">主动亮出局限，比堆漂亮数字更可信</span></div>
+    <div class="note">
+      <b>关于测试输入与方法边界（请在引用任何指标前先读这段）：</b>
+      <ul>
+        <li>评测输入为 <b>32 份跨行业合成简历 / 56 个追问场景 / 32 个报告场景</b>，明确为构造输入，<b>不代表真实用户效果</b>。</li>
+        <li>离线匹配引擎为确定性可复现；真实模型接口调用存在温度方差（决策合理率 66%–71%），报告已标注。</li>
+        <li>「追问相关性 2.68/5」「评分-证据一致性 92%」为<b>启发式代理指标，保守下界</b>，非人工标注黄金集。</li>
+        <li>P95 延迟偏高（追问 169.9s / 稳定性 23.3s）源于免费本地模型服务，已在产品中通过异步进度提示缓解。</li>
+        <li>所有指标由实际运行计算，<b>未为获得漂亮数据修改评分逻辑或硬编码答案</b>，全程未输出任何 API Key。</li>
+        <li>结论建议：生产环境应以「评分 + 人工复核」双轨呈现，不对候选人做单点自动化否决。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div>AI Career Copilot · Resume-Aware Interview Agent · 产品负责人 & 全栈实现</div>
+    <div><a href="evaluation.html">评测报告</a> &nbsp;·&nbsp; <a href="prototype/gallery.html">在线原型</a> &nbsp;·&nbsp; <a href="data/evaluation_results.json">原始数据 JSON</a> &nbsp;·&nbsp; <a href="https://github.com/Joezy331/resume-aware-interview-agent">GitHub</a></div>
+  </footer>
+</div>
+</body>
+</html>

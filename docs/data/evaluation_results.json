@@ -1,0 +1,174 @@
+{
+  "project": "AI Career Copilot (Resume-Aware Interview Agent)",
+  "generated_at": "2026-10-19T02:13:47.928Z",
+  "data_sources": {
+    "match_engine": "离线确定性引擎 electron-app/job-matching.js（不调用模型）",
+    "model_endpoint": "真实本地大模型接口 http://localhost:8787/v1 （cline-free/mimo-v2.6-flash）",
+    "test_inputs": "32 份跨行业合成简历 + 56 个追问场景 + 32 个报告场景（明确标注为合成测试输入，非真实用户）",
+    "regression": "产品自带测试套件（纯 Node + Electron headless）"
+  },
+  "availability": {
+    "test1_job_match": true,
+    "test2_followup": true,
+    "test3_report": true,
+    "test4_stability": true,
+    "test4_regression": true
+  },
+  "tests": {
+    "test1_job_match": {
+      "sample_total": 32,
+      "complete_count": 30,
+      "top1_reasonable_rate": 96.7,
+      "top3_reasonable_rate": 96.7,
+      "top1_reasonable_n": 29,
+      "top3_reasonable_n": 29,
+      "industry_coverage": 11,
+      "family_diversity_top1": 11,
+      "family_diversity_all": 12,
+      "mean_evidence_coverage_top1": 61.1,
+      "score_mean": 41.2,
+      "score_median": 37.5,
+      "score_max": 81,
+      "score_min": 2,
+      "ratio_90plus": 0,
+      "count_90plus": 0,
+      "total_jobs": 128,
+      "insufficient_expected": 2,
+      "insufficient_flagged": 5,
+      "insufficient_detected_expected": 1,
+      "insufficient_detection_rate": 50,
+      "insufficient_false_positive": 4,
+      "insufficient_false_positive_rate": 13.3,
+      "ai_pm_unwarranted_top1_n": 0,
+      "ai_pm_unwarranted_top1_rate": 0,
+      "ai_pm_unwarranted_top3_n": 2,
+      "ai_pm_unwarranted_top3_rate": 7.1,
+      "non_pm_count": 28,
+      "cert_cases_total": 3,
+      "cert_cases_correct": 3,
+      "cert_detection_rate": 100,
+      "cert_missing_detected_n": 1,
+      "cert_missing_total": 1,
+      "cert_present_not_flagged_n": 2,
+      "cert_present_total": 2,
+      "cert_detection_cases": [
+        {
+          "id": "R25_clinic",
+          "family": "medical_bio",
+          "certTest": "present",
+          "certJob": "医学支持/CRA",
+          "flagged": false,
+          "expectedFlag": false,
+          "correct": true
+        },
+        {
+          "id": "R26_pharma_nocert",
+          "family": "medical_bio",
+          "certTest": "missing",
+          "certJob": "药师",
+          "flagged": true,
+          "expectedFlag": true,
+          "correct": true
+        },
+        {
+          "id": "R28_legal",
+          "family": "legal",
+          "certTest": "present",
+          "certJob": "律师助理",
+          "flagged": false,
+          "expectedFlag": false,
+          "correct": true
+        }
+      ],
+      "missed_top1": []
+    },
+    "test2_followup": {
+      "sample_total": 56,
+      "api_success": 56,
+      "api_success_rate": 100,
+      "api_fail": 0,
+      "latency_mean_ms": 33581,
+      "latency_p50_ms": 20781,
+      "latency_p95_ms": 169886,
+      "latency_max_ms": 180862,
+      "followup_generated_n": 56,
+      "relevance_avg": 2.68,
+      "context_util_avg": 3.95,
+      "decision_rational_n": 40,
+      "decision_rational_rate": 71.4,
+      "repetition_n": 0,
+      "repetition_rate": 0,
+      "unsupported_n": 0,
+      "unsupported_rate": 0,
+      "newinfo_scenarios": 8,
+      "newinfo_probed_n": 5,
+      "newinfo_probed_rate": 62.5
+    },
+    "test3_report": {
+      "n_scenarios": 32,
+      "api_success_rate": 1,
+      "latency_mean_ms": 17538,
+      "latency_p95_ms": 39132,
+      "scoring_rationale_completeness": 1,
+      "score_evidence_consistency": 0.92,
+      "directionality_monotonic": true,
+      "mean_score_by_quality": {
+        "strong": 76,
+        "weak": 30,
+        "contradictory": 36,
+        "offtopic": 30,
+        "medium": 52
+      },
+      "strong_mean": 76,
+      "weak_mean": 32,
+      "weak_identification_rate": 1,
+      "followup_consistency": 0.5556,
+      "report_generation_success": 1,
+      "key_field_completeness": 1,
+      "conflict_detection": [
+        {
+          "id": "CAND_STRONG",
+          "spread": 23,
+          "hasConflict": true,
+          "verdict": "谨慎推荐"
+        },
+        {
+          "id": "CAND_MEDIUM",
+          "spread": 8,
+          "hasConflict": false,
+          "verdict": "不推荐"
+        },
+        {
+          "id": "CAND_WEAK",
+          "spread": 10,
+          "hasConflict": false,
+          "verdict": "不推荐"
+        }
+      ]
+    },
+    "test4_stability": {
+      "api_total": 40,
+      "api_success": 40,
+      "api_fail": 0,
+      "api_timeouts": 0,
+      "api_success_rate": 1,
+      "latency_mean_ms": 13386,
+      "latency_p50_ms": 11645,
+      "latency_p95_ms": 23283,
+      "latency_max_ms": 25368,
+      "http_error_breakdown": {},
+      "multiturn_total": 6,
+      "multiturn_recalled": 6,
+      "multiturn_retention_rate": 1,
+      "app_state_retention": "covered-by-regression"
+    },
+    "test4_regression": {
+      "suites_total": 7,
+      "suites_passed": 6,
+      "suites_pass_rate": 0.8571,
+      "total_assertions_passed": 113,
+      "total_assertions_failed": 1,
+      "overall_pass": false
+    }
+  }
+}

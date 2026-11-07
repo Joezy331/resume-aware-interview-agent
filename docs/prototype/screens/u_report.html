@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Career Copilot · 评分报告</title>
+<style>/* ============================================================
+   AI Career Copilot · High-Fidelity Prototype Design System
+   Calm / professional / portfolio-grade. No AI-template feel.
+   ============================================================ */
+
+:root{
+  /* 与 EXE UI v4 完全对齐的浅灰白 SaaS 工作台令牌 */
+  --bg:#F5F6F7;
+  --bg-soft:#FAFAFA;
+  --panel:#FFFFFF;
+  --panel-2:#FCFDFB;
+
+  --ink:#202124;
+  --ink-2:#7B818A;
+  --ink-3:#9AA0A6;
+  --muted:#8A8F98;
+
+  --line:#E8EAED;
+  --line-2:#F0F2F4;
+  --line-strong:#DDE0E4;
+
+  /* 主强调色：荧光黄绿（与 EXE 一致） */
+  --pink:#C8F36A;
+  --pink-soft:#F1FBD4;
+  --pink-ink:#2E3B13;
+  --pink-line:#D9ECA0;
+
+  --green:#5B8C4A;
+  --green-soft:#EEF3EC;
+  --blue:#3E7CB1;
+  --blue-soft:#EAF1F8;
+  --amber:#C9A227;
+  --amber-soft:#FBF6E6;
+  --purple:#9A7BB5;
+
+  --shadow-sm:0 1px 2px rgba(32,33,36,.04),0 1px 3px rgba(32,33,36,.05);
+  --shadow-md:0 6px 18px rgba(32,33,36,.06),0 2px 6px rgba(32,33,36,.04);
+  --shadow-lg:0 16px 40px rgba(32,33,36,.10);
+
+  --r:14px;
+  --r-sm:10px;
+  --r-lg:18px;
+
+  --font:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --sidebar-w:236px;
+  --topbar-h:72px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--pink-soft);color:var(--pink-ink)}
+
+/* ---------- App shell ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  padding:20px 14px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#F1FBD4);
+  border:1px solid var(--line);
+  display:grid;place-items:center;font-size:18px;
+}
+.brand .name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand .sub{font-size:11px;color:var(--ink-3);margin-top:-2px}
+
+.nav-group{margin-top:6px}
+.nav-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;color:var(--ink-2);
+  font-size:13.5px;font-weight:500;transition:all .15s ease;
+  margin-bottom:2px;
+}
+.nav-link .ico{width:18px;text-align:center;opacity:.8}
+.nav-link:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-link.active{background:var(--pink);color:var(--pink-ink)}
+.nav-link.active .ico{opacity:1}
+.sidebar-foot{margin-top:auto;padding:10px;border-top:1px solid var(--line)}
+.me{display:flex;align-items:center;gap:10px}
+.me .avatar{width:34px;height:34px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:16px}
+.me .nm{font-size:12.5px;font-weight:600}
+.me .rl{font-size:11px;color:var(--ink-3)}
+
+.workspace-switch{display:flex;gap:6px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:4px;margin-top:10px}
+.workspace-switch button{flex:1;padding:7px 0;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.workspace-switch button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  height:var(--topbar-h);flex:0 0 var(--topbar-h);
+  border-bottom:1px solid var(--line);background:rgba(247,247,245,.8);
+  backdrop-filter:saturate(1.2) blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{font-size:12px;color:var(--ink-3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right .pill{font-size:11px;color:var(--ink-3);border:1px solid var(--line);padding:5px 10px;border-radius:999px;background:var(--panel)}
+.proto-flag{font-size:10.5px;letter-spacing:.06em;color:var(--pink-ink);background:var(--pink-soft);border:1px solid var(--pink-line);padding:5px 10px;border-radius:999px;font-weight:600}
+
+.view{padding:30px 32px 60px;max-width:1280px;width:100%;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:22px}
+.page-head .eyebrow{font-size:12px;color:var(--pink-ink);font-weight:600;letter-spacing:.04em}
+.page-head h2{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px}
+.page-head p{color:var(--ink-2);margin-top:6px;max-width:680px;font-size:13.5px}
+
+/* ---------- Layout grid ---------- */
+.grid{display:grid;gap:18px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.cols-5{grid-template-columns:repeat(5,1fr)}
+.span-2{grid-column:span 2}
+.split{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.split-r{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start}
+
+/* ---------- Card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.card.hov:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-title{font-size:13px;font-weight:650;color:var(--ink);display:flex;align-items:center;line-height:1.3;gap:8px}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);transform:translateY(0.5px)}
+.card-sub{font-size:12px;color:var(--ink-2);margin-top:3px}
+.card-pad-sm{padding:16px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:11px;font-size:13.5px;font-weight:600;
+  transition:all .16s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--pink);color:var(--pink-ink)}
+.btn-primary:hover{background:#B7E84F;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--panel);color:var(--ink);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:var(--bg-soft);border-color:var(--ink-3)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-soft);color:var(--ink)}
+.btn-pink{background:var(--pink-soft);color:var(--pink-ink);border:1px solid var(--pink-line)}
+.btn-pink:hover{background:#ECF7D6}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.tag-pink{background:var(--pink-soft);color:var(--pink-ink);border-color:var(--pink-line)}
+.tag-green{background:var(--green-soft);color:#4d6b48;border-color:#DCE7D8}
+.tag-blue{background:var(--blue-soft);color:#46627e;border-color:#DCE6EE}
+.tag-amber{background:var(--amber-soft);color:#8a6d10;border-color:#EFE4BD}
+.tag-gray{background:var(--bg-soft);color:var(--ink-3);border-color:var(--line)}
+.tag-soft{background:var(--bg-soft);color:var(--ink-2)}
+
+/* ---------- Inputs ---------- */
+.input{
+  width:100%;padding:11px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;font-size:13.5px;background:var(--panel);color:var(--ink);
+  transition:border-color .15s, box-shadow .15s;font-family:inherit;
+}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(24,24,27,.06)}
+.input::placeholder{color:var(--ink-3)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+label.field{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+
+/* ---------- Progress / bars ---------- */
+.progress{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.progress>.bar{height:100%;background:var(--ink);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.progress.pink>.bar{background:var(--pink)}
+.progress.green>.bar{background:var(--green)}
+.meter{display:flex;align-items:center;gap:10px}
+.meter .lab{font-size:12.5px;color:var(--ink-2);width:96px;flex:0 0 96px}
+.meter .val{font-size:12.5px;font-weight:650;width:38px;text-align:right;flex:0 0 38px}
+.meter .track{flex:1;height:7px;background:var(--line-2);border-radius:999px;overflow:hidden}
+.meter .track>i{display:block;height:100%;background:var(--ink);border-radius:999px}
+
+/* ---------- Avatar ---------- */
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;flex:0 0 38px}
+.avatar.sm{width:30px;height:30px;font-size:14px;flex-basis:30px}
+.avatar.lg{width:52px;height:52px;font-size:24px;flex-basis:52px}
+.avatar.blue{background:var(--blue-soft);border-color:#DCE6EE}
+.avatar.green{background:var(--green-soft);border-color:#DCE7D8}
+.avatar.amber{background:var(--amber-soft);border-color:#EFE4BD}
+.avatar.purple{background:#F3EEF7;border-color:#E6DCF0}
+
+/* ---------- Stat ---------- */
+.stat .k{font-size:12px;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;color:var(--ink-3);font-weight:600}
+.stat .d{font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.stat .d.down{color:#D45D4D}
+
+/* ---------- List / rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.row:last-child{border-bottom:none}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:600}
+.row .meta{font-size:12px;color:var(--ink-3);margin-top:1px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--ink-2)}
+.kv .v{font-weight:600}
+
+/* ---------- Dropdown / select ---------- */
+.select{
+  position:relative;display:inline-block;
+}
+.select>button{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line-strong);
+  border-radius:11px;background:var(--panel);font-size:13px;font-weight:600;color:var(--ink);min-width:150px;justify-content:space-between;
+}
+.select .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;z-index:30;display:none}
+.select.open .menu{display:block}
+.select .menu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--ink-2)}
+.select .menu button:hover{background:var(--bg-soft);color:var(--ink)}
+.select .menu button.on{color:var(--ink);font-weight:650}
+
+/* ---------- Tabs ---------- */
+.tabs{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.tabs button{padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:all .15s}
+.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- Chat / interview ---------- */
+.chat{display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:86%;padding:13px 16px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.bubble.q{background:var(--ink);color:#fff;align-self:flex-start;border-bottom-left-radius:5px}
+.bubble.a{background:var(--panel);border:1px solid var(--line);align-self:flex-end;border-bottom-right-radius:5px}
+.bubble .who{font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+
+/* ---------- Agent status ---------- */
+.agent-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.agent-row:last-child{border-bottom:none}
+.status-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;position:relative}
+.status-dot.run{background:var(--green)}
+.status-dot.run::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.4;animation:ping 1.4s ease-out infinite}
+.status-dot.done{background:var(--blue)}
+.status-dot.wait{background:var(--ink-3)}
+.status-dot.warn{background:var(--amber)}
+@keyframes ping{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Empty / loading ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+.empty .ill{font-size:42px;opacity:.5;margin-bottom:10px}
+.empty p{font-size:13px}
+.skeleton{background:linear-gradient(90deg,var(--line-2) 25%,#EDEDE8 37%,var(--line-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;height:14px;margin:8px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;transition:all .3s;z-index:90;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast-card{background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:9px}
+.toast-card .ic{color:var(--green)}
+
+/* ---------- Modal ---------- */
+.modal-mask{position:fixed;inset:0;background:rgba(24,24,27,.32);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;animation:fade .2s ease}
+.modal{background:var(--panel);border-radius:var(--r-lg);width:min(460px,92vw);padding:26px;box-shadow:var(--shadow-lg);animation:pop .25s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+
+/* ---------- Hero / upload ---------- */
+.upload-zone{
+  border:1.8px dashed var(--line-strong);border-radius:var(--r-lg);
+  background:var(--panel-2);padding:54px 30px;text-align:center;transition:all .2s;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--pink);background:var(--pink-soft)}
+.upload-ill{font-size:46px;margin-bottom:12px}
+.upload-zone h3{font-size:18px;font-weight:700}
+.upload-zone p{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+/* ---------- Misc ---------- */
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.center{text-align:center}
+.right{text-align:right}
+.flex{display:flex}
+.between{display:flex;justify-content:space-between;align-items:center}
+.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}
+.wrap{flex-wrap:wrap}
+.items-center{align-items:center}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.divider{height:1px;background:var(--line-2);margin:16px 0}
+.section-note{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.badge-step{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;flex:0 0 22px;box-sizing:border-box}
+.flow-hint{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+.note-line{border-left:3px solid var(--pink);background:var(--pink-soft);padding:11px 14px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--pink-ink)}
+.mock-tag{display:inline-flex;align-items:center;line-height:1;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);border:1px solid #EFE4BD;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:8px}
+
+/* donut legend */
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .li{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+
+/* ---------- Charts (shared chart toolkit) ---------- */
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.chart-legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.chart-legend .sw{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:block;line-height:1.5}
+.chart-note .mock-tag{margin-left:0;margin-right:8px}
+.grid-line{stroke:var(--line-2);stroke-width:1}
+.axis-lab{fill:var(--ink-3);font-size:10px;font-family:var(--font)}
+.bar-lab{fill:var(--ink-2);font-size:10.5px;font-family:var(--font)}
+.bar-val{fill:var(--ink);font-size:10.5px;font-weight:650;font-family:var(--font)}
+.spark{display:block}
+.ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring-row .ring-meta{flex:1;min-width:120px}
+.chart-empty{display:grid;place-items:center;min-height:150px;color:var(--ink-3);font-size:12.5px;gap:6px}
+.chart-empty .ill{font-size:26px;opacity:.45}
+
+/* bar entrance animation (used by charts + meters) */
+@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growBarY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chart rect.anim-x{transform-origin:left center;animation:growBar .7s cubic-bezier(.2,.7,.3,1) both}
+.chart rect.anim-y{transform-origin:center bottom;animation:growBarY .7s cubic-bezier(.2,.7,.3,1) both}
+/* 环形图中心数字：HTML 覆盖层（不依赖 SVG text-anchor） */
+.ring-wrap{position:relative;display:inline-flex;vertical-align:middle}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.15}
+.ring-center b{font-weight:700;color:#18181B;letter-spacing:-.01em}
+.ring-center i{font-style:normal;font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.ring-row .ring-wrap{flex:0 0 auto}
+.meter .track>i{transition:width .8s cubic-bezier(.2,.7,.3,1)}
+
+/* ---------- nav: star + agents-active + 开始使用 ---------- */
+.nav-star{color:#E0B341;font-size:11px;margin-left:2px}
+.agents-active{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);padding:0 2px 12px}
+.agents-active .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);position:relative}
+.agents-active .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);opacity:.45;animation:ping 1.6s ease-out infinite}
+.btn-block{width:100%;justify-content:center;margin-top:4px}
+
+/* ---------- 简历解析 4 步向导 ---------- */
+.wizard{display:flex;align-items:flex-start;gap:0}
+.wz-step{flex:1;position:relative;text-align:center}
+.wz-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--ink-2);font-weight:700;font-size:13px;transition:all .2s}
+.wz-t{font-size:12.5px;font-weight:600;margin-top:7px;color:var(--ink-2)}
+.wz-s{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.wz-step.on .wz-n{background:var(--ink);border-color:var(--ink);color:#fff}
+.wz-step.on .wz-t{color:var(--ink)}
+.wz-step.done .wz-n{background:var(--green);border-color:var(--green);color:#fff}
+.wz-step.done .wz-t{color:var(--green)}
+.wz-line{position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--line);z-index:-0}
+.wz-step.done .wz-line{background:var(--green)}
+.agent-row.sm{padding:9px 0}
+.agent-row.sm .ttl{font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="sidebar"></div>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="view" id="view"></main>
+  </div>
+</div>
+<div id="toast"></div>
+<div id="modal-root"></div>
+<script>/* ============================================================
+   AI Career Copilot · Prototype Data
+   Real field names extracted from dist/index_v3.html +
+   docs/competency_framework.md + python-backend/config.py.
+   Sections backed only by frontend prototype state are
+   marked:  // MOCK DATA FOR PROTOTYPE
+   ============================================================ */
+window.DB = {};
+
+/* ---------- User profile ---------- */
+DB.profile = {
+  name:'江同学', role:'AI 产品经理 · 求职中',
+  avatar:'🐱', target:'AI 产品经理',
+  resumeDone:true, lastScore:78, growth:+12,
+  email:'jiang@prototype.dev'
+};
+
+/* ---------- Resume parse (real-ish structure) ---------- */
+DB.resume = {
+  file:'Jiang_Resume_2026.pdf', size:'2.4 MB', status:'已解析',
+  basic:{name:'江同学', edu:'硕士 · 计算机', years:'3 年', field:'AI / 产品'},
+  education:[{school:'某 985 高校', major:'人工智能（硕士）', time:'2023–2026'}],
+  projects:[
+    {name:'AI 聊天机器人平台', role:'产品负责人', impact:'DAU +38%'},
+    {name:'Prompt 评测工作台', role:'产品设计 + 0→1', impact:'评测效率 ×3'}
+  ],
+  interns:[{co:'某大厂 AI Lab', role:'产品实习生', time:'2024 夏'}],
+  skills:['Python','LLM/GPT API','产品策略','A/B 测试','SQL','Figma','敏捷开发','数据分析'],
+  ability:[
+    {k:'产品思维', v:82}, {k:'数据分析', v:74}, {k:'AI 理解', v:79},
+    {k:'沟通表达', v:86}, {k:'项目深度', v:80}, {k:'业务洞察', v:71}
+  ]
+};
+
+/* ---------- Job matches (11, real list from index_v3) ---------- */
+DB.jobs = [
+  {name:'AI 产品经理',score:92,reason:'丰富的 AI/LLM 产品经验 + 策略能力',skills:['Prompt设计','LLM应用','产品策略','数据驱动'],gap:'需更多模型评估经验',path:'AI PM → 高级 AI PM → AI 产品总监'},
+  {name:'产品经理',score:88,reason:'扎实的产品管理基础 + 数据决策',skills:['需求分析','PRD','敏捷开发','A/B测试'],gap:'B2C 产品经验不足',path:'PM → 高级PM → 产品总监'},
+  {name:'数据产品经理',score:85,reason:'强大数据技能 + 看板设计 + 指标驱动',skills:['SQL','数据看板','指标体系','实验设计'],gap:'数仓架构知识待加深',path:'数据分析师→数据PM→高级数据PM'},
+  {name:'AIGC 产品经理',score:83,reason:'AI/LLM理解 + 产品思维 + AIGC认知',skills:['Agent设计','Prompt工程','AI伦理'],gap:'AIGC工具链经验不足',path:'AIGC PM → 高级 PM → 创新负责人'},
+  {name:'AI 运营',score:80,reason:'AI工具熟练 + 数据分析 + 流程优化',skills:['自动化','数据分析','内容策略','增长实验'],gap:'MLOps 基础待学习',path:'AI运营→高级运营→运营经理'},
+  {name:'数据分析师',score:79,reason:'SQL/数据能力强 + 可视化 + 统计基础',skills:['Python','SQL','Tableau','统计'],gap:'统计学待深入',path:'初级→分析师→高级→分析经理'},
+  {name:'提示词工程师',score:77,reason:'LLM API经验 + AI能力理解',skills:['Prompt工程','CoT','API调用','模型评估'],gap:'系统化训练待加强',path:'PE → 高级PE → AI架构师'},
+  {name:'商业分析师',score:76,reason:'业务理解 + 数据 + 干系人管理',skills:['商业模式','财务建模','流程优化'],gap:'行业知识待深入',path:'BA→高级BA→主管BA'},
+  {name:'用户增长',score:74,reason:'数据驱动 + A/B测试 + 用户行为',skills:['增长漏斗','留存','实验设计','病毒传播'],gap:'增长黑客实战不足',path:'增长分析师→经理→负责人'},
+  {name:'前端开发',score:71,reason:'技术背景 + 产品理解 + UX意识',skills:['HTML/CSS/JS','React/Vue','UI组件','响应式'],gap:'框架深入经验待补充',path:'初级前端→工程师→高级→架构师'},
+  {name:'后端开发',score:69,reason:'Python能力 + 系统设计 + API',skills:['Python','REST API','数据库','系统设计'],gap:'分布式系统待学习',path:'初级后端→工程师→高级→架构师'}
+];
+
+/* ---------- JD library (real JD fields) ---------- */
+DB.jd = {
+  'AI 产品经理':{
+    resp:['定义 AI 产品路线图','设计 LLM/Agent 功能','推动跨团队落地','建立评测体系'],
+    hard:['LLM 应用','Prompt 工程','产品设计','数据分析'],
+    soft:['跨团队沟通','结构化思考','Owner 意识'],
+    tools:['GPT/Claude API','Figma','SQL','Mixpanel'],
+    edu:'本科及以上，AI/计算机/相关优先',
+    focus:'LLM 应用、产品落地、评测体系',
+    kw:['用户研究','需求分析','AI产品','数据分析','Prompt','Agent']
+  },
+  '产品经理':{
+    resp:['用户研究与需求分析','撰写 PRD','敏捷迭代','版本规划'],
+    hard:['需求分析','原型设计','数据分析','项目管理'],
+    soft:['沟通协调','向上管理','同理心'],
+    tools:['Figma','Axure','SQL','Jira'],
+    edu:'本科及以上',
+    focus:'用户价值、需求优先级、交付质量',
+    kw:['用户研究','需求分析','PRD','A/B测试','项目管理']
+  },
+  '数据分析师':{
+    resp:['搭建数据分析体系','撰写数据洞察','支持业务决策','设计 A/B 实验'],
+    hard:['SQL','Python/R','统计学','BI 工具'],
+    soft:['逻辑分析','业务理解','报告撰写'],
+    tools:['SQL','Python','Tableau','Excel'],
+    edu:'本科及以上，统计/数学/计算机优先',
+    focus:'统计分析、数据建模、业务洞察',
+    kw:['SQL','Python','指标','A/B测试','可视化']
+  },
+  'AI 运营':{
+    resp:['制定 AI 工具运营策略','优化 AI 辅助流程','分析运营数据','培训团队使用 AI'],
+    hard:['AI工具熟练','数据分析','内容运营','自动化'],
+    soft:['学习能力','流程优化','沟通培训'],
+    tools:['ChatGPT','飞书','Excel','Python'],
+    edu:'本科及以上',
+    focus:'AI工具应用、流程自动化、数据运营',
+    kw:['自动化','运营数据','增长实验','流程优化']
+  }
+};
+DB.jdFallback = {
+  resp:['负责核心业务模块','推动需求落地','跨部门协作','复盘迭代'],
+  hard:['岗位硬技能','数据分析','项目执行'],
+  soft:['沟通表达','逻辑思维','协作'],
+  tools:['常用办公与专业工具'],
+  edu:'本科及以上',
+  focus:'岗位核心能力与业务结果',
+  kw:['岗位关键词','业务','协作','结果']
+};
+
+/* ---------- Competency tree (real second-level, per job) ---------- */
+DB.competency = {
+  '产品经理':{
+    '产品设计':['用户研究','需求分析','原型设计','优先级判断'],
+    '数据分析':['指标体系','漏斗分析','A/B 测试','用户画像'],
+    '商业理解':['竞品分析','商业模式','市场分析','定价策略'],
+    '沟通协作':['需求评审','跨部门协调','向上管理','团队激励']
+  },
+  'AI 运营':{
+    'AI工具':['ChatGPT应用','Midjourney','自动化工具','AI辅助写作'],
+    '运营能力':['内容运营','用户运营','活动策划','数据分析'],
+    '流程优化':['效率提升','自动化设计','标准化','培训赋能'],
+    '数据能力':['数据监控','效果分析','A/B测试','报告撰写']
+  },
+  '数据分析师':{
+    '分析技能':['SQL精通','Python分析','统计建模','机器学习基础'],
+    '可视化':['Tableau','数据看板','报告撰写','故事讲述'],
+    '业务理解':['业务指标','漏斗分析','用户分群','ROI计算'],
+    '工具':['Excel高级','Jupyter','R语言','SPSS']
+  },
+  '用户增长':{
+    '增长方法':['增长漏斗','留存分析','病毒传播','增长实验'],
+    '数据分析':['用户行为','A/B测试','归因分析','LTV计算'],
+    '产品理解':['用户画像','转化优化','产品体验','功能实验'],
+    '渠道运营':['获客渠道','内容营销','社交传播','合作推广']
+  }
+};
+DB.competencyFallback = {
+  '核心能力':['需求理解','执行落地','沟通协作','结果导向'],
+  '专业深度':['方法论','工具使用','案例积累','数据验证'],
+  '业务理解':['用户价值','指标意识','商业逻辑','复盘迭代']
+};
+
+/* ---------- Dynamic scoring weights (real 5 templates) ---------- */
+DB.DIM = {comm:'沟通表达',biz:'商业洞察',tech:'技术深度',leader:'领导力',strategy:'战略思维',culture:'文化匹配'};
+DB.weights = {
+  product:{name:'产品经理',icon:'📦',weights:{comm:20,biz:25,tech:10,leader:20,strategy:15,culture:10}},
+  tech:{name:'软件工程师',icon:'💻',weights:{comm:10,biz:5,tech:35,leader:15,strategy:10,culture:10}},
+  ai:{name:'AI 工程师',icon:'🤖',weights:{comm:10,biz:10,tech:30,leader:10,strategy:20,culture:10}},
+  data:{name:'数据分析师',icon:'📊',weights:{comm:15,biz:20,tech:25,leader:10,strategy:15,culture:10}},
+  ops:{name:'运营',icon:'🚀',weights:{comm:20,biz:20,tech:10,leader:20,strategy:15,culture:15}}
+};
+/* map a job name → weight template key */
+DB.jobType = function(name){
+  if(/数据/.test(name)) return 'data';
+  if(/AI|大模型|Prompt|提示词|AIGC/.test(name)) return 'ai';
+  if(/运营|增长/.test(name)) return 'ops';
+  if(/前端|后端|开发|工程师/.test(name)) return 'tech';
+  return 'product';
+};
+
+/* ---------- Interviewers (real 5) ---------- */
+DB.interviewers = [
+  {id:'hr',name:'Sarah',role:'HR 经理',initials:'S',color:'#C8F36A',focus:'沟通表达 · 文化匹配'},
+  {id:'biz',name:'Mike Zhang',role:'业务经理',initials:'M',color:'#6B8CAE',focus:'商业洞察 · 策略思维'},
+  {id:'pro',name:'刘博士',role:'技术专家',initials:'L',color:'#9A7BB5',focus:'技术深度 · 专业'},
+  {id:'lead',name:'Emma Wang',role:'团队负责人',initials:'E',color:'#7C9A78',focus:'领导力 · 潜力'},
+  {id:'chief',name:'David Park',role:'首席评估官',initials:'D',color:'#C9A227',focus:'战略视野 · 仲裁'}
+];
+
+/* ---------- Interview question bank (real V3 bank, trimmed) ---------- */
+DB.questions = [
+  {q:'请介绍一个你参与过的 AI 产品项目，以及你在其中承担的主要工作。',src:'resume',iv:'hr',dim:'comm'},
+  {q:'职位强调 LLM 应用。你会如何为客服机器人设计 Prompt 策略？',src:'jd',iv:'pro',dim:'tech'},
+  {q:'你曾带领 4 人团队。请描述一个需要做艰难决策的场景。',src:'resume',iv:'lead',dim:'leader'},
+  {q:'如何为新 AI 功能设计 A/B 测试框架来衡量业务影响？',src:'competency',iv:'biz',dim:'biz'},
+  {q:'请讲述一个跨职能协调三方达成一致的经历。',src:'jd',iv:'chief',dim:'strategy'},
+  {q:'如何跟进最新 AI 发展并应用到产品中？',src:'competency',iv:'pro',dim:'tech'},
+  {q:'描述一个用数据驱动重大产品决策的项目，跟踪了哪些指标？',src:'jd',iv:'biz',dim:'biz'},
+  {q:'为什么对这个职位感兴趣？与你的规划如何契合？',src:'competency',iv:'chief',dim:'culture'}
+];
+
+/* ---------- Score report (mock aggregated result) ---------- */
+DB.report = {
+  overall:78, band:'整体表现良好',
+  dims:{comm:82,biz:74,tech:78,leader:71,strategy:80,culture:84},
+  strengths:[
+    '项目表达较完整，有具体案例支撑',
+    '沟通逻辑清晰，结构分明',
+    '岗位理解较好，动机明确'
+  ],
+  weaknesses:[
+    '数据指标表达偏少，缺少量化结果',
+    '业务分析停留在执行层，缺商业拆解',
+    '部分回答缺少清晰框架'
+  ],
+  evidence:{
+    comm:'用 STAR 完整讲述项目，结论先行',
+    biz:'未给出北极星指标与 ROI 推导',
+    tech:'能讲清原理但缺落地数据验证',
+    leader:'给出艰难决策案例，Owner 意识强',
+    strategy:'拆解问题有层次，路径清楚',
+    culture:'动机与团队案例一致'
+  }
+};
+
+/* ---------- Growth (top 3) ---------- */
+DB.growth = [
+  {k:'数据分析',cur:74,tgt:85,gap:11,why:'面试回答缺少指标定义与结果验证',tips:['学习指标体系','练习 A/B 测试题','梳理项目数据']},
+  {k:'业务分析',cur:71,tgt:82,gap:11,why:'回答偏执行层，缺商业目标与用户价值分析',tips:['加强商业目标分析','练习 ROI 推导','补行业研究方法']},
+  {k:'结构化表达',cur:80,tgt:88,gap:8,why:'部分回答缺少清晰框架',tips:['使用 STAR/金字塔','先结论后论据','限时练习']}
+];
+
+/* ---------- Interview history (mock) ---------- */
+DB.history = [
+  {date:'2026.09.29',diff:'标准',score:78,trend:'+6',weak:'数据指标'},
+  {date:'2026.09.20',diff:'轻量',score:72,trend:'+3',weak:'业务分析'},
+  {date:'2026.09.12',diff:'标准',score:69,trend:'—',weak:'结构化'}
+];
+
+/* =================== ADMIN (mostly prototype-scale) =================== */
+// MOCK DATA FOR PROTOTYPE — admin analytics are demo figures, not live backend
+DB.admin = {
+  kpis:[
+    {k:'用户数',v:'1,284',d:'+8.2%'},
+    {k:'累计面试',v:'3,602',d:'+12%'},
+    {k:'平均评分',v:'74.6',d:'+1.4'},
+    {k:'完成率',v:'91%',d:'+3%'}
+  ],
+  trend:[52,48,61,55,63,58,70,66,72,69,78,74], // 12-week interview counts
+  jobDist:[['AI 产品经理',38],['产品经理',24],['数据分析',18],['AI 运营',12],['其他',8]],
+  abilityDist:[['沟通表达',82],['商业洞察',74],['技术深度',76],['领导力',70],['战略思维',78],['文化匹配',80]],
+  diffDist:[['校招',18],['普通社招',40],['大厂',24],['BAT',12],['Leader',6]],
+  // 13-agent pipeline (real order, real names)
+  pipeline:[
+    'Resume Parser','Job Match','JD Agent','Competency Framework',
+    'Interview Agent','Follow-up Agent','HR Interviewer','Business Interviewer',
+    'Professional Interviewer','Leader Interviewer','Chief Evaluation',
+    'Score Agent','Summary Agent'
+  ],
+  agentHealth:[
+    {n:'HR Agent',rate:98}, {n:'Business Agent',rate:97}, {n:'Professional Agent',rate:96},
+    {n:'Leader Agent',rate:95}, {n:'Chief Evaluation',rate:99}
+  ],
+  // Agent monitor (13 agents) — demo
+  monitor:[
+    {n:'Resume Parser',st:'done',t:'0.9s',calls:1284,succ:100,token:'—',last:'09:58'},
+    {n:'Job Match',st:'done',t:'1.2s',calls:1284,succ:100,token:'—',last:'09:58'},
+    {n:'JD Agent',st:'done',t:'1.5s',calls:1180,succ:99,token:'—',last:'09:55'},
+    {n:'Competency',st:'done',t:'0.7s',calls:1180,succ:100,token:'—',last:'09:55'},
+    {n:'Interview Agent',st:'run',t:'2.8s',calls:3602,succ:98,token:'1,284',last:'now'},
+    {n:'Follow-up Agent',st:'run',t:'1.1s',calls:2950,succ:97,token:'640',last:'now'},
+    {n:'HR Interviewer',st:'done',t:'1.6s',calls:3602,succ:99,token:'420',last:'09:40'},
+    {n:'Business Interviewer',st:'done',t:'1.9s',calls:3602,succ:98,token:'510',last:'09:40'},
+    {n:'Professional Interviewer',st:'warn',t:'3.4s',calls:3602,succ:95,token:'690',last:'09:38'},
+    {n:'Leader Interviewer',st:'done',t:'2.0s',calls:3602,succ:98,token:'480',last:'09:39'},
+    {n:'Chief Evaluation',st:'run',t:'2.2s',calls:3602,succ:99,token:'320',last:'now'},
+    {n:'Score Agent',st:'wait',t:'—',calls:3602,succ:99,token:'—',last:'09:30'},
+    {n:'Summary Agent',st:'wait',t:'—',calls:3602,succ:100,token:'—',last:'09:30'}
+  ],
+  agentDetail:{
+    name:'Interview Agent',status:'Completed',latency:'2.8s',token:'1,284',model:'GPT-4o-mini (Demo)',
+    input:'Resume + JD + 上一轮回答',
+    process:['读取简历与 JD','匹配能力维度','生成情境问题','标注追问信号'],
+    output:'本轮面试问题 + 下一轮追问策略',
+    errors:'无'
+  },
+  // model calls (demo)
+  models:[
+    {m:'GPT-4o-mini',role:'面试问题生成',calls:3602,cost:'$42.1',lat:'1.8s'},
+    {m:'GPT-4o',role:'评估报告汇总',calls:1180,cost:'$61.3',lat:'2.4s'},
+    {m:'Embedding',role:'简历/岗位向量',calls:2464,cost:'$3.2',lat:'0.3s'},
+    {m:'Claude (备选)',role:'冲突仲裁',calls:420,cost:'$18.9',lat:'2.1s'}
+  ],
+  system:[
+    {k:'服务状态',v:'运行中',ok:true},
+    {k:'API 可用率',v:'99.7%',ok:true},
+    {k:'平均时延',v:'1.9s',ok:true},
+    {k:'待处理队列',v:'12',ok:true},
+    {k:'错误率(24h)',v:'0.3%',ok:true},
+    {k:'存储使用',v:'41%',ok:true}
+  ],
+  quality:[
+    {k:'评分一致性(跨面试官)',v:'0.86',note:'Cohen κ'},
+    {k:'冲突仲裁触发率',v:'7.2%',note:'>15 分差异'},
+    {k:'低分申诉率',v:'2.1%',note:'用户反馈'},
+    {k:'追问命中率',v:'83%',note:'用户认为相关'}
+  ]
+};
+
+/* =================== CHART SERIES =================== */
+// MOCK DATA FOR PROTOTYPE
+// Every series below is demo data drawn for the high-fidelity prototype.
+// No live backend / analytics pipeline is connected.
+DB.charts = {
+  /* ---------- 用户端 ---------- */
+  scoreTrend:{labels:['08-12','08-20','09-01','09-12','09-29'],vals:[69,72,71,76,78]},
+  resumeSections:[
+    {label:'教育背景',val:100},{label:'项目经历',val:92},{label:'技能标签',val:88},
+    {label:'实习经历',val:80},{label:'AI 能力',val:76}
+  ],
+  skillDist:[['产品能力',34],['数据能力',24],['AI 能力',22],['沟通协作',20]],
+  jdKwWeight:{                       // 关键词权重（示意）
+    'AI 产品经理':[38,32,28,24,20,16],
+    '产品经理':[36,31,27,22,18,14],
+    '数据分析师':[40,33,26,21,17,13],
+    'AI 运营':[34,30,25,20,16,12]
+  },
+  jdKwWeightFallback:[34,29,24,20,16,12],
+  targetFit:[
+    {k:'产品思维',you:82,req:88},{k:'数据分析',you:74,req:80},
+    {k:'AI 理解',you:79,req:85},{k:'沟通表达',you:86,req:82},
+    {k:'业务洞察',you:71,req:78}
+  ],
+  diffMeta:[
+    {k:'校招',q:6,fu:30,depth:50},
+    {k:'普通社招',q:8,fu:45,depth:70},
+    {k:'大厂',q:10,fu:60,depth:85},
+    {k:'BAT',q:12,fu:78,depth:95},
+    {k:'Leader',q:9,fu:65,depth:90}
+  ],
+  agentScores:[
+    {n:'HR · Sarah',v:84},{n:'Business · Mike',v:74},
+    {n:'Professional · 刘博士',v:78},{n:'Leader · Emma',v:71},
+    {n:'Chief · David',v:80}
+  ],
+  agentLatency:[
+    {n:'HR',v:1.6},{n:'Business',v:1.9},
+    {n:'Professional',v:3.4},{n:'Leader',v:2.0},{n:'Chief',v:2.2}
+  ],
+  prevDims:{comm:76,biz:70,tech:72,leader:68,strategy:74,culture:80},
+  historySeries:{
+    labels:['09-12','09-20','09-29'],
+    items:[
+      {name:'综合得分',vals:[69,72,78],color:'#18181B'},
+      {name:'数据分析',vals:[62,68,74],color:'#C8F36A'},
+      {name:'结构化表达',vals:[70,73,80],color:'#6B8CAE'}
+    ]
+  },
+  activity:[3,5,4,7,6,8,7,9],
+  jdHit:[92,86,78,71,64,58],        // 简历对 JD 关键词的命中率（示意）
+  livePerf:[62,68,71,75,78],        // 本轮面试实时表现（示意）
+  offerProb:[62,68,74,79,83],       // 录用概率随面试推进（示意）
+
+  /* ---------- 管理员端 ---------- */
+  userTrend:{labels:['W1','W2','W3','W4','W5','W6','W7','W8'],vals:[820,910,985,1042,1108,1164,1226,1284]},
+  userStatus:[['活跃',986],['沉默',298]],
+  scoreDist:[['<60',6],['60-69',18],['70-79',38],['80-89',28],['90+',10]],
+  doneTrend:{labels:['W1','W5','W9','W13','W17','W21','W25','W29'],vals:[84,86,85,88,90,89,91,93]},
+  agentTrend:{labels:['10:00','10:05','10:10','10:15','10:20','10:25'],vals:[2.1,2.4,3.1,2.8,2.6,2.9]},
+  uptimeTrend:{labels:['W1','W2','W3','W4','W5','W6','W7','W8'],vals:[99.5,99.6,99.4,99.8,99.7,99.9,99.6,99.7]},
+  qualityTrend:{labels:['W1','W2','W3','W4','W5','W6','W7','W8'],vals:[0.78,0.80,0.81,0.79,0.83,0.85,0.84,0.86]},
+  modelCost:[{label:'GPT-4o',v:61.3},{label:'4o-mini',v:42.1},{label:'Claude',v:18.9},{label:'Embedding',v:3.2}],
+  queueTrend:[8,11,9,14,12,10,13,12],
+  tokenDist:[{label:'Interview',v:1284},{label:'Follow-up',v:640},{label:'Professional',v:690},{label:'Business',v:510},{label:'Leader',v:480}]
+};
+</script>
+<script>/* ============================================================
+   AI Career Copilot · High-Fidelity Interactive Prototype
+   Classic-script SPA (opens via file://). No build step.
+   ============================================================ */
+(function(){
+'use strict';
+
+/* ---------------- helpers ---------------- */
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function go(h){location.hash=h;}
+function tag(t,cls){return `<span class="tag ${cls||''}">${esc(t)}</span>`;}
+function avatar(ch,cls){return `<div class="avatar ${cls||''}">${ch}</div>`;}
+function meter(lab,val,color){return `<div class="meter"><span class="lab">${lab}</span><span class="track"><i style="width:${val}%;background:${color||'#18181B'}"></i></span><span class="val">${val}</span></div>`;}
+
+/* SVG 文本宽度估算：Ardot 导入会丢失 text-anchor/dominant-baseline，
+   故所有图表文字一律使用默认 start 锚点 + 计算偏移实现居中/右对齐 */
+function estW(s,fs){s=String(s);var w=0;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);w+=((c>=0x2E80&&c<=0x9FFF)||(c>=0xFF00&&c<=0xFFEF))?fs:fs*0.56;}return w;}
+/* 居中/右对齐：返回 start 锚点 x；超宽自动缩字号（下限 8px） */
+function fitFs(s,fs,maxW){var w=estW(s,fs);return w>maxW?Math.max(8,fs*maxW/w):fs;}
+function txC(cx,s,fs,maxW){fs=fitFs(s,fs,maxW||1e4);return [ (cx-estW(s,fs)/2).toFixed(1), fs ];}
+function txR(rx,s,fs){return (rx-estW(s,fs)).toFixed(1);}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.innerHTML=`<div class="toast-card"><span class="ic">✓</span>${esc(msg)}</div>`;
+  t.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show');},1900);
+}
+function modal(title,body,ok){
+  var root=document.getElementById('modal-root');
+  root.innerHTML=`<div class="modal-mask" onclick="if(event.target===this)closeModal()"><div class="modal"><h3>${esc(title)}</h3><p>${body}</p><div class="flex gap-12 right"><button class="btn btn-primary" onclick="closeModal()">${ok||'好的'}</button></div></div></div>`;
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+
+/* ---------------- charts ---------------- */
+function radar(scores){
+  var dims=['comm','biz','tech','leader','strategy','culture'],N=dims.length,cx=140,cy=128,R=92;
+  var ang=function(i){return -Math.PI/2+i*2*Math.PI/N;};
+  var pt=function(r,i){return [cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))];};
+  var grid='';[0.25,0.5,0.75,1].forEach(function(f){
+    var p=dims.map(function(_,i){return pt(R*f,i).map(function(n){return n.toFixed(1);}).join(',');}).join(' ');
+    grid+=`<polygon points="${p}" fill="none" stroke="#ECECE8" stroke-width="1"/>`;
+  });
+  var axes='',labels='';
+  dims.forEach(function(d,i){
+    var q=pt(R,i);axes+=`<line x1="${cx}" y1="${cy}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="#ECECE8"/>`;
+    var t=DB.DIM[d];var l=pt(R+22,i);var tc=txC(l[0],t,10.5,72);
+    labels+=`<text x="${tc[0]}" y="${(l[1]+3.5).toFixed(1)}" font-size="${tc[1].toFixed(1)}" fill="#777">${t}</text>`;
+  });
+  var dp=dims.map(function(d,i){return pt(R*scores[d]/100,i).map(function(n){return n.toFixed(1);}).join(',');}).join(' ');
+  var dots=dims.map(function(d,i){var q=pt(R*scores[d]/100,i);return `<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3" fill="#C8F36A"/>`;}).join('');
+  return `<svg viewBox="0 0 280 256" width="100%">${grid}${axes}<polygon points="${dp}" fill="rgba(200,243,106,.18)" stroke="#C8F36A" stroke-width="2"/>${dots}${labels}</svg>`;
+}
+function donut(segs){
+  var total=segs.reduce(function(a,s){return a+s.v;},0),cx=90,cy=90,r=62,sw=22,acc=0,paths='';
+  segs.forEach(function(s){
+    var f=s.v/total,a0=acc*2*Math.PI-Math.PI/2,a1=(acc+f)*2*Math.PI-Math.PI/2,lg=f>0.5?1:0;
+    var x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    paths+=`<path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${lg} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}" fill="none" stroke="${s.color}" stroke-width="${sw}" stroke-linecap="butt"/>`;
+    acc+=f;
+  });
+  return `<span class="ring-wrap"><svg viewBox="0 0 180 180" width="150" height="150"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#F0F0EC" stroke-width="${sw}"/>${paths}</svg><span class="ring-center"><b style="font-size:20px">${total}</b><i>份</i></span></span>`;
+}
+function hbars(rows){
+  return rows.map(function(r){return `<div class="meter"><span class="lab">${r.label}</span><span class="track"><i style="width:${r.val}%;background:${r.color||'#18181B'}"></i></span><span class="val">${r.val}</span></div>`;}).join('');
+}
+function lineChart(vals){
+  var W=580,H=160,pad=12,max=Math.max.apply(null,vals)*1.12,n=vals.length;
+  var xs=function(i){return pad+i*(W-2*pad)/(n-1);};
+  var ys=function(v){return H-pad-v/(max)*(H-2*pad);};
+  var pts=vals.map(function(v,i){return xs(i).toFixed(1)+','+ys(v).toFixed(1);}).join(' ');
+  var area=pad+','+(H-pad)+' '+pts+' '+(W-pad)+','+(H-pad);
+  var grid='';[0.25,0.5,0.75].forEach(function(f){var y=pad+f*(H-2*pad);grid+=`<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W-pad}" y2="${y.toFixed(1)}" stroke="#EFEFEA"/>`;});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%">${grid}<polygon points="${area}" fill="rgba(200,243,106,.10)"/><polyline points="${pts}" fill="none" stroke="#C8F36A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${xs(n-1).toFixed(1)}" cy="${ys(vals[n-1]).toFixed(1)}" r="4" fill="#C8F36A"/></svg>`;
+}
+var PAL=['#C8F36A','#7C9A78','#6B8CAE','#9A7BB5','#C9A227','#52525B'];
+
+/* ---------- 统一图表工具库（每个功能模块共用） ---------- */
+var MOCK='<span class="mock-tag">MOCK</span> 原型演示数据，非真实统计';
+function chartCard(title,inner,sub,note){
+  return `<div class="card"><div class="card-title"><span class="dot"></span>${title}</div>`+
+    (sub?`<div class="card-sub">${sub}</div>`:'')+
+    `<div class="mt-12">${inner}</div>`+
+    (note?`<div class="chart-note">${note}</div>`:'')+`</div>`;
+}
+function legend(items){
+  return `<div class="chart-legend">${items.map(function(i){return `<div class="li"><span class="sw" style="background:${i.color}"></span>${esc(i.name)}</div>`;}).join('')}</div>`;
+}
+/* 垂直柱状图 */
+function vBars(rows,opt){
+  opt=opt||{};
+  var H=opt.h||184,padT=22,padB=30,padL=30,padR=22,n=rows.length;
+  var W=opt.w||Math.max(320,padL+padR+n*(opt.step||66)),plotH=H-padT-padB,step=(W-padL-padR)/n;
+  var max=opt.max||Math.max.apply(null,rows.map(function(r){return r.val;}))*1.16;
+  var bw=Math.min(34,step*0.56),g='';
+  [0,0.5,1].forEach(function(f){
+    var y=padT+plotH*(1-f);
+    g+=`<line class="grid-line" x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}"/>`+
+       `<text class="axis-lab" x="4" y="${(y+3.5).toFixed(1)}">${Math.round(max*f)}</text>`;
+  });
+  var bars=rows.map(function(r,i){
+    var x=padL+step*i+(step-bw)/2,h=plotH*(r.val/max),y=padT+plotH-h,c=r.color||'#18181B';
+    var vt=String(r.val)+(opt.unit||''),tc=txC(x+bw/2,vt,10.5,step);
+    return `<rect class="anim-y" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${c}"/>`+
+      `<text class="bar-val" x="${tc[0]}" y="${(y-6).toFixed(1)}" font-size="${tc[1].toFixed(1)}">${vt}</text>`+
+      (function(){var tl=txC(x+bw/2,r.label,10.5,step-2);return `<text class="bar-lab" x="${tl[0]}" y="${(H-padB+16).toFixed(1)}" font-size="${tl[1].toFixed(1)}">${esc(r.label)}</text>`;})();
+  }).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}${bars}</svg>`;
+}
+/* 水平条形图（标签 + 数值） */
+function hBarsRich(rows,opt){
+  opt=opt||{};
+  var rowH=28,W=opt.w||480,labW=opt.labW||108,valW=46,padX=4;
+  var H=rows.length*rowH+10;
+  var asPct=(opt.unit==='%');
+  var max=opt.max||(asPct?100:Math.max.apply(null,rows.map(function(r){return r.val;}))*1.05);
+  var tx=labW+8,tw=W-labW-8-valW-padX;
+  var out=rows.map(function(r,i){
+    var y=i*rowH+9,w=tw*(r.val/max),c=r.color||'#18181B';
+    var lt=esc(r.label),lf=fitFs(lt,10.5,labW-12),vt=String(r.val)+(opt.unit||'');
+    return `<text class="bar-lab" x="6" y="${y+14}" font-size="${lf.toFixed(1)}">${lt}</text>`+
+      `<rect x="${tx}" y="${y+3}" width="${tw}" height="12" rx="6" fill="#EEEEEA"/>`+
+      `<rect class="anim-x" x="${tx}" y="${y+3}" width="${Math.max(4,w).toFixed(1)}" height="12" rx="6" fill="${c}"/>`+
+      `<text class="bar-val" x="${txR(W-padX,vt,10.5)}" y="${y+14}">${vt}</text>`;
+  }).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${out}</svg>`;
+}
+/* 分组柱状图（两组对比） */
+function gBars(rows,aLab,bLab,opt){
+  opt=opt||{};
+  var H=opt.h||200,padT=28,padB=30,padL=32,n=rows.length;
+  var W=Math.max(280,n*76),step=(W-padL-12)/n,plotH=H-padT-padB;
+  var max=opt.max||Math.max.apply(null,rows.map(function(r){return Math.max(r.a,r.b);}))*1.2;
+  var bw=Math.min(15,step*0.28),g='';
+  [0,0.5,1].forEach(function(f){
+    var y=padT+plotH*(1-f);
+    g+=`<line class="grid-line" x1="${padL}" y1="${y.toFixed(1)}" x2="${W-10}" y2="${y.toFixed(1)}"/>`+
+       `<text class="axis-lab" x="4" y="${(y+3).toFixed(1)}">${Math.round(max*f)}</text>`;
+  });
+  var bars=rows.map(function(r,i){
+    var cx=padL+step*i+step/2;
+    var ha=plotH*(r.a/max),hb=plotH*(r.b/max);
+    var tl=txC(cx,r.label,10.5,step-2);
+    return `<rect class="anim-y" x="${(cx-bw-2).toFixed(1)}" y="${(padT+plotH-ha).toFixed(1)}" width="${bw}" height="${ha.toFixed(1)}" rx="4" fill="#C8F36A"/>`+
+      `<rect class="anim-y" x="${(cx+2).toFixed(1)}" y="${(padT+plotH-hb).toFixed(1)}" width="${bw}" height="${hb.toFixed(1)}" rx="4" fill="#18181B"/>`+
+      `<text class="bar-lab" x="${tl[0]}" y="${(H-padB+16).toFixed(1)}" font-size="${tl[1].toFixed(1)}">${esc(r.label)}</text>`;
+  }).join('');
+  var lg=`<rect x="${padL}" y="9" width="9" height="9" rx="2" fill="#C8F36A"/><text class="axis-lab" x="${padL+14}" y="17">${esc(aLab)}</text>`+
+         `<rect x="${padL+72}" y="9" width="9" height="9" rx="2" fill="#18181B"/><text class="axis-lab" x="${padL+86}" y="17">${esc(bLab)}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}${bars}${lg}</svg>`;
+}
+/* 环形指标 */
+function ring(pct,opt){
+  opt=opt||{};
+  var size=opt.size||116,sw=opt.sw||12,r=(size-sw)/2,cx=size/2,cy=size/2,C=2*Math.PI*r;
+  var off=C*(1-Math.min(100,pct)/100),c=opt.color||'#C8F36A';
+  return `<span class="ring-wrap"><svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">`+
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#F0F0EC" stroke-width="${sw}"/>`+
+    `<circle ${opt.id?'id="'+opt.id+'" ':''}cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>`+
+    `</svg><span class="ring-center"><b style="font-size:${(size*0.23).toFixed(0)}px">${pct}${opt.unit||'%'}</b>`+
+    (opt.cap?`<i>${esc(opt.cap)}</i>`:'')+`</span></span>`;
+}
+/* 迷你趋势线 */
+function spark(vals,opt){
+  opt=opt||{};
+  var W=opt.w||130,H=opt.h||36,pad=4,n=vals.length;
+  var max=Math.max.apply(null,vals),min=Math.min.apply(null,vals),rng=(max-min)||1;
+  var pts=vals.map(function(v,i){return [pad+i*(W-2*pad)/(n-1),H-pad-((v-min)/rng)*(H-2*pad)];});
+  var d=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ');
+  var c=opt.color||'#C8F36A';
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`+
+    `<path d="${d} L ${pts[n-1][0].toFixed(1)} ${H-pad} L ${pts[0][0].toFixed(1)} ${H-pad} Z" fill="${c}" opacity=".10"/>`+
+    `<path d="${d}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/>`+
+    `<circle cx="${pts[n-1][0].toFixed(1)}" cy="${pts[n-1][1].toFixed(1)}" r="2.6" fill="${c}"/></svg>`;
+}
+/* 多序列趋势图 */
+function trendChart(series,opt){
+  opt=opt||{};
+  var W=opt.w||560,H=opt.h||210,padL=36,padR=14,padT=16,padB=28,n=series.labels.length;
+  var all=[];series.items.forEach(function(s){all=all.concat(s.vals);});
+  var mx=Math.max.apply(null,all),mn=opt.zero?0:Math.min.apply(null,all)*0.88;
+  var max=mx*1.08,plotH=H-padT-padB,plotW=W-padL-padR;
+  var X=function(i){return padL+plotW*(n<2?0.5:i/(n-1));};
+  var Y=function(v){return padT+plotH*(1-(v-mn)/((max-mn)||1));};
+  var g='';
+  [0,0.5,1].forEach(function(f){
+    var y=padT+plotH*f,v=mn+(max-mn)*(1-f);
+    g+=`<line class="grid-line" x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}"/>`+
+       `<text class="axis-lab" x="2" y="${(y+3).toFixed(1)}">${(Math.round(v*10)/10)}</text>`;
+  });
+  var paths=series.items.map(function(s){
+    var d=s.vals.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');
+    var area=(series.items.length===1)?`<path d="${d} L ${X(n-1).toFixed(1)} ${(padT+plotH).toFixed(1)} L ${X(0).toFixed(1)} ${(padT+plotH).toFixed(1)} Z" fill="${s.color}" opacity=".08"/>`:'';
+    var dots=s.vals.map(function(v,i){return `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="${s.color}"/>`;}).join('');
+    return area+`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round"/>${dots}`;
+  }).join('');
+  var labs=series.labels.map(function(l,i){var tl=txC(X(i),l,10,plotW/Math.max(1,n-1)||60);return `<text class="axis-lab" x="${tl[0]}" y="${(H-padB+16).toFixed(1)}" font-size="${tl[1].toFixed(1)}">${esc(l)}</text>`;}).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}${paths}${labs}</svg>`;
+}
+/* 通用雷达图（任意维度数组） */
+function radarFrom(rows,opt){
+  opt=opt||{};
+  var N=rows.length,cx=150,cy=142,R=opt.R||100;
+  var ang=function(i){return -Math.PI/2+i*2*Math.PI/N;};
+  var pt=function(r,i){return [cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))];};
+  var g='';
+  [0.25,0.5,0.75,1].forEach(function(f){
+    g+=`<polygon points="${rows.map(function(_,i){return pt(R*f,i).map(function(n){return n.toFixed(1);}).join(',');}).join(' ')}" fill="none" stroke="#ECECE8"/>`;
+  });
+  var ax='',lb='';
+  rows.forEach(function(r,i){
+    var q=pt(R,i);
+    ax+=`<line x1="${cx}" y1="${cy}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="#ECECE8"/>`;
+    var l=pt(R+24,i);var tl=txC(l[0],r.label,10,80);
+    lb+=`<text class="axis-lab" x="${tl[0]}" y="${(l[1]+3.5).toFixed(1)}" font-size="${tl[1].toFixed(1)}">${esc(r.label)}</text>`;
+  });
+  var dp=rows.map(function(r,i){return pt(R*r.val/100,i).map(function(n){return n.toFixed(1);}).join(',');}).join(' ');
+  var dots=rows.map(function(r,i){var q=pt(R*r.val/100,i);return `<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3" fill="#C8F36A"/>`;}).join('');
+  return `<svg class="chart" viewBox="0 0 300 285" preserveAspectRatio="xMidYMid meet">${g}${ax}<polygon points="${dp}" fill="rgba(200,243,106,.18)" stroke="#C8F36A" stroke-width="2"/>${dots}${lb}</svg>`;
+}
+/* 环形动画（上传/加载场景） */
+function animateRing(id,pct){
+  var el=document.getElementById(id);if(!el)return;
+  var r=parseFloat(el.getAttribute('r')),C=2*Math.PI*r;
+  el.style.transition='stroke-dashoffset .9s cubic-bezier(.2,.7,.3,1)';
+  el.setAttribute('stroke-dasharray',C.toFixed(1));
+  el.setAttribute('stroke-dashoffset',(C*(1-Math.max(0,Math.min(100,pct))/100)).toFixed(1));
+  var t=el.parentNode.querySelector('text');if(t)t.textContent=Math.round(pct)+'%';
+}
+
+/* ---------------- layout ---------------- */
+/* 对齐 exe 主面板：单一侧边栏 6 项 + 13 Agents 状态 + 开始使用 */
+var NAV=[
+  {i:'🏠',t:'首页',h:'#/u/dashboard'},
+  {i:'📄',t:'简历解析',h:'#/u/upload'},
+  {i:'💬',t:'AI 面试',h:'#/u/difficulty'},
+  {i:'📊',t:'评分报告',h:'#/u/report',star:true},
+  {i:'🧩',t:'Agent 架构',h:'#/a/agents'},
+  {i:'📈',t:'数据看板',h:'#/a/dashboard'}
+];
+function sidebar(hash){
+  var cur='#/'+hash;
+  var isAdmin=/^a\//.test(hash);
+  var links=NAV.map(function(n){
+    var on=cur.indexOf(n.h)===0?'active':'';
+    var star=n.star?' <span class="nav-star">★</span>':'';
+    return `<a class="nav-link ${on}" href="${n.h}"><span class="ico">${n.i}</span>${n.t}${star}</a>`;
+  }).join('');
+  return `<aside class="sidebar">
+    <div class="brand"><div class="logo">🐱</div><div><div class="name">AI Career Copilot</div><div class="sub">${isAdmin?'后台 · 架构视角':'用户 · 求职视角'}</div></div></div>
+    <div class="nav-group">${links}</div>
+    <div class="sidebar-foot">
+      <div class="agents-active"><span class="pulse"></span>13 Agents Active</div>
+      <button class="btn btn-primary btn-block" onclick="go('#/u/upload')">开始使用 →</button>
+    </div>
+  </aside>`;
+}
+
+/* ---------- 简历解析 4 步向导（对齐 exe 面板） ---------- */
+var RESUME_WIZARD=[
+  {n:'①',t:'上传简历',sub:'PDF / 粘贴 / 示例'},
+  {n:'②',t:'解析 · 匹配',sub:'Resume Parser + Job Match'},
+  {n:'③',t:'JD · 建模',sub:'JD Agent + 能力树'},
+  {n:'④',t:'确认 · 权重',sub:'目标岗位 / 动态权重'}
+];
+function resumeWizard(active){
+  var html=RESUME_WIZARD.map(function(s,i){
+    var cls=i===active?'on':(i<active?'done':'');
+    var sep=i<RESUME_WIZARD.length-1?'<span class="wz-line"></span>':'';
+    return `<div class="wz-step ${cls}"><span class="wz-n">${s.n}</span><div class="wz-t">${s.t}</div><div class="wz-s">${s.sub}</div></div>${sep}`;
+  }).join('');
+  return `<div class="wizard">${html}</div>`;
+}
+
+/* ---------- 面试页 AGENT 状态（对齐 exe 侧栏） ---------- */
+var AGENT_STATE=[
+  {k:'Resume Parser',label:'Resume Parser Agent',st:'done'},
+  {k:'Interview',label:'Interview Agent',st:'run'},
+  {k:'Follow-up',label:'Follow-up Agent',st:'run'},
+  {k:'Score',label:'Score Agent',st:'wait'},
+  {k:'Summary',label:'Summary Agent',st:'wait'}
+];
+function setAgentDone(k){var a=AGENT_STATE.filter(function(x){return x.k===k;});a.forEach(function(x){x.st='done';});}
+function agentStateHtml(){
+  return AGENT_STATE.map(function(a){
+    var st=a.st==='done'?'✓ 完成':(a.st==='run'?'● 运行中':'○ 待命');
+    var tag=a.st==='done'?'tag-green':(a.st==='run'?'tag-blue':'tag-gray');
+    return `<div class="agent-row sm"><span class="status-dot ${a.st}"></span>
+      <div class="main"><div class="ttl" style="font-size:13px">${esc(a.label)}</div></div>
+      <span class="tag ${tag}" style="font-size:11px">${st}</span></div>`;
+  }).join('');
+}
+
+/* ============================================================
+   PAGE RENDERERS
+   ============================================================ */
+var PAGES={};
+
+/* ---------- U01 Dashboard ---------- */
+PAGES['u/dashboard']={title:'我的求职空间',crumb:'首页 · 工作台',render:function(){
+  var p=DB.profile;
+  return `<div class="page-head"><div class="eyebrow">MY CAREER SPACE</div><h2>准备好开始下一次面试了吗？</h2>
+    <p>你当前处于「求职 → 面试 → 成长」的循环中。先看看这一程的进度。</p></div>
+    <div class="flex gap-8 mt-16" style="flex-wrap:wrap">
+      <span class="tag tag-soft">📄 Resume Aware</span>
+      <span class="tag tag-soft">🧠 Multi Agent</span>
+      <span class="tag tag-soft">13 Agents 在线</span>
+    </div>
+    <div class="grid cols-4">
+      ${card('目标岗位',`<div class="stat"><div class="k">正在准备</div><div class="v" style="font-size:20px">${esc(p.target)}</div><div class="d">简历已完成</div></div>`)}
+      ${card('最近一次面试',`<div class="stat"><div class="v">${p.lastScore}<small> / 100</small></div><div class="d">较上次 +6</div></div>`)}
+      ${card('能力成长',`<div class="stat"><div class="v" style="color:var(--green)">+${p.growth}%</div><div class="d">近 30 天</div></div>`)}
+      ${card('简历状态',`<div class="stat"><div class="v" style="font-size:20px">✓ 已解析</div><div class="d">${esc(DB.resume.file)}</div></div>`)}
+    </div>
+    <div class="grid cols-3 mt-20">
+      ${chartCard('综合得分趋势',
+        trendChart({labels:DB.charts.scoreTrend.labels,items:[{name:'综合得分',vals:DB.charts.scoreTrend.vals,color:'#C8F36A'}]}),
+        '近 5 次面试 · 逐次提升', MOCK)}
+      ${chartCard('简历结构完整度',
+        `<div class="ring-row">${ring(88,{size:104,color:'#7C9A78',cap:'完整度'})}<div class="ring-meta">${hBarsRich(DB.charts.resumeSections,{w:236,labW:62,valW:36,unit:'%'})}</div></div>`,
+        'Resume Parser 对各模块的解析覆盖度', MOCK)}
+      ${chartCard('近 8 周活跃度',
+        vBars(DB.charts.activity.map(function(v,i){return {label:'W'+(i+1),val:v};}),{h:168}),
+        '每周完成的面试 / 练习次数', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>最近面试</div>
+        <div class="mt-12">${DB.history.map(function(h){return `<div class="row"><div class="avatar sm">📝</div><div class="main"><div class="ttl">${h.diff}难度 · ${h.score}分</div><div class="meta">${h.date} · 薄弱项：${h.weak}</div></div><span class="tag tag-green">${h.trend}</span></div>`;}).join('')}</div>
+        <div class="mt-16 flex gap-12"><button class="btn btn-primary" onclick="go('#/u/difficulty')">继续面试</button><button class="btn btn-secondary" onclick="go('#/u/report')">查看报告</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>下一步建议</div>
+        <div class="mt-12">
+          <div class="note-line mb-12">你的数据指标表达偏弱，建议先补「数据分析」能力再进入挑战难度。</div>
+          ${meter('简历解析',100)} ${meter('岗位匹配',92)} ${meter('能力模型',80)} ${meter('面试完成',68)}
+          <div class="mt-16"><button class="btn btn-pink btn-sm" onclick="go('#/u/growth')">查看成长计划 →</button></div>
+        </div>
+      </div>
+    </div>`;
+}};
+
+/* ---------- U02 Upload ---------- */
+PAGES['u/upload']={title:'上传你的简历',crumb:'首页 · 上传简历',render:function(){
+  return `<div class="page-head"><div class="eyebrow">STEP 1 / 简历录入</div><h2>先让我们认识你</h2>
+    <p>上传你的简历，我们会从你的经历中提取能力与优势，并为你匹配岗位。</p></div>
+    <div class="mt-8">${resumeWizard(0)}</div>
+    <div class="split">
+      <div>
+        <div class="upload-zone" id="uz" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');uploadResume()">
+          <div class="upload-ill">📄</div>
+          <h3>拖拽简历到此处</h3>
+          <p>支持 PDF / DOC / DOCX / TXT · 单文件 ≤ 10MB</p>
+          <div class="mt-16 flex gap-12">
+            <button class="btn btn-primary" onclick="uploadResume()">上传简历</button>
+            <button class="btn btn-ghost btn-sm" onclick="uploadResume()">使用示例简历</button>
+          </div>
+          <div class="muted small mt-12">🐱 小提示：识别过程不会离开你的设备原型</div>
+        </div>
+        <div class="card mt-16" id="filecard" style="display:none">
+          <div class="row" style="border:none"><div class="avatar">📄</div><div class="main"><div class="ttl" id="fname">${esc(DB.resume.file)}</div><div class="meta" id="fmeta">${DB.resume.size} · <span id="fstatus">解析中…</span></div></div><span class="tag tag-blue" id="ftag">处理中</span></div>
+          <div class="mt-16 ring-row">
+            ${ring(0,{id:'upRing',size:100,cap:'解析进度'})}
+            <div class="ring-meta" id="upStages">${hBarsRich(UP_STAGES,{w:250,labW:66,valW:36,unit:'%',max:100})}</div>
+          </div>
+          <div class="chart-note">${MOCK} · 各阶段进度为动画演示</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>为什么从这里开始</div>
+        <div class="mt-12 muted" style="line-height:1.8">简历是整个系统的起点：<br>• <b>Resume Parser Agent</b> 抽取教育与项目经历<br>• 自动生成能力画像，驱动岗位推荐<br>• 后续面试问题均来自你的真实经历<br><br>上传后无需手动填表，我们帮你理解。</div>
+        <div class="divider"></div>
+        <div class="section-note">🔒 原型演示 · 文件不会真实上传</div>
+      </div>
+    </div>`;
+}};
+var UP_STAGES=[{label:'文本抽取',val:0},{label:'结构识别',val:0},{label:'能力抽取',val:0},{label:'画像生成',val:0}];
+var UP_TARGET=[100,94,88,82];
+function drawUpStages(){document.getElementById('upStages').innerHTML=hBarsRich(UP_STAGES,{w:250,labW:66,valW:36,unit:'%',max:100});}
+function uploadResume(){
+  document.getElementById('filecard').style.display='block';
+  var st=document.getElementById('fstatus'),tg=document.getElementById('ftag');
+  st.textContent='解析中…';tg.textContent='处理中';tg.className='tag tag-blue';
+  UP_STAGES.forEach(function(s){s.val=0;});drawUpStages();animateRing('upRing',0);
+  var i=0;
+  (function step(){
+    if(i>=UP_STAGES.length){
+      st.textContent='已解析';tg.textContent='完成';tg.className='tag tag-green';
+      animateRing('upRing',100);
+      toast('简历解析完成，已生成能力画像');return;
+    }
+    UP_STAGES[i].val=UP_TARGET[i];drawUpStages();animateRing('upRing',(i+1)*25);
+    i++;setTimeout(step,330);
+  })();
+}
+
+/* ---------- U03 Resume ---------- */
+PAGES['u/resume']={title:'简历分析',crumb:'上传 · 解析结果',render:function(){
+  var r=DB.resume;
+  return `<div class="page-head"><div class="eyebrow">STEP 2 / 简历理解</div><h2>正在了解你的经历</h2>
+    <p>系统从简历中识别到以下能力与经历标签。</p></div>
+    <div class="mt-8">${resumeWizard(1)}</div>
+    <div class="split">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>简历预览</div>
+        <div class="mt-12">
+          <div class="row" style="border:none"><div class="avatar lg">🐱</div><div class="main"><div class="ttl">${esc(r.basic.name)}</div><div class="meta">${esc(r.basic.edu)} · ${r.basic.years}经验 · ${esc(r.basic.field)}</div></div></div>
+          <div class="kv"><span class="k">教育背景</span><span class="v">${esc(r.education[0].school)}</span></div>
+          <div class="kv"><span class="k">项目经历</span><span class="v">${r.projects.length} 个</span></div>
+          <div class="kv"><span class="k">实习经历</span><span class="v">${esc(r.interns[0].co)}</span></div>
+          <div class="kv"><span class="k">技能</span><span class="v">${r.skills.length} 项</span></div>
+          <div class="mt-12 flex wrap gap-8">${r.skills.map(function(s){return tag(s,'tag-soft');}).join('')}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>能力画像</div>
+        <div class="mt-12">${r.ability.map(function(a){var c=a.v>=80?'var(--green)':(a.v>=74?'var(--ink)':'var(--pink)');return meter(a.k,a.v,c);}).join('')}</div>
+        <div class="divider"></div>
+        <div class="section-note">🤖 AI 识别自简历原文（原型示意）</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/jobs')">查看岗位推荐 →</button></div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('简历模块完整度', hBarsRich(DB.charts.resumeSections,{unit:'%'}), 'Resume Parser 对各模块的识别置信度', MOCK)}
+      ${chartCard('能力结构分布', vBars(DB.charts.skillDist.map(function(x,i){return {label:x[0],val:x[1],color:PAL[i]};}),{unit:'%'}), '按简历技能标签聚类后的能力占比', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U04 Jobs ---------- */
+function shortJob(n){return n.replace('产品经理','PM').replace('工程师','').replace('开发','').replace('分析师','分析').slice(0,6);}
+PAGES['u/jobs']={title:'岗位推荐',crumb:'解析 · 岗位匹配',render:function(){
+  var jobs=DB.jobs;
+  var cards=jobs.map(function(j,i){
+    var c=j.score>=85?'var(--green)':(j.score>=75?'var(--ink)':'var(--ink-3)');
+    return `<div class="card hov" style="cursor:pointer" onclick="selectJob('${esc(j.name)}')">
+      <div class="between"><div class="ttl" style="font-size:15px;font-weight:700">${esc(j.name)}</div><div style="font-size:22px;font-weight:700;color:${c}">${j.score}<span style="font-size:12px;color:var(--ink-3)">%</span></div></div>
+      <div class="muted small mt-8">${esc(j.reason)}</div>
+      <div class="mt-12 flex wrap gap-8">${j.skills.map(function(s){return tag(s,'tag-soft');}).join('')}</div>
+      <div class="mt-12 small" style="color:var(--pink-ink)">⚠ 差距：${esc(j.gap)}</div>
+      <div class="mt-8 small muted">路径：${esc(j.path)}</div>
+    </div>`;
+  }).join('');
+  var bins=[{label:'≥90',val:0},{label:'85-89',val:0},{label:'80-84',val:0},{label:'75-79',val:0},{label:'<75',val:0}];
+  DB.jobs.forEach(function(j){
+    if(j.score>=90)bins[0].val++;else if(j.score>=85)bins[1].val++;
+    else if(j.score>=80)bins[2].val++;else if(j.score>=75)bins[3].val++;else bins[4].val++;
+  });
+  return `<div class="page-head"><div class="eyebrow">STEP 3 / 岗位匹配</div><h2>这些方向与你比较匹配</h2>
+    <p>Job Match Agent 基于「简历能力 + 岗位要求」向量匹配，推荐 11 个适配职位。选择目标岗位以继续。</p></div>
+    <div class="mt-8">${resumeWizard(1)}</div>
+    <div class="grid cols-2">
+      ${chartCard('Top 8 岗位匹配度',
+        vBars(DB.jobs.slice(0,8).map(function(j){
+          return {label:shortJob(j.name),val:j.score,color:j.score>=85?'#7C9A78':(j.score>=75?'#18181B':'#C8F36A')};
+        }),{unit:'%'}),
+        'Job Match Agent 输出的匹配得分（11 个岗位取前 8）', MOCK)}
+      ${chartCard('匹配度区间分布', vBars(bins,{unit:' 个',h:168}), '全部 11 个推荐岗位落在各分数段的个数', MOCK)}
+    </div>
+    <div class="grid cols-3 mt-20">${cards}</div>
+    <div class="mt-20 center"><button class="btn btn-primary" id="toJd" disabled onclick="go('#/u/jd')">选择目标岗位以继续 →</button></div>`;
+}};
+function selectJob(name){
+  DB.selectedJob=name;
+  document.querySelectorAll('.card.hov').forEach(function(c){c.style.outline='';});
+  event.currentTarget.style.outline='2px solid var(--pink)';
+  document.getElementById('toJd').disabled=false;
+  toast('已选择：'+name);
+}
+
+/* ---------- U05 JD ---------- */
+PAGES['u/jd']={title:'JD 分析',crumb:'岗位 · JD 解析',render:function(){
+  var job=DB.selectedJob||'AI 产品经理';var j=DB.jd[job]||DB.jdFallback;
+  var kwv=DB.charts.jdKwWeight[job]||DB.charts.jdKwWeightFallback;
+  return `<div class="page-head"><div class="eyebrow">STEP 4 / JD 理解</div><h2>把你真正想申请的岗位告诉我</h2>
+    <p>可粘贴目标 JD，或使用推荐岗位「${esc(job)}」的示例 JD。</p></div>
+    <div class="mt-8">${resumeWizard(2)}</div>
+    <div class="split">
+      <div class="card">
+        <label class="field">粘贴岗位 JD</label>
+        <textarea class="input" placeholder="在此粘贴招聘信息文本…">${esc(job)} · ${esc(j.resp[0])}；要求 ${j.hard.join('、')}。">${j.kw.map(function(k){return tag(k,'tag-pink');}).join('')}</textarea>
+        <div class="mt-12"><button class="btn btn-secondary btn-sm" onclick="toast('已分析 JD（原型）')">分析 JD</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>JD 解析结果 · ${esc(job)}</div>
+        <div class="mt-12 grid cols-2" style="gap:14px">
+          <div><div class="small muted mb-8">岗位职责</div>${j.resp.map(function(x){return `<div class="row" style="padding:6px 0;border:none">• ${esc(x)}</div>`;}).join('')}</div>
+          <div><div class="small muted mb-8">硬技能 / 软技能</div>${j.hard.map(function(x){return tag(x,'tag-blue');}).join(' ')}<br><br>${j.soft.map(function(x){return tag(x,'tag-soft');}).join(' ')}</div>
+        </div>
+        <div class="kv mt-8"><span class="k">工具要求</span><span class="v">${j.tools.join('、')}</span></div>
+        <div class="kv"><span class="k">经验要求</span><span class="v">${esc(j.edu)}</span></div>
+        <div class="kv"><span class="k">面试重点</span><span class="v">${esc(j.focus)}</span></div>
+        <div class="divider"></div>
+        <div class="section-note">🔑 关键词将连接到「能力模型」</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/competency')">确认 JD →</button></div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('JD 关键词权重',
+        vBars(j.kw.map(function(k,i){return {label:k,val:(kwv[i]!==undefined?kwv[i]:14)};})),
+        '权重 = JD 文本频次 × 岗位类型系数', MOCK)}
+      ${chartCard('简历关键词命中率',
+        hBarsRich(j.kw.map(function(k,i){return {label:k,val:(DB.charts.jdHit[i]!==undefined?DB.charts.jdHit[i]:58)};}),{unit:'%'}),
+        '你的简历对各关键词的覆盖程度', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U06 Competency ---------- */
+PAGES['u/competency']={title:'能力模型',crumb:'JD · 能力模型',render:function(){
+  var job=DB.selectedJob||'AI 产品经理';var tree=DB.competency[job]||DB.competencyFallback;
+  var keys=Object.keys(tree);
+  var left=keys.map(function(k,i){return `<div class="card card-pad-sm hov" style="cursor:pointer;margin-bottom:10px" onclick="showComp('${esc(k)}')"><div class="between"><b>${esc(k)}</b><span class="muted">${tree[k].length} 项 ▾</span></div></div>`;}).join('');
+  var detail=keys.map(function(k){return `<div id="comp-${CSSesc(k)}" style="display:${k===keys[0]?'block':'none'}"><div class="small muted mb-8">${esc(k)} · 二级能力</div>${tree[k].map(function(s){return `<span class="tag tag-soft" style="margin:0 6px 6px 0">${esc(s)}</span>`;}).join('')}</div>`;}).join('');
+  var w=DB.weights[DB.jobType(job)].weights;
+  var bars=Object.keys(w).map(function(d){return meter(DB.DIM[d],w[d],'var(--pink)');}).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 5 / 能力模型</div><h2>这场面试，会从哪些能力判断你？</h2>
+    <p>根据简历 + JD 建立岗位能力模型。「${esc(job)}」的重点能力已用权重标出。</p></div>
+    <div class="mt-8">${resumeWizard(2)}</div>
+    <div class="split">
+      <div>${left}<div class="mt-12">${detail}</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>本岗位重点能力（权重）</div><div class="mt-12">${bars}</div><div class="divider"></div><div class="section-note">权重随岗位类型动态变化</div><div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/target')">下一步 →</button></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('你的水平 vs 岗位要求',
+        gBars(DB.charts.targetFit.map(function(t){return {label:t.k,a:t.you,b:t.req};}),'你的水平','岗位要求'),
+        '差值即为本次面试的重点考察方向', MOCK)}
+      ${chartCard('当前能力雷达',
+        radarFrom(DB.resume.ability.map(function(a){return {label:a.k,val:a.v};})),
+        '来自 Resume Parser 的能力画像', MOCK)}
+    </div>`;
+}};
+function CSSesc(s){return s.replace(/[^a-zA-Z0-9_-]/g,'_');}
+function showComp(k){var tree=DB.competency[DB.selectedJob]||DB.competencyFallback;Object.keys(tree).forEach(function(x){var el=document.getElementById('comp-'+CSSesc(x));if(el)el.style.display=(x===k?'block':'none');});}
+
+/* ---------- U07 Target ---------- */
+PAGES['u/target']={title:'目标岗位确认',crumb:'能力模型 · 确认',render:function(){
+  var job=DB.selectedJob||'AI 产品经理';var j=DB.jd[job]||DB.jdFallback;
+  var _j=DB.jobs.filter(function(x){return x.name===job;})[0];var fit=_j?_j.score:88;
+  return `<div class="page-head"><div class="eyebrow">STEP 6 / 目标确认</div><h2>你准备挑战哪个岗位？</h2></div>
+    <div class="mt-8">${resumeWizard(3)}</div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="between"><div class="ttl" style="font-size:18px;font-weight:700">${esc(job)}</div>${tag('已选择','tag-green')}</div>
+        <div class="kv mt-8"><span class="k">JD 摘要</span><span class="v">${esc(j.focus)}</span></div>
+        <div class="kv"><span class="k">核心能力</span><span class="v">${j.hard.slice(0,3).join('、')}</span></div>
+        <div class="kv"><span class="k">当前匹配度</span><span class="v" style="color:var(--green)">${fit}%</span></div>
+      </div>
+      <div class="card"><div class="card-title"><span class="dot"></span>为什么需要确认</div><div class="muted mt-8" style="line-height:1.9">进入面试前，系统需要明确：<br>• 本次面试针对<b>哪个岗位</b><br>• 使用<b>哪套能力模型</b><br>• 采用<b>哪组评分权重</b><br><br>确认后不可在面试中切换。</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('岗位契合度拆解',
+        gBars(DB.charts.targetFit.map(function(t){return {label:t.k,a:t.you,b:t.req};}),'你的水平','岗位要求'),
+        '整体契合度 '+fit+'%', MOCK)}
+      ${chartCard('匹配度总览',
+        `<div class="ring-row">${ring(fit,{size:120,color:'#7C9A78',cap:'匹配度'})}<div class="ring-meta">${hBarsRich(DB.charts.targetFit.map(function(t){return {label:t.k,val:t.you};}),{w:250,labW:66,valW:36,unit:'%'})}</div></div>`,
+        '各能力项当前得分', MOCK)}
+    </div>
+    <div class="mt-20 flex gap-12"><button class="btn btn-primary" onclick="go('#/u/weight')">确认目标岗位 →</button><button class="btn btn-ghost" onclick="go('#/u/jobs')">重新选择</button></div>`;
+}};
+
+/* ---------- U08 Weight (dynamic) ---------- */
+PAGES['u/weight']={title:'动态评分权重',crumb:'目标岗位 · 评分权重',render:function(){
+  var job=DB.selectedJob||'AI 产品经理';var type=DB.jobType(job);
+  var opts=Object.keys(DB.weights).map(function(k){return `<button class="${k===type?'on':''}" onclick="switchWeight('${k}')">${DB.weights[k].icon} ${DB.weights[k].name}</button>`;}).join('');
+  var w=DB.weights[type].weights;
+  var bars=Object.keys(w).map(function(d){return meter(DB.DIM[d],w[d],'var(--pink)');}).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 7 / 动态权重</div><h2>本次面试评分将根据岗位类型动态调整</h2>
+    <p>评分标准不是固定的——它会随目标岗位的类型与 JD 要求自动变化。</p></div>
+    <div class="mt-8">${resumeWizard(3)}</div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>岗位类型</div>
+        <div class="mt-12"><div class="tabs" id="wtabs">${opts}</div></div>
+        <div class="mt-16" id="wbars">${bars}</div>
+        <div class="mt-16" id="wchart">${vBars(Object.keys(w).map(function(d){return {label:DB.DIM[d],val:w[d]};}),{unit:'%'})}</div>
+        <div class="chart-note">${MOCK} · 切换岗位类型可看到权重重排</div>
+        <div class="divider"></div>
+        <div class="note-line">评分权重会根据岗位类型与 JD 要求自动调整。当前岗位：<b>${esc(job)}</b></div>
+      </div>
+      <div class="card"><div class="card-title"><span class="dot"></span>产品逻辑</div>
+        <div class="muted mt-8" style="line-height:1.9">传统面试对所有候选人用同一把尺子。<br>这里：<br>• AI PM → 重「商业洞察 / 战略思维」<br>• 数据岗 → 重「技术深度 / 策略思维」<br>• 技术岗 → 重「技术深度」至 35%<br><br>让评分更贴合岗位真实要求。</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/difficulty')">继续：选择难度 →</button></div>
+      </div>
+    </div>`;
+}};
+function switchWeight(k){
+  var btns=document.querySelectorAll('#wtabs button');
+  btns.forEach(function(b){b.classList.remove('on');});
+  var btn=(window.event&&window.event.currentTarget)||btns[0];
+  if(btn)btn.classList.add('on');
+  var w=DB.weights[k].weights;
+  var html=Object.keys(w).map(function(d){return meter(DB.DIM[d],w[d],'var(--pink)');}).join('');
+  var box=document.getElementById('wbars');box.innerHTML=html;
+  box.querySelectorAll('.track>i').forEach(function(i){var w=i.style.width;i.style.width='0%';setTimeout(function(){i.style.width=w;},30);});
+  document.getElementById('wchart').innerHTML=vBars(Object.keys(w).map(function(d){return {label:DB.DIM[d],val:w[d]};}),{unit:'%'});
+  toast('已切换至：'+DB.weights[k].name);
+}
+
+/* ---------- U09 Difficulty ---------- */
+PAGES['u/difficulty']={title:'面试难度',crumb:'权重 · 难度',render:function(){
+  var opts=[
+    {k:'校招',name:'校招',d:'基础能力',x:'适合应届生',icon:'🌱'},
+    {k:'普通社招',name:'普通社招',d:'完整面试',x:'覆盖核心能力',icon:'💼',on:1},
+    {k:'大厂',name:'大厂',d:'高标准',x:'深度业务考察',icon:'🏢'},
+    {k:'BAT',name:'字节腾讯阿里美团',d:'顶级考核',x:'极限追问',icon:'🔥'},
+    {k:'Leader',name:'Leader',d:'管理岗',x:'潜力 / Owner 意识',icon:'👑'}
+  ];
+  var cards=opts.map(function(o){return `<div class="card hov" style="cursor:pointer;text-align:center;padding:22px" data-k="${o.k}" onclick="pickDiff(this)">
+    <div style="font-size:30px">${o.icon}</div>
+    <div class="ttl mt-8" style="font-weight:700;font-size:15px">${o.name}</div>
+    <div class="muted small mt-4">${o.d}</div>
+    <div class="small mt-8" style="color:var(--ink-2)">${o.x}</div></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 8 / 面试难度</div><h2>选择适合你的面试难度</h2>
+    <p>对齐真实考核梯度：从校招到字节 / 腾讯 / 阿里 / 美团专项，再到 Leader 管理岗。</p></div>
+    <div class="grid cols-5">${cards}</div>
+    <div class="grid cols-3 mt-20">
+      ${chartCard('题目数量',
+        vBars(DB.charts.diffMeta.map(function(d){return {label:d.k,val:d.q};}),{unit:' 题',h:170}),
+        '本场面试的问题总数', MOCK)}
+      ${chartCard('追问触发率',
+        vBars(DB.charts.diffMeta.map(function(d){return {label:d.k,val:d.fu};}),{unit:'%',h:170}),
+        'Follow-up Agent 触发追问的比例', MOCK)}
+      ${chartCard('项目挖掘深度',
+        vBars(DB.charts.diffMeta.map(function(d){return {label:d.k,val:d.depth};}),{h:170}),
+        '对简历项目的追问层数（指数化）', MOCK)}
+    </div>
+    <div class="mt-20 center"><button class="btn btn-primary" id="startIv" disabled onclick="go('#/u/interview')">开始面试 →</button></div>`;
+}};
+function pickDiff(el){
+  document.querySelectorAll('[data-k]').forEach(function(c){c.style.outline='';});
+  el.style.outline='2px solid var(--pink)';
+  document.getElementById('startIv').disabled=false;
+  DB.diff=el.getAttribute('data-k');toast('难度：'+DB.diff);
+}
+
+/* ---------- U10 Interview ---------- */
+PAGES['u/interview']={title:'AI 面试',crumb:'难度 · 面试中',render:function(){
+  var steps=['简历了解','项目经历','岗位能力','情景问题','综合追问'];
+  var stepHtml=steps.map(function(s,i){return `<div class="flow-step ${i===0?'on':''}" data-i="${i}"><span class="badge-step">${i+1}</span>${s}</div>`;}).join('');
+  var q=DB.questions[0];
+  return `<div class="page-head"><div class="eyebrow">STEP 9 / 在线面试</div><h2>正式 AI 面试</h2>
+    <p>像真实的线上面试系统，而不是聊天机器人。</p></div>
+    <div class="grid" style="grid-template-columns:200px 1fr 220px;gap:20px;align-items:start">
+      <div class="card card-pad-sm"><div class="card-title"><span class="dot"></span>面试进度</div><div class="mt-12" id="steps">${stepHtml}</div>
+        <div class="divider"></div><div class="small muted">Round <b id="round">1</b> / 5</div></div>
+      <div class="card">
+        <div class="between mb-12"><div class="flex items-center gap-12"><div class="avatar blue">🧑‍💼</div><div><div class="ttl" style="font-weight:700">面试官 · Mike</div><div class="meta small">业务经理</div></div></div><span class="tag tag-gray">录制中</span></div>
+        <div class="chat" id="chat"><div class="bubble q"><span class="who">面试官</span>${esc(q.q)}</div></div>
+        <div class="mt-12 flex gap-8"><input class="input" id="ans" placeholder="输入你的回答…"/><button class="btn btn-primary" onclick="submitAns()">发送</button></div>
+      </div>
+      <div class="card card-pad-sm"><div class="card-title"><span class="dot"></span>AGENT 状态</div>
+        <div class="mt-12" id="agentState">${agentStateHtml()}</div></div>
+      <div class="card card-pad-sm mt-16"><div class="card-title"><span class="dot"></span>实时观察</div>
+        <div class="mt-12">${LIVE.map(function(x){return meter(x.t,x.v,'var(--ink-3)');}).join('')}</div>
+        <div class="divider"></div>
+        <div class="small muted mb-8">本轮表现趋势</div>
+        <div>${spark(DB.charts.livePerf,{w:186,h:44})}</div>
+        <div class="ring-row mt-12">${ring(20,{id:'ivRing',size:78,sw:9,cap:'完成度'})}<div class="ring-meta small muted">已完成 <b id="ivDone">1</b> / 5 轮<br>预计剩余 6 分钟</div></div>
+        <div class="divider"></div><div class="note-line" style="font-size:11px">仅作为过程参考，不代表最终评分</div></div>
+    </div>`;
+}};
+var LIVE=[{t:'逻辑表达',v:78},{t:'项目深度',v:72},{t:'岗位匹配',v:81},{t:'沟通能力',v:85}];
+var ivIdx=0;
+function submitAns(){
+  var inp=document.getElementById('ans');var v=inp.value.trim();if(!v){toast('请先输入回答');return;}
+  var chat=document.getElementById('chat');
+  chat.innerHTML+=`<div class="bubble a"><span class="who">你</span>${esc(v)}</div>`;
+  inp.value='';
+  var q=DB.questions[ivIdx];
+  var iv=DB.interviewers.find(function(x){return x.id===q.iv;});
+  setTimeout(function(){
+    var fu='为什么问这个？ '+['项目经历','岗位要求','当前回答'].join(' + ')+' → 触发追问';
+    chat.innerHTML+=`<div class="bubble q"><span class="who">${iv.name} · 追问</span>${esc('能否具体讲讲你当时是如何确定核心需求的？')}</div><div class="small muted mt-8" style="margin-left:4px">${fu}</div>`;
+    chat.scrollTop=chat.scrollHeight;
+    ivIdx++;
+    if(ivIdx<DB.questions.length){
+      document.querySelectorAll('.flow-step').forEach(function(s){s.classList.remove('on');});
+      var st=document.querySelector('.flow-step[data-i="'+ivIdx+'"]');if(st)st.classList.add('on');
+      document.getElementById('round').textContent=ivIdx+1;
+      var dn=document.getElementById('ivDone');if(dn)dn.textContent=Math.min(5,ivIdx+1);
+      animateRing('ivRing',Math.min(100,(ivIdx+1)/5*100));
+      chat.innerHTML+=`<div class="bubble q mt-8"><span class="who">面试官</span>${esc(DB.questions[ivIdx].q)}</div>`;
+    } else {
+      chat.innerHTML+=`<div class="bubble q mt-8"><span class="who">系统</span>面试已完成，正在进入综合评估…</div>`;
+      animateRing('ivRing',100);var dn2=document.getElementById('ivDone');if(dn2)dn2.textContent=5;
+      setAgentDone('Score');setAgentDone('Summary');setAgentDone('Interview');setAgentDone('Follow-up');
+      var ags=document.getElementById('agentState');if(ags)ags.innerHTML=agentStateHtml();
+      setTimeout(function(){go('#/u/multiagent');},900);
+    }
+    chat.scrollTop=chat.scrollHeight;
+  },500);
+}
+
+/* ---------- U10b Follow-up（动态追问，对齐低保真帧11） ---------- */
+PAGES['u/followup']={title:'动态追问',crumb:'面试 · 追问',render:function(){
+  return `<div class="page-head"><div class="eyebrow">STEP 9b / 动态追问</div><h2>AI 动态追问</h2>
+    <p>追问不是随机的，而是基于「项目经历 + 岗位要求 + 当前回答」的共同上下文触发，用于强化薄弱维度的证据采集。</p></div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card"><div class="card-title"><span class="dot"></span>面试对话</div>
+        <div class="chat mt-12">
+          <div class="bubble q"><span class="who">面试官 · Mike</span>请介绍一个你参与过的 AI 产品项目，以及你承担的工作。</div>
+          <div class="bubble a"><span class="who">你</span>我负责该项目的产品设计，从 0 到 1 搭建对话框架，上线后留存提升 18%。</div>
+          <div class="bubble q"><span class="who">Follow-up Agent · 追问</span>你刚才提到负责产品设计——当时是如何确定核心需求的？是否用数据验证过这个判断？</div>
+        </div>
+        <div class="mt-16 flex gap-8"><input class="input" placeholder="继续回答…"/><button class="btn btn-primary" onclick="toast('已记录回答')">发送</button></div>
+      </div>
+      <div class="card"><div class="card-title"><span class="dot"></span>为什么问这个问题？</div>
+        <div class="mt-12 muted" style="line-height:1.9">追问由三方上下文共同触发：<br>• <b>项目经历</b>：命中「0→1 产品设计」<br>• <b>岗位要求</b>：JD 强调数据驱动决策<br>• <b>当前回答</b>：给出结果但缺少「如何验证」</div>
+        <div class="divider"></div>
+        <div class="note-line">Context（Resume + JD + Answer）→ 触发追问，聚焦「数据分析」薄弱维度的证据采集。</div>
+        <div class="mt-16"><button class="btn btn-ghost" onclick="go('#/u/finish')">结束本轮面试 →</button></div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('追问触发来源占比', hBarsRich([{label:'项目经历',val:42},{label:'岗位要求',val:33},{label:'当前回答',val:25}],{unit:'%'}), '本轮追问的上下文来源构成', MOCK)}
+      ${chartCard('薄弱维度证据采集', vBars([{label:'数据分析',val:3},{label:'业务洞察',val:2},{label:'技术深度',val:1},{label:'沟通表达',val:1}],{unit:' 次'}), '追问聚焦的维度与命中次数', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U10c Finish（面试结束，对齐低保真帧13） ---------- */
+PAGES['u/finish']={title:'面试完成',crumb:'面试 · 完成',render:function(){
+  return `<div class="page-head"><div class="eyebrow">STEP 9c / 面试结束</div><h2>面试完成</h2>
+    <p>感谢你的参与，报告正在由 5 位虚拟面试官 + Chief Evaluation Agent 汇总生成。</p></div>
+    <div class="card center" style="padding:38px 20px">
+      <div style="font-size:52px">🐱</div>
+      <div style="font-size:22px;font-weight:700;margin-top:8px">面试完成</div>
+      <div class="muted mt-8">感谢你的参与，报告正在生成…</div>
+      <div class="tag tag-green mt-12">✓ 本次面试已完成</div>
+    </div>
+    <div class="grid cols-4 mt-20">
+      <div class="card center stat"><div class="k">完成问题数</div><div class="v">8</div></div>
+      <div class="card center stat"><div class="k">面试时长</div><div class="v">17<small>′</small></div></div>
+      <div class="card center stat"><div class="k">评价维度</div><div class="v">6</div></div>
+      <div class="card center stat"><div class="k">是否完成</div><div class="v" style="color:var(--green)">是</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('本轮实时表现', trendChart({labels:['R1','R2','R3','R4','R5'],items:[{name:'实时表现',vals:DB.charts.livePerf,color:'#C8F36A'}]}), '每完成一轮的实时表现评估', MOCK)}
+      ${chartCard('录用概率随轮次变化', vBars(DB.charts.offerProb.map(function(v,i){return {label:'R'+(i+1),val:v};}),{unit:'%'}), '每完成一轮后的概率更新', MOCK)}
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>下一步</div>
+      <div class="mt-8 muted" style="line-height:1.8">查看多维度评分报告，了解优势与待提升，并获取 30/60/90 天成长计划。</div>
+      <div class="mt-16 flex gap-12"><button class="btn btn-primary" onclick="go('#/u/multiagent')">查看多 Agent 评估 →</button><button class="btn btn-ghost" onclick="go('#/u/report')">直接看评分报告</button></div>
+    </div>`;
+}};
+
+/* ---------- U11 Multi-Agent ---------- */
+PAGES['u/multiagent']={title:'多 Agent 评估',crumb:'面试 · 评估',render:function(){
+  var rows=DB.interviewers.map(function(a,i){var st=i<4?'done':'run';var cls=i<4?'done':'run';
+    return `<div class="agent-row"><span class="status-dot ${cls}"></span>${avatar(a.initials[0], a.id==='hr'?'':a.id==='biz'?'blue':a.id==='pro'?'purple':a.id==='lead'?'green':'amber')}<div class="main"><div class="ttl">${esc(a.name)} · ${esc(a.role)}</div><div class="meta">${esc(a.focus)}</div></div><span class="tag ${i<4?'tag-green':'tag-blue'}">${i<4?'✓ completed':'● analyzing'}</span></div>`;
+  }).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 10 / 综合评估</div><h2>正在完成综合评估</h2>
+    <p>Multi-Interviewer Evaluation System · 5 位虚拟面试官：五位面试官独立打分，由 Chief Evaluation 汇总并仲裁冲突。</p></div>
+    <div class="grid cols-2">
+      <div class="card"><div class="card-title"><span class="dot"></span>面试官状态</div><div class="mt-12">${rows}</div>
+        <div class="mt-16"><button class="btn btn-primary" onclick="go('#/u/report')">查看评分报告 →</button></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>评估逻辑</div>
+        <div class="muted mt-8" style="line-height:1.9">• 每位面试官聚焦不同维度<br>• 独立打分，避免相互影响<br>• Chief 检测 &gt;15 分差异并仲裁<br>• 最终输出可解释评分报告</div>
+        <div class="divider"></div><div class="note-line">评估过程与真实多 Agent 架构一致（见管理员端 Agent Architecture）</div></div>
+    </div>
+    <div class="grid cols-3 mt-20">
+      ${chartCard('各面试官评分',
+        hBarsRich(DB.charts.agentScores.map(function(a){return {label:a.n,val:a.v};}),{labW:128}),
+        '五位面试官独立打分结果', MOCK)}
+      ${chartCard('各 Agent 耗时',
+        vBars(DB.charts.agentLatency.map(function(a){return {label:a.n,val:a.v};}),{unit:'s'}),
+        '单轮评估耗时（秒）', MOCK)}
+      ${chartCard('评分分歧度',
+        hBarsRich(DB.charts.agentScores.map(function(a){
+          return {label:a.n,val:Math.abs(a.v-80),color:a.v>=80?'#7C9A78':'#C8F36A'};
+        }),{labW:128,unit:' 分'}),
+        '与 Chief 基准（80）的偏离，>15 分触发仲裁', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U12 Report ---------- */
+PAGES['u/report']={title:'面试评分报告',crumb:'评估 · 报告',render:function(){
+  var r=DB.report;
+  var dims=Object.keys(r.dims).map(function(d){return `<div class="row" style="border:none;padding:6px 0"><span style="width:70px;display:inline-block" class="small">${DB.DIM[d]}</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden;display:inline-block"><i style="display:block;height:100%;width:${r.dims[d]}%;background:var(--ink)"></i></span><b style="width:34px;text-align:right;display:inline-block" class="small">${r.dims[d]}</b></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 11 / 评分报告</div><h2>面试评分报告</h2></div>
+    <div class="split">
+      <div class="card" style="text-align:center">
+        <div class="muted small">本次面试</div><div style="font-size:60px;font-weight:800;letter-spacing:-.03em;line-height:1">${r.overall}<span style="font-size:22px;color:var(--ink-3)">/100</span></div>
+        <div class="tag tag-green mt-8">${esc(r.band)}</div>
+        <div class="mt-12">${radar(r.dims)}</div>
+      </div>
+      <div>
+        <div class="card mb-16"><div class="card-title"><span class="dot"></span>能力维度</div><div class="mt-12">${dims}</div></div>
+        <div class="grid cols-2">
+          <div class="card"><div class="card-title" style="color:var(--green)">优势</div><div class="mt-8">${r.strengths.map(function(s){return `<div class="row" style="border:none;padding:5px 0">✓ ${esc(s)}</div>`;}).join('')}</div></div>
+          <div class="card"><div class="card-title" style="color:var(--pink-ink)">待提升</div><div class="mt-8">${r.weaknesses.map(function(s){return `<div class="row" style="border:none;padding:5px 0">○ ${esc(s)}</div>`;}).join('')}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid cols-2 mt-16">
+      ${chartCard('与上次面试对比',
+        gBars(Object.keys(r.dims).map(function(d){return {label:DB.DIM[d],a:DB.charts.prevDims[d],b:r.dims[d]};}),'上次','本次'),
+        '六维度逐项对比', MOCK)}
+      ${chartCard('历史得分趋势',
+        trendChart({labels:DB.charts.scoreTrend.labels,items:[{name:'综合得分',vals:DB.charts.scoreTrend.vals,color:'#18181B'}]}),
+        '近 5 次面试综合得分', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-16">
+      ${chartCard('录用概率预测',
+        `<div class="ring-row">${ring(83,{size:118,color:'#6B8CAE',cap:'综合预测'})}<div class="ring-meta"><div class="kv"><span class="k">岗位匹配</span><span class="v">92%</span></div><div class="kv"><span class="k">面试表现</span><span class="v">78 / 100</span></div><div class="kv"><span class="k">表达稳定度</span><span class="v">高</span></div></div></div>`,
+        '由 Chief Evaluation Agent 汇总推算', MOCK)}
+      ${chartCard('录用概率随轮次变化',
+        vBars(DB.charts.offerProb.map(function(v,i){return {label:'R'+(i+1),val:v};}),{unit:'%'}),
+        '每完成一轮后的概率更新', MOCK)}
+    </div>
+    <div class="mt-16 flex gap-12"><button class="btn btn-pink" onclick="go('#/u/growth')">查看能力短板 →</button><button class="btn btn-ghost" onclick="go('#/u/multiagent')">回看评估</button></div>`;
+}};
+
+/* ---------- U13 Growth ---------- */
+PAGES['u/growth']={title:'能力短板与提升',crumb:'报告 · 成长',render:function(){
+  var cards=DB.growth.map(function(g){return `<div class="card"><div class="between"><b style="font-size:15px">${esc(g.k)}</b><span class="tag tag-amber">差距 ${g.gap}</span></div>
+    <div class="mt-8 flex items-center gap-12"><span class="small muted">当前 ${g.cur}</span><span class="track" style="flex:1;height:7px;background:var(--line-2);border-radius:9px;overflow:hidden"><i style="display:block;height:100%;width:${g.cur}%;background:var(--pink)"></i></span><span class="small muted">目标 ${g.tgt}</span></div>
+    <div class="mt-12 muted small">为什么：${esc(g.why)}</div>
+    <div class="mt-8 small" style="color:var(--ink-2)">建议：${g.tips.map(function(t){return '· '+esc(t);}).join('　')}</div></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">STEP 12 / 成长闭环</div><h2>下一步提升什么？</h2>
+    <p>面试 → 评分 → 发现问题 → 提升 → 再次面试。</p></div>
+    <div class="grid cols-3">${cards}</div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('当前 vs 目标',
+        gBars(DB.growth.map(function(g){return {label:g.k,a:g.cur,b:g.tgt};}),'当前','目标'),
+        '三项待提升能力的差距（分）', MOCK)}
+      ${chartCard('近三次能力变化',
+        trendChart(DB.charts.historySeries)+legend(DB.charts.historySeries.items.map(function(i){return {name:i.name,color:i.color};})),
+        '历史面试中关键维度的走势', MOCK)}
+    </div>
+    <div class="mt-20 center"><button class="btn btn-primary" onclick="go('#/u/difficulty')">再次练习 ↺</button></div>`;
+}};
+
+/* ---------- U14 History ---------- */
+PAGES['u/history']={title:'面试历史',crumb:'成长 · 历史',render:function(){
+  var rows=DB.history.map(function(h){return `<div class="row"><div class="avatar sm">📊</div><div class="main"><div class="ttl">${h.date} · ${h.diff}难度</div><div class="meta">薄弱项：${h.weak}</div></div><span class="tag tag-green">${h.score} 分</span><span class="tag tag-soft">${h.trend}</span></div>`;}).join('');
+  var dm={};DB.history.forEach(function(h){(dm[h.diff]=dm[h.diff]||[]).push(h.score);});
+  var diffAvg=Object.keys(dm).map(function(k){
+    return {label:k,val:Math.round(dm[k].reduce(function(a,b){return a+b;},0)/dm[k].length)};
+  });
+  return `<div class="page-head"><div class="eyebrow">HISTORY</div><h2>我的面试时间轴</h2></div>
+    <div class="grid cols-2">
+      <div class="card"><div class="card-title"><span class="dot"></span>历史记录</div><div class="mt-12">${rows}</div>
+        <div class="muted small mt-12">分数逐步上升，数据指标维度提升最明显。</div></div>
+      ${chartCard('能力变化趋势',
+        trendChart(DB.charts.historySeries)+legend(DB.charts.historySeries.items.map(function(i){return {name:i.name,color:i.color};})),
+        '近三次面试的多维度走势', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('各次得分',
+        vBars(DB.history.map(function(h){return {label:h.date.slice(5),val:h.score};}),{unit:' 分'}),
+        '按时间顺序排列', MOCK)}
+      ${chartCard('各难度平均分',
+        vBars(diffAvg,{unit:' 分'}),
+        '不同难度下的平均表现', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U16 API / OCR 状态（对齐低保真帧16） ---------- */
+PAGES['u/api']={title:'API / OCR 状态',crumb:'设置 · 接口状态',render:function(){
+  var llm=[
+    ['调用中','面试官正在思考…','单次请求最长 90 秒超时','tag-blue'],
+    ['调用失败','网络失败 / 401 Key 无效 / 429 限流 / 502 区域限制','明确文案提示，不泄露 Key','tag-amber'],
+    ['返回格式异常','空内容或无法解析','提示重试，页面不崩溃','tag-amber'],
+    ['重试 / 切换模型','设置页提供 5 个模型选项与「测试连接」','可一键重试或换模型','tag-green']
+  ].map(function(r){return `<div class="row"><span class="tag ${r[3]}" style="flex:0 0 116px;justify-content:center">${r[0]}</span><div class="main"><div class="meta">${esc(r[1])}</div></div><div class="small muted" style="max-width:230px;text-align:right">${esc(r[2])}</div></div>`;}).join('');
+  var ocr=[
+    ['识别中','上传 JD 截图 / 简历图片 → 高精度版识别','3–8 秒','tag-blue'],
+    ['识别失败','格式不支持 / 网络异常 / 权限错误 / 空结果','保留原文本输入流程','tag-amber'],
+    ['识别成功','文字回填 JD / 简历解析模块','用户确认后继续','tag-green'],
+    ['重试','失败后可重新上传识别','或改用粘贴文本','tag-gray']
+  ].map(function(r){return `<div class="row"><span class="tag ${r[3]}" style="flex:0 0 116px;justify-content:center">${r[0]}</span><div class="main"><div class="meta">${esc(r[1])}</div></div><div class="small muted" style="max-width:200px;text-align:right">${esc(r[2])}</div></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">SYSTEM / 接口状态</div><h2>API 与 OCR 状态</h2>
+    <p>外接大模型与百度 OCR 的调用状态、失败兜底与配置来源，面向「可用、可解释、可恢复」。</p></div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card"><div class="card-title"><span class="dot"></span>🤖 外接大模型调用状态</div><div class="mt-8">${llm}</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>🖼️ 百度 OCR 调用状态</div><div class="mt-8">${ocr}</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>🔑 配置来源（设置页）</div>
+        <div class="mt-8 muted" style="line-height:1.85">API Key / Base URL / 模型默认从本地安全配置 <code>local_api_config.json</code> 读取（asar 之外，不硬编码）；用户可在设置页覆盖并保存到 localStorage。</div>
+        <div class="divider"></div><div class="section-note">⚙ 设置项仅为原型示意</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>🧭 适用范围</div>
+        <div class="mt-8 muted" style="line-height:1.85">OCR 仅用于 <b>简历图片</b> 与 <b>JD 截图</b>；PDF / DOCX / TXT 走本地文本抽取，不经过 OCR。百度 NLP 关键词接口因权限受限已弃用，JD 关键词改由「文本渲染 PNG → OCR 高精度版」实现。</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('近 7 次大模型调用成功率', vBars([{label:'T1',val:100},{label:'T2',val:100},{label:'T3',val:98},{label:'T4',val:100},{label:'T5',val:99},{label:'T6',val:100},{label:'T7',val:100}],{unit:'%',max:100}), '单次请求成功率（示意）', MOCK)}
+      ${chartCard('OCR 与模型响应时延', hBarsRich([{label:'OCR 高精度',val:5.2},{label:'问题生成',val:1.8},{label:'追问',val:1.1},{label:'报告汇总',val:2.4}],{unit:'s',labW:88}), '平均响应时延（秒，示意）', MOCK)}
+    </div>`;
+}};
+
+/* ---------- U15 Profile ---------- */
+PAGES['u/profile']={title:'个人中心',crumb:'设置 · 个人',render:function(){
+  var p=DB.profile;
+  return `<div class="page-head"><div class="eyebrow">PROFILE</div><h2>个人中心</h2></div>
+    <div class="grid cols-2"><div class="card"><div class="row" style="border:none"><div class="avatar lg">🐱</div><div class="main"><div class="ttl" style="font-weight:700">${esc(p.name)}</div><div class="meta">${esc(p.role)}</div></div></div>
+      <div class="kv"><span class="k">邮箱</span><span class="v">${esc(p.email)}</span></div><div class="kv"><span class="k">目标岗位</span><span class="v">${esc(p.target)}</span></div><div class="kv"><span class="k">简历</span><span class="v">${esc(DB.resume.file)}</span></div></div>
+    <div class="card"><div class="card-title"><span class="dot"></span>偏好</div><div class="muted mt-8" style="line-height:1.9">· 通知：临期/结果推送（预留）<br>· 主题：浅色 · 极简<br>· 数据：原型演示数据</div>
+      <div class="divider"></div>
+      <div class="small muted mb-8">近 8 周活跃度</div>
+      <div>${spark(DB.charts.activity,{w:230,h:52,color:'#6B8CAE'})}</div>
+      <div class="chart-note">${MOCK}</div>
+      <div class="divider"></div><div class="section-note">⚙ 设置项仅为原型示意</div></div></div>`;
+}};
+
+/* ============================ ADMIN ============================ */
+/* ---------- A01 Dashboard ---------- */
+PAGES['a/dashboard']={title:'数据看板',crumb:'Admin · Overview',render:function(){
+  var a=DB.admin;
+  var kpis=a.kpis.map(function(k){return `<div class="card">${stat(k.k,k.v,k.d)}</div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">ADMIN · SYSTEM OVERVIEW</div><span class="mock-tag">MOCK DATA</span><h2>系统数据看板</h2>
+    <p>面向管理员的产品运行全景。以下为演示数据。</p></div>
+    <div class="grid cols-4">${kpis}</div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>面试趋势（近 12 周）</div><div class="mt-12">${lineChart(a.trend)}</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>岗位分布</div><div class="mt-12 flex gap-20 items-center">${donut(a.jobDist.map(function(x,i){return {v:x[1],color:PAL[i]};}))}<div class="legend">${a.jobDist.map(function(x,i){return `<div class="li"><span class="sw" style="background:${PAL[i]}"></span>${x[0]} · ${x[1]}%</div>`;}).join('')}</div></div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>能力维度分布</div><div class="mt-12">${hbars(a.abilityDist.map(function(x,i){return {label:x[0],val:x[1],color:PAL[i]};}))}</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>面试难度分布</div><div class="mt-12">${hbars(a.diffDist.map(function(x,i){return {label:x[0],val:x[1],color:PAL[i]};}))}</div>
+        <div class="divider"></div><div class="card-title"><span class="dot"></span>Agent 健康度</div><div class="mt-8">${a.agentHealth.map(function(x){return meter(x.n+' '+x.rate+'%', x.rate,'var(--green)');}).join('')}</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('用户增长趋势',
+        trendChart({labels:DB.charts.userTrend.labels,items:[{name:'注册用户',vals:DB.charts.userTrend.vals,color:'#6B8CAE'}]}),
+        '近 8 周累计用户数', MOCK)}
+      ${chartCard('面试完成率趋势',
+        trendChart({labels:DB.charts.doneTrend.labels,items:[{name:'完成率',vals:DB.charts.doneTrend.vals,color:'#7C9A78'}]}),
+        '近 30 周完成率（%）', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('评分分布',
+        vBars(DB.charts.scoreDist.map(function(x){return {label:x[0],val:x[1]};}),{unit:'%'}),
+        '全平台面试得分分布', MOCK)}
+      ${chartCard('任务队列积压',
+        vBars(DB.charts.queueTrend.map(function(v,i){return {label:'T'+(i+1),val:v};}),{unit:' 个'}),
+        '近 8 个时间片的待处理任务数', MOCK)}
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>后台模块</div>
+      <div class="grid cols-3 mt-12" style="gap:12px">
+        ${['用户数据:#/a/users','面试数据:#/a/interviews','岗位数据:#/a/jobs','Agent 详情:#/a/agent-detail','模型调用:#/a/models','系统状态:#/a/system'].map(function(s){var p=s.split(':');return `<div class="card hov card-pad-sm" style="cursor:pointer;text-align:center" onclick="go('${p[1]}')"><div class="muted small">${p[0]}</div></div>`;}).join('')}
+      </div>
+    </div>`;
+}};
+function stat(k,v,d){var up=d&&d.indexOf('+')===0;return `<div class="stat"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="d ${up?'':'down'}">${esc(d)}</div></div>`;}
+
+/* ---------- A02 Users ---------- */
+PAGES['a/users']={title:'用户数据',crumb:'Admin · Users',render:function(){
+  var rows=[['江同学','AI 产品经理','8','78','09-29','活跃'],['林同学','数据分析师','5','71','09-25','活跃'],['王同学','产品经理','3','69','09-20','沉默'],['赵同学','AI 运营','6','74','09-28','活跃']];
+  var body=rows.map(function(r){return `<tr><td><div class="flex items-center gap-12"><div class="avatar sm">🐱</div>${r[0]}</div></td><td>${r[1]}</td><td>${r[2]}</td><td><b>${r[3]}</b></td><td>${r[4]}</td><td>${r[5]==='活跃'?tag('活跃','tag-green'):tag('沉默','tag-gray')}</td></tr>`;}).join('');
+  return adminTable('用户数据','MOCK DATA','用户 · 目标岗位 · 面试数 · 平均分',body)
+    +`<div class="grid cols-2 mt-20">
+      ${chartCard('用户增长趋势',
+        trendChart({labels:DB.charts.userTrend.labels,items:[{name:'注册用户',vals:DB.charts.userTrend.vals,color:'#6B8CAE'}]}),
+        '近 8 周累计注册用户数', MOCK)}
+      ${chartCard('活跃 / 沉默占比',
+        `<div class="ring-row">${ring(77,{size:120,color:'#7C9A78',cap:'活跃率'})}<div class="ring-meta">${hBarsRich(DB.charts.userStatus.map(function(x,i){return {label:x[0],val:x[1],color:PAL[i]};}),{w:236,labW:56,valW:44})}</div></div>`,
+        '共 1,284 位注册用户', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A03 Interviews ---------- */
+PAGES['a/interviews']={title:'面试数据',crumb:'Admin · Interviews',render:function(){
+  var rows=[['INT-2041','AI 产品经理','标准','78','92%'],['INT-2040','数据分析师','挑战','71','88%'],['INT-2039','产品经理','标准','69','90%'],['INT-2038','AI 运营','轻量','74','95%']];
+  var body=rows.map(function(r){return `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${tag(r[2],'tag-soft')}</td><td><b>${r[3]}</b></td><td>${r[4]}</td></tr>`;}).join('');
+  return adminTable('面试数据','MOCK DATA','面试编号 · 岗位 · 难度 · 评分 · 完成率',body)
+    +`<div class="grid cols-2 mt-20">
+      ${chartCard('完成率趋势',
+        trendChart({labels:DB.charts.doneTrend.labels,items:[{name:'完成率',vals:DB.charts.doneTrend.vals,color:'#7C9A78'}]}),
+        '近 30 周（%）', MOCK)}
+      ${chartCard('评分分布',
+        vBars(DB.charts.scoreDist.map(function(x){return {label:x[0],val:x[1]};}),{unit:'%'}),
+        '全部面试得分的区间占比', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A04 Jobs ---------- */
+PAGES['a/jobs']={title:'岗位数据',crumb:'Admin · Jobs',render:function(){
+  var rows=DB.jobs.slice(0,8).map(function(j){return [j.name,j.score,j.path,j.gap];});
+  var body=rows.map(function(r){return `<tr><td><b>${esc(r[0])}</b></td><td><span style="color:var(--green);font-weight:700">${r[1]}%</span></td><td class="muted">${esc(r[2])}</td><td class="muted">${esc(r[3])}</td></tr>`;}).join('');
+  return adminTable('岗位数据','实时（来自 Job Match Agent）','岗位 · 平均匹配 · 发展路径 · 常见差距',body)
+    +`<div class="grid cols-2 mt-20">
+      ${chartCard('岗位匹配度 Top 8',
+        vBars(DB.jobs.slice(0,8).map(function(j){
+          return {label:shortJob(j.name),val:j.score,color:j.score>=85?'#7C9A78':(j.score>=75?'#18181B':'#C8F36A')};
+        }),{unit:'%'}),
+        'Job Match Agent 输出', MOCK)}
+      ${chartCard('岗位类型分布',
+        hBarsRich(DB.admin.jobDist.map(function(x,i){return {label:x[0],val:x[1],color:PAL[i]};}),{unit:'%',labW:110}),
+        '用户选择目标岗位的占比', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A04b Scores（评分数据，对齐低保真帧7） ---------- */
+PAGES['a/scores']={title:'评分数据',crumb:'Admin · Scores',render:function(){
+  var mean=[['comm',82],['biz',76],['tech',71],['leader',80],['strategy',74],['culture',83]];
+  var radarObj={};mean.forEach(function(x){radarObj[x[0]]=x[1];});
+  return `<div class="page-head"><div class="eyebrow">ADMIN · SCORES</div><span class="mock-tag">MOCK DATA</span><h2>评分数据</h2>
+    <p>全站面试评分的六维均值与区间分布，用于校准动态权重模板。</p></div>
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card"><div class="card-title"><span class="dot"></span>📐 六维均值</div>
+        <div class="mt-12">${mean.map(function(x){return meter(DB.DIM[x[0]],x[1],x[1]>=80?'var(--green)':'var(--ink)');}).join('')}</div>
+        <div class="chart-note">${MOCK}</div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>六维能力雷达</div>
+        <div class="mt-8 center">${radar(radarObj)}</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('评分分布', vBars(DB.charts.scoreDist.map(function(x){return {label:x[0],val:x[1]};}),{unit:'%'}), '全部面试得分的区间占比', MOCK)}
+      ${chartCard('六维均值', hBarsRich(mean.map(function(x){return {label:DB.DIM[x[0]],val:x[1]};}),{labW:80,unit:' 分',max:100}), '沟通/文化较高，技术维度偏低', MOCK)}
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>维度均值用于校准动态权重模板</div>
+      <div class="mt-8 muted" style="line-height:1.85">Score Agent 依据岗位类型套用不同权重模板（product / tech / ai / data / ops）。六维均值用于持续校准各模板的区分度，技术深度相对偏低时可针对性提升该维度题目权重。</div></div>`;
+}};
+
+/* ---------- A05 Agents ---------- */
+PAGES['a/agents']={title:'Agent 运行监控',crumb:'Admin · Agents',render:function(){
+  var cls={run:'run',done:'done',wait:'wait',warn:'warn'};
+  var stc={run:0,done:0,wait:0,warn:0};DB.admin.monitor.forEach(function(m){stc[m.st]=(stc[m.st]||0)+1;});
+  var rows=DB.admin.monitor.map(function(m){return `<div class="agent-row"><span class="status-dot ${cls[m.st]}"></span><div class="main"><div class="ttl">${esc(m.n)}</div><div class="meta">${esc(m.calls)} 次调用 · 成功率 ${m.succ}% · 最后 ${m.last}</div></div><div class="right"><span class="small muted" style="width:54px;text-align:right;display:inline-block">${m.t}</span>${m.token!=='—'?tag(m.token+' tok','tag-soft'):''}</div></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">ADMIN · AGENT MONITOR</div><span class="mock-tag">DEMO</span><h2>Agent 运行监控</h2>
+    <p>13 个 Agent 的实时运行状态。点击任一 Agent 查看详情。</p></div>
+    <div class="card"><div class="card-title"><span class="dot"></span>Agent 列表</div><div class="mt-12" onclick="go('#/a/agent-detail')" style="cursor:pointer">${rows}</div></div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('平均耗时趋势',
+        trendChart({labels:DB.charts.agentTrend.labels,items:[{name:'平均耗时',vals:DB.charts.agentTrend.vals,color:'#9A7BB5'}]}),
+        '近 30 分钟（秒）', MOCK)}
+      ${chartCard('Token 消耗分布',
+        hBarsRich(DB.charts.tokenDist.map(function(t){return {label:t.label,val:t.v};}),{unit:' tok',labW:112}),
+        '各 Agent 单轮 Token 消耗', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('调用次数分布',
+        hBarsRich(DB.admin.monitor.map(function(m){return {label:m.n,val:m.calls};}),{labW:150,valW:52}),
+        '近 24 小时累计调用次数', MOCK)}
+      ${chartCard('运行状态分布',
+        vBars([{label:'running',val:stc.run},{label:'done',val:stc.done},{label:'waiting',val:stc.wait},{label:'warning',val:stc.warn}],{unit:' 个',h:172}),
+        '13 个 Agent 的实时状态', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A06 Agent Detail ---------- */
+PAGES['a/agent-detail']={title:'Agent 详情',crumb:'Admin · Agent',render:function(){
+  var d=DB.admin.agentDetail;
+  return `<div class="page-head"><div class="eyebrow">ADMIN · AGENT DETAIL</div><span class="mock-tag">DEMO DATA</span><h2>${esc(d.name)}</h2></div>
+    <div class="split">
+      <div class="card"><div class="kv"><span class="k">状态</span><span class="v">${esc(d.status)} ${tag('ok','tag-green')}</span></div>
+        <div class="kv"><span class="k">耗时</span><span class="v">${esc(d.latency)}</span></div>
+        <div class="kv"><span class="k">Token</span><span class="v">${esc(d.token)}</span></div>
+        <div class="kv"><span class="k">模型</span><span class="v">${esc(d.model)}</span></div>
+        <div class="kv"><span class="k">错误</span><span class="v">${esc(d.errors)}</span></div></div>
+      <div class="card"><div class="card-title"><span class="dot"></span>本次执行</div>
+        <div class="kv"><span class="k">Input</span><span class="v">${esc(d.input)}</span></div>
+        <div class="mt-12 small muted mb-8">Process</div>${d.process.map(function(x){return `<div class="row" style="border:none;padding:5px 0">↓ ${esc(x)}</div>`;}).join('')}
+        <div class="kv mt-8"><span class="k">Output</span><span class="v">${esc(d.output)}</span></div></div>
+    </div>
+    <div class="grid cols-2 mt-16">
+      ${chartCard('该 Agent 耗时趋势',
+        trendChart({labels:DB.charts.agentTrend.labels,items:[{name:'耗时',vals:DB.charts.agentTrend.vals,color:'#9A7BB5'}]}),
+        '近 30 分钟（秒）', MOCK)}
+      ${chartCard('Token 消耗对比',
+        vBars(DB.charts.tokenDist.map(function(t){return {label:t.label,val:t.v};}),{unit:' tok'}),
+        '与其他 Agent 的单轮对比', MOCK)}
+    </div>
+    <div class="grid cols-3 mt-16">
+      ${chartCard('成功率',
+        `<div class="ring-row">${ring(98,{size:104,color:'#7C9A78',cap:'近 24h'})}<div class="ring-meta small muted">3,602 次调用<br>失败 42 次<br>错误：无</div></div>`,
+        '', MOCK)}
+      ${chartCard('各阶段耗时',
+        hBarsRich(d.process.map(function(p,i){return {label:p,val:[0.6,0.9,0.8,0.5][i]||0.5};}),{unit:'s',labW:118,max:1}),
+        'Pipeline 单步骤耗时', MOCK)}
+      ${chartCard('Token / 调用',
+        vBars([{label:'本次',val:1284},{label:'均值',val:1180}],{unit:' tok'}),
+        '与历史均值对比', MOCK)}
+    </div>
+    <div class="mt-16"><button class="btn btn-secondary" onclick="go('#/a/agents')">← 返回监控</button></div>`;
+}};
+
+/* ---------- A07 Models ---------- */
+PAGES['a/models']={title:'模型调用情况',crumb:'Admin · Models',render:function(){
+  var rows=DB.admin.models.map(function(m){return `<tr><td><b>${esc(m.m)}</b></td><td class="muted">${esc(m.role)}</td><td>${m.calls}</td><td>${esc(m.cost)}</td><td>${m.lat}</td></tr>`;}).join('');
+  return adminTable('模型调用情况','MOCK DATA','模型 · 用途 · 调用次数 · 成本 · 时延',body2(rows))
+    +`<div class="grid cols-2 mt-20">
+      ${chartCard('成本对比',
+        hBarsRich(DB.charts.modelCost.map(function(t){return {label:t.label,val:t.v};}),{unit:' $',labW:104}),
+        '近 30 天各模型支出', MOCK)}
+      ${chartCard('调用次数',
+        vBars(DB.admin.models.map(function(m){return {label:m.m.split(' ')[0],val:m.calls};}),{}),
+        '近 30 天调用次数', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A08 System ---------- */
+PAGES['a/system']={title:'系统运行状态',crumb:'Admin · System',render:function(){
+  var rows=DB.admin.system.map(function(s){return `<div class="row"><div class="main"><div class="ttl">${esc(s.k)}</div></div>${s.ok?tag(esc(s.v),'tag-green'):tag(esc(s.v),'tag-amber')}</div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">ADMIN · SYSTEM</div><span class="mock-tag">DEMO</span><h2>系统运行状态</h2></div>
+    <div class="grid cols-2"><div class="card"><div class="card-title"><span class="dot"></span>运行状态</div><div class="mt-12">${rows}</div></div>
+    <div class="card"><div class="card-title"><span class="dot"></span>13-Agent 架构</div><div class="mt-12">${DB.admin.pipeline.map(function(n,i){return `<span class="tag tag-soft" style="margin:0 6px 8px 0">${i+1}. ${esc(n)}</span>`;}).join('')}</div>
+      <div class="divider"></div><div class="section-note">架构与真实多 Agent 管线一致（见 docs/competency_framework.md）</div></div></div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('API 可用率',
+        trendChart({labels:DB.charts.uptimeTrend.labels,items:[{name:'可用率',vals:DB.charts.uptimeTrend.vals,color:'#7C9A78'}]}),
+        '近 8 周（%）', MOCK)}
+      ${chartCard('队列积压',
+        vBars(DB.charts.queueTrend.map(function(v,i){return {label:'T'+(i+1),val:v};}),{unit:' 个'}),
+        '近 8 个时间片待处理任务数', MOCK)}
+    </div>
+    <div class="grid cols-3 mt-20">
+      ${chartCard('可用率', `<div class="ring-row">${ring(99.7,{size:104,color:'#7C9A78',cap:'24h'})}</div>`, '目标 ≥ 99.5%', MOCK)}
+      ${chartCard('存储使用', `<div class="ring-row">${ring(41,{size:104,color:'#6B8CAE',cap:'已用'})}</div>`, '41% / 200 GB', MOCK)}
+      ${chartCard('错误率', `<div class="ring-row">${ring(0.3,{size:104,color:'#C8F36A',cap:'24h'})}</div>`, '阈值 ≤ 1%', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A09 Quality ---------- */
+PAGES['a/quality']={title:'面试质量分析',crumb:'Admin · Quality',render:function(){
+  var rows=DB.admin.quality.map(function(q){return `<div class="row"><div class="main"><div class="ttl">${esc(q.k)}</div><div class="meta">${esc(q.note)}</div></div><b>${esc(q.v)}</b></div>`;}).join('');
+  return `<div class="page-head"><div class="eyebrow">ADMIN · QUALITY</div><span class="mock-tag">MOCK DATA</span><h2>面试质量分析</h2></div>
+    <div class="grid cols-2"><div class="card"><div class="card-title"><span class="dot"></span>质量指标</div><div class="mt-12">${rows}</div></div>
+      ${chartCard('评分一致性趋势',
+        trendChart({labels:DB.charts.qualityTrend.labels,items:[{name:'Cohen κ',vals:DB.charts.qualityTrend.vals,color:'#9A7BB5'}]}),
+        '近 8 周跨面试官一致性', MOCK)}
+    </div>
+    <div class="grid cols-3 mt-20">
+      ${chartCard('评分一致性', `<div class="ring-row">${ring(86,{size:104,color:'#7C9A78',cap:'κ 指数'})}</div>`, '目标 ≥ 0.80', MOCK)}
+      ${chartCard('冲突仲裁触发率', `<div class="ring-row">${ring(7.2,{size:104,color:'#C9A227',cap:'触发率'})}</div>`, '>15 分差异时触发', MOCK)}
+      ${chartCard('追问命中率', `<div class="ring-row">${ring(83,{size:104,color:'#6B8CAE',cap:'命中率'})}</div>`, '用户主观反馈', MOCK)}
+    </div>
+    <div class="grid cols-2 mt-20">
+      <div class="card"><div class="card-title"><span class="dot"></span>说明</div><div class="muted mt-8" style="line-height:1.9">· 评分一致性衡量多面试官打分相关度<br>· 冲突仲裁触发率反映分歧程度<br>· 追问命中率体现动态追问相关性<br><br>这些指标帮助持续校准 Agent。</div></div>
+      ${chartCard('低分申诉率',
+        vBars([{label:'W1',val:2.8},{label:'W3',val:2.4},{label:'W5',val:2.2},{label:'W8',val:2.1}],{unit:'%'}),
+        '用户反馈的评分异议比例', MOCK)}
+    </div>`;
+}};
+
+/* ---------- A09b Logs（运行日志，对齐低保真帧9） ---------- */
+PAGES['a/logs']={title:'运行日志',crumb:'Admin · Logs',render:function(){
+  var rows=[['11:02','INFO','Agent 管线启动','tag-gray'],['10:47','WARN','Scorer 延迟升高','tag-amber'],['10:21','ERROR','Interview JSON 解析失败→兜底','tag-pink'],['09:58','INFO','新增 12 场面试','tag-gray'],['09:40','INFO','Chief 仲裁 1 处评分冲突','tag-gray']]
+    .map(function(r){return `<tr><td class="muted">${r[0]}</td><td><span class="tag ${r[3]}">${r[1]}</span></td><td>${esc(r[2])}</td><td>${tag('已恢复','tag-green')}</td></tr>`;}).join('');
+  return adminTable('运行日志 / 系统情况','MOCK DATA','时间 · 级别 · 消息 · 状态',rows)
+    +`<div class="grid cols-3 mt-20">
+      <div class="card center stat"><div class="k">系统整体</div><div class="v" style="color:var(--green);font-size:22px">正常</div></div>
+      <div class="card center stat"><div class="k">近 1h 错误</div><div class="v">2</div></div>
+      <div class="card center stat"><div class="k">已自动恢复</div><div class="v">2</div></div>
+    </div>
+    <div class="grid cols-2 mt-20">
+      ${chartCard('日志级别分布', vBars([{label:'INFO',val:38},{label:'WARN',val:7},{label:'ERROR',val:2}],{unit:' 条'}), '近 24 小时各级别日志数量', MOCK)}
+      ${chartCard('近 8 时段日志量', trendChart({labels:['T1','T2','T3','T4','T5','T6','T7','T8'],items:[{name:'日志量',vals:[42,55,38,61,49,72,58,47],color:'#6B8CAE'}]}), '日志吞吐趋势（示意）', MOCK)}
+    </div>
+    <div class="card mt-20"><div class="card-title"><span class="dot"></span>说明</div>
+      <div class="mt-8 muted" style="line-height:1.85">系统运行情况视图为规划方向，日志样本用于演示监控形态。ERROR 均已触发兜底逻辑（JSON 解析失败回退默认问题），页面不崩溃。</div></div>`;
+}};
+
+function adminTable(title,flag,cols,body){
+  return `<div class="page-head"><div class="eyebrow">ADMIN</div><span class="mock-tag">${flag}</span><h2>${title}</h2></div>
+    <div class="card"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--ink-3);border-bottom:1px solid var(--line)">${cols.split('·').map(function(c){return '<th style="padding:10px 8px;font-weight:600">'+c.trim()+'</th>';}).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function body2(r){return r;}
+
+/* card helper used by dashboard */
+function card(title,body){return `<div class="card"><div class="card-title"><span class="dot"></span>${title}</div><div class="mt-12">${body}</div></div>`;}
+
+/* ---------------- router ---------------- */
+function render(){
+  var hash=(location.hash.replace(/^#/,'')||'u/dashboard').replace(/^\/+/,'');
+  var role=hash.charAt(0)==='a'?'a':'u';
+  var page=PAGES[hash]||PAGES[role+'/dashboard'];
+  if(!PAGES[hash])hash=role+'/dashboard';
+  var def=PAGES[hash];
+  document.getElementById('sidebar').innerHTML=sidebar(hash);
+  document.getElementById('topbar').innerHTML=
+    `<div><h1>${esc(def.title)}</h1><div class="crumb">${esc(def.crumb||'')}</div></div>
+     <div class="topbar-right"><span class="proto-flag">HIGH-FI PROTOTYPE</span><div class="avatar sm">🐱</div></div>`;
+  var view=document.getElementById('view');
+  view.innerHTML=def.render();
+  view.scrollTop=0;window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',render);
+window.addEventListener('DOMContentLoaded',function(){
+  if(!location.hash)location.hash='#/u/dashboard';
+  render();
+});
+/* expose for inline handlers */
+window.go=go;window.toast=toast;window.modal=modal;window.closeModal=closeModal;
+window.uploadResume=uploadResume;window.selectJob=selectJob;window.toast=toast;
+window.showComp=showComp;window.switchWeight=switchWeight;window.pickDiff=pickDiff;
+window.submitAns=submitAns;
+})();
+</script>
+<script>window.location.hash = '#/u/report';</script>
+</body>
+</html>
