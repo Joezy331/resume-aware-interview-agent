@@ -8,12 +8,25 @@
 
 ---
 
+## 🔗 在线入口（推荐先看）
+
+| 入口 | 链接 |
+|---|---|
+| **项目简介与可信度** | https://joezy331.github.io/resume-aware-interview-agent/ |
+| **量化评测报告**（方法论 / 25 项指标 / 原始数据 / 复现命令） | https://joezy331.github.io/resume-aware-interview-agent/evaluation.html |
+| **26 屏在线交互原型** | https://joezy331.github.io/resume-aware-interview-agent/prototype/gallery.html |
+| **桌面版下载**（v4.2 便携 EXE，71.7MB，含 SHA256） | https://github.com/Joezy331/resume-aware-interview-agent/releases/tag/v4.2 |
+
+> 评测结论、可信度分级与数据溯源见 `evaluation_report.md` / `resume_metrics.md`；所有指标可由 `evaluation/` 下 6 条命令复现。测试输入为合成简历与构造场景，**不代表真实用户效果**。
+
+---
+
 ## 🚀 30 秒看懂
 
 | 你想看什么 | 怎么看 |
 |-----------|--------|
 | **完整产品交互（推荐先打开）** | 直接用浏览器打开根目录 `index.html`，无需安装、无需 Key |
-| **桌面版（当前主力版本）** | Electron 便携 EXE：接入**外接大模型 API**（出题/追问/评分/报告真实生成）、**百度智能云 OCR**（简历图片 / JD 截图文字识别）、**面试历史记录**（localStorage 持久化）。源码在本仓库 `electron-app/` 目录，构建产物 `AI-Career-Copilot-20261015d.exe` |
+| **桌面版（当前主力版本）** | Electron 便携 EXE：接入**外接大模型 API**（出题/追问/评分/报告真实生成）、**百度智能云 OCR**（简历图片 / JD 截图文字识别）、**面试历史记录**（localStorage 持久化）。源码在本仓库 `electron-app/` 目录，最新构建产物见 [Releases v4.2](https://github.com/Joezy331/resume-aware-interview-agent/releases/tag/v4.2) |
 | **真实大模型工程实现** | 进入 `python-backend/`，配置 Key 后 `streamlit run streamlit_app.py`（见 [12.3](#123-运行真实大模型后端python-streamlit)） |
 | **核心流程图（多张短图）** | `docs/flows/`：用户主流程 / API 调用 / OCR 子流程 / 历史记录 / 13-Agent 架构（SVG 源 + PNG） |
 | **产品与架构文档** | 见 `docs/PRD.md`、`docs/competency_framework.md` 与 `docs/flows/agent_architecture.png` |
